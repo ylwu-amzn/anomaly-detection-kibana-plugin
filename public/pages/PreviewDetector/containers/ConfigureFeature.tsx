@@ -38,25 +38,25 @@ interface FeaturesRouterProps {
 }
 interface FeaturesProps extends RouteComponentProps<FeaturesRouterProps> {}
 
-const tabs = [
-  {
-    id: 'definitions',
-    name: 'Model definitions',
-    route: 'definitions',
-  },
-  {
-    id: 'results',
-    name: 'Detector configuration',
-    route: 'results',
-  },
-];
+// const tabs = [
+//   {
+//     id: 'definitions',
+//     name: 'Model definitionsaaa',
+//     route: 'definitions',
+//   },
+//   {
+//     id: 'results',
+//     name: 'Detector configuration',
+//     route: 'results',
+//   },
+// ];
 
 const getSelectedTabId = (pathname: string) => {
   if (pathname.includes('results')) return 'results';
   return 'definitions';
 };
 
-export const PreviewDetector = (props: FeaturesProps) => {
+export const ConfigureFeature = (props: FeaturesProps) => {
   const [selectedTab, setSelectedTab] = useState(
     getSelectedTabId(props.location.pathname)
   );
@@ -98,7 +98,7 @@ export const PreviewDetector = (props: FeaturesProps) => {
             </EuiDescriptionListDescription>
           </EuiDescriptionList>
         </EuiFlexItem>
-        <EuiFlexItem style={{ marginTop: 0 }}>
+        {/* <EuiFlexItem style={{ marginTop: 0 }}>
           <EuiTabs className={isDark ? '' : 'feature-class'}>
             {tabs.map(tab => (
               <EuiTab
@@ -112,33 +112,8 @@ export const PreviewDetector = (props: FeaturesProps) => {
               </EuiTab>
             ))}
           </EuiTabs>
-        </EuiFlexItem>
+        </EuiFlexItem> */}
       </EuiFlexGroup>
-      <Switch>
-        <Route
-          exact
-          path="/detectors/:detectorId/features/definitions"
-          render={props => (
-            <ModelDefinition
-              {...props}
-              detectorId={detectorId}
-              detector={detector}
-            />
-          )}
-        />
-        <Route
-          exact
-          path="/detectors/:detectorId/features/results"
-          render={props => (
-            <AnomaliesList
-              {...props}
-              detectorId={detectorId}
-              detector={detector}
-            />
-          )}
-        />
-        <Redirect to="/detectors/:detectorId/features/definitions" />
-      </Switch>
     </React.Fragment>
   );
 };

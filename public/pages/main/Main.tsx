@@ -19,7 +19,9 @@ import { CreateDetector } from '../createDetector';
 
 import { DetectorList } from '../DetectorsList';
 import { ListRouterParams } from '../DetectorsList/List/List';
-import { PreviewDetector } from '../PreviewDetector/containers/PreviewDetector';
+// import { PreviewDetector } from '../PreviewDetector/containers/PreviewDetector';
+// import { ConfigureFeature } from '../PreviewDetector/containers/ConfigureFeature';
+import { CreateFeature } from '../PreviewDetector/containers/CreateFeature';
 
 interface MainProps {}
 
@@ -49,7 +51,7 @@ export function Main(mainProps: MainProps) {
       />
       <Route
         path="/detectors/:detectorId/features/"
-        render={(props: RouteComponentProps) => <PreviewDetector {...props} />}
+        render={(props: RouteComponentProps) => <CreateFeature {...props} />}
       />
       <Redirect to="/detectors" />
     </Switch>

@@ -26,22 +26,6 @@ export const AggregationSelector = () => {
   const numberFields = getNumberFields(useSelector(getAllFields));
   return (
     <div>
-      <Field name="aggregationBy" validate={required}>
-        {({ field, form }: FieldProps) => (
-          <EuiFormRow
-            label="Aggregation by"
-            helpText="Select an aggregation to be performed on the selected field for the selected sample size"
-            isInvalid={isInvalid(field.name, form)}
-            error={getError(field.name, form)}
-          >
-            <EuiSelect
-              options={AGGREGATION_TYPES}
-              {...field}
-              data-test-subj="aggregationType"
-            />
-          </EuiFormRow>
-        )}
-      </Field>
       <Field name="aggregationOf" validate={required}>
         {({ field, form }: FieldProps) => (
           <EuiFormRow
@@ -58,6 +42,23 @@ export const AggregationSelector = () => {
               onChange={(options: any) => {
                 form.setFieldValue(`aggregationOf`, options);
               }}
+            />
+          </EuiFormRow>
+        )}
+      </Field>
+
+      <Field name="aggregationBy" validate={required}>
+        {({ field, form }: FieldProps) => (
+          <EuiFormRow
+            label="Aggregation method"
+            helpText="The aggregation method determins what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
+            isInvalid={isInvalid(field.name, form)}
+            error={getError(field.name, form)}
+          >
+            <EuiSelect
+              options={AGGREGATION_TYPES}
+              {...field}
+              data-test-subj="aggregationType"
             />
           </EuiFormRow>
         )}

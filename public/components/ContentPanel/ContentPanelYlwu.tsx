@@ -22,6 +22,7 @@ import {
   EuiHorizontalRule,
   EuiPanel,
   EuiTitle,
+  EuiText,
 } from '@elastic/eui';
 
 type ContentPanelProps = {
@@ -37,7 +38,7 @@ type ContentPanelProps = {
   children: React.ReactNode | React.ReactNode[];
 };
 
-const ContentPanel = (props: ContentPanelProps) => (
+const ContentPanelYlwu = (props: ContentPanelProps) => (
   <EuiPanel
     style={{ paddingLeft: '0px', paddingRight: '0px', ...props.panelStyles }}
   >
@@ -79,4 +80,4 @@ const ContentPanel = (props: ContentPanelProps) => (
   </EuiPanel>
 );
 
-export default ContentPanel;
+export default ContentPanelYlwu;

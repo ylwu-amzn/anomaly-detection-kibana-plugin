@@ -53,7 +53,7 @@ export const useFetchDetectorInfo = (
         fetchDetector();
       }
     },
-    [detectorId, selectedIndices]
+    [detectorId]
   );
   return {
     detector: detector || {},
