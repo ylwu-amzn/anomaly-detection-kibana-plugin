@@ -157,6 +157,7 @@ const reducer = handleActions<ElasticsearchState>(
         state: ElasticsearchState,
         action: APIResponseAction
       ): ElasticsearchState => {
+        console.log("0909090909, get mapping", state, action);
         return {
           ...state,
           requesting: false,
@@ -190,12 +191,17 @@ export const getAliases = (searchKey: string = ''): APIAction => ({
   searchKey,
 });
 
-export const getMappings = (searchKey: string = ''): APIAction => ({
-  type: GET_MAPPINGS,
-  request: (client: IHttpService) =>
-    client.get(`..${AD_NODE_API._MAPPINGS}?index=${searchKey}`),
-  searchKey,
-});
+export const getMappings = (searchKey: string = ''): APIAction => {
+  console.log('090909 -- 11', searchKey);
+  return ({
+
+    type: GET_MAPPINGS,
+    request: (client: IHttpService) =>
+      client.get(`..${AD_NODE_API._MAPPINGS}?index=${searchKey}`),
+    searchKey,
+  });
+}
+
 
 export const searchES = (requestData: any): APIAction => ({
   type: SEARCH_ES,

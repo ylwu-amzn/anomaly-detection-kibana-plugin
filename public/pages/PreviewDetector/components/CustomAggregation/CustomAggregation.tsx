@@ -21,7 +21,9 @@ import { isInvalid, getError } from '../../../../utils/utils';
 
 import 'brace/ext/language_tools';
 
-interface CustomAggregationProps {}
+interface CustomAggregationProps {
+  index?: number;
+}
 
 export const validateQuery = (value: string) => {
   try {
@@ -33,8 +35,9 @@ export const validateQuery = (value: string) => {
 };
 
 export const CustomAggregation = (props: CustomAggregationProps) => {
+  console.log('=====index', props.index);
   return (
-    <Field name="customAggregation" validate={validateQuery}>
+    <Field name={`featureList.${props.index}.aggregationQuery`} validate={validateQuery}>
       {({ field, form }: FieldProps) => (
         <EuiFormRow
           fullWidth
@@ -57,7 +60,7 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
             isInvalid={isInvalid(field.name, form)}
             onChange={(query: string) => {
               //Reset operator and values
-              form.setFieldValue('customAggregation', query);
+              form.setFieldValue(`featureList.${props.index}.aggregationQuery`, query);
             }}
             onBlur={field.onBlur}
             value={field.value}

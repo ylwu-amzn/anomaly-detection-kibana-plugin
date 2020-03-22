@@ -13,7 +13,8 @@
  * permissions and limitations under the License.
  */
 
-import React from 'react';
+import { get } from 'lodash';
+import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { EuiFormRow, EuiSelect, EuiComboBox } from '@elastic/eui';
 import { getAllFields } from '../../../../redux/selectors/elasticsearch';
@@ -22,11 +23,19 @@ import { Field, FieldProps } from 'formik';
 import { AGGREGATION_TYPES } from '../../utils/constants';
 import { required, isInvalid, getError } from '../../../../utils/utils';
 
-export const AggregationSelector = () => {
+interface AggregationSelectorProps {
+  index?: number;
+}
+export const AggregationSelector = (props: AggregationSelectorProps) => {
   const numberFields = getNumberFields(useSelector(getAllFields));
+  const s = useSelector(state => state);
+  console.log('090909 state', s);
+  console.log('++++ numberFields, ', numberFields);
+  console.log('++++10101 numberFields, ', get(numberFields,'0.number'));
+  console.log('=====11index', props.index);
   return (
-    <div>
-      <Field name="aggregationOf" validate={required}>
+    <Fragment>
+      <Field name={`featureList.${props.index}.aggregationOf`} validate={required}>
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Field"
@@ -35,19 +44,22 @@ export const AggregationSelector = () => {
           >
             <EuiComboBox
               singleSelection
-              selectedOptions={field.value}
+              selectedOptions={field ? field.value : []}
               //@ts-ignore
               options={numberFields}
               {...field}
               onChange={(options: any) => {
-                form.setFieldValue(`aggregationOf`, options);
+                form.setFieldValue(
+                  `featureList.${props.index}.aggregationOf`,
+                  options
+                );
               }}
             />
           </EuiFormRow>
         )}
       </Field>
 
-      <Field name="aggregationBy" validate={required}>
+      <Field name={`featureList.${props.index}.aggregationBy`} validate={required}>
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Aggregation method"
@@ -63,6 +75,6 @@ export const AggregationSelector = () => {
           </EuiFormRow>
         )}
       </Field>
-    </div>
+    </Fragment>
   );
 };
