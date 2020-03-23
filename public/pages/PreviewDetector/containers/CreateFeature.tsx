@@ -55,9 +55,11 @@ import {
 import { Field, FieldArray, FieldProps, Form, Formik } from 'formik';
 import { get, set, remove, isEmpty, cloneDeep } from 'lodash';
 import React, { Fragment, useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 // @ts-ignore
+import { toastNotifications } from 'ui/notify';
 import {
   Detector,
   FeatureAttributes,
@@ -95,13 +97,13 @@ interface FeaturesRouterProps {
   detectorId?: string;
 }
 
-interface CreateFeatureProps extends RouteComponentProps<FeaturesRouterProps> {
-}
+interface CreateFeatureProps extends RouteComponentProps<FeaturesRouterProps> {}
 
 const MAX_NAME_SIZE = 256;
 
 // let firstLoad = true;
 export function CreateFeature(props: CreateFeatureProps) {
+  const dispatch = useDispatch();
   const detectorId = get(props, 'match.params.detectorId', '');
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
   const [createFeature, setCreateFeature] = useState(false);
@@ -160,7 +162,6 @@ export function CreateFeature(props: CreateFeatureProps) {
     </div>
   );
 
-
   const featureButtonContent = (feature: any, featureUiMetaData: any) => {
     // console.log('00000featureUiMetaData, ', featureUiMetaData, feature, props);
 
@@ -169,17 +170,26 @@ export function CreateFeature(props: CreateFeatureProps) {
         <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
           <EuiFlexItem>
             <EuiTitle size="s" className="euiAccordionForm__title">
-              <h3>{feature.featureName}</h3>
+              <h3>
+                {feature.featureName ? feature.featureName : 'Add feature'}
+              </h3>
             </EuiTitle>
           </EuiFlexItem>
         </EuiFlexGroup>
         <EuiText size="s">
           <p>
             {featureUiMetaData &&
-            featureUiMetaData.featureType === 'simple_aggs' ?
-              (<EuiTextColor color="subdued">Field: {featureUiMetaData.aggregationOf} Aggregation
-                method: {featureUiMetaData.aggregationBy} State: {feature.featureEnabled ? 'Enabled' : 'Disabled'}</EuiTextColor>) :
-              <EuiTextColor color="subdued">Custom expression State: Disabled</EuiTextColor>}
+            featureUiMetaData.featureType === 'simple_aggs' ? (
+              <EuiTextColor color="subdued">
+                Field: {featureUiMetaData.aggregationOf} Aggregation method:{' '}
+                {featureUiMetaData.aggregationBy} State:{' '}
+                {feature.featureEnabled ? 'Enabled' : 'Disabled'}
+              </EuiTextColor>
+            ) : (
+              <EuiTextColor color="subdued">
+                Custom expression State: Disabled
+              </EuiTextColor>
+            )}
           </p>
         </EuiText>
       </div>
@@ -200,121 +210,136 @@ export function CreateFeature(props: CreateFeatureProps) {
     onDelete: any,
     index: number,
     feature?: any,
-    featureUiMetaData?: any,
+    featureUiMetaData?: any
   ) => (
     // <Field name={`features.${index}`} validate={validateFeatureName}>
-      <EuiAccordion
-        id={feature ? feature.featureId : null}
-        buttonContent={
-          feature
-            ? featureButtonContent(feature, featureUiMetaData)
-            : addFeatureButtonContent
-        }
-        buttonClassName="euiAccordionForm__button"
-        className="euiAccordionForm"
-        paddingSize="l"
-        initialIsOpen={!feature}
-        extraAction={extraAction(onDelete)}
+    <EuiAccordion
+      id={feature ? feature.featureId : null}
+      buttonContent={
+        feature
+          ? featureButtonContent(feature, featureUiMetaData)
+          : addFeatureButtonContent
+      }
+      buttonClassName="euiAccordionForm__button"
+      className="euiAccordionForm"
+      paddingSize="l"
+      initialIsOpen={!get(feature, 'featureId')}
+      extraAction={extraAction(onDelete)}
+    >
+      <Field
+        name={`featureList.${index}.featureName`}
+        validate={validateFeatureName}
       >
-        <Field name={`featureList.${index}.featureName`} validate={validateFeatureName}>
-          {({ field, form }: FieldProps) => (
+        {({ field, form }: FieldProps) => (
+          <EuiFormRow
+            label="Feature name"
+            helpText="Enter a descriptive name. The name must be unique within this detector"
+            isInvalid={isInvalid(field.name, form)}
+            error={getError(field.name, form)}
+          >
+            <EuiFieldText
+              // name="featureName"
+              // id="featureName"
+              placeholder="Enter feature name"
+              value={field.value ? field.value : feature.featureName}
+              {...field}
+            />
+          </EuiFormRow>
+        )}
+      </Field>
+
+      <Field name={`featureList.${index}.featureEnabled`}>
+        {({ field, form }: FieldProps) => (
+          <EuiFormRow
+            label="Feature state"
+            isInvalid={isInvalid(field.name, form)}
+            error={getError(field.name, form)}
+          >
+            <EuiCheckbox
+              id={`featureList.${index}.featureEnabled`}
+              label="Enable feature"
+              checked={field.value ? field.value : feature.featureEnabled}
+              {...field}
+            />
+          </EuiFormRow>
+        )}
+      </Field>
+
+      <Field name={`featureList.${index}.featureType`} validate={required}>
+        {({ field, form }: FieldProps) => (
+          <Fragment>
             <EuiFormRow
-              label="Feature name"
-              helpText="Enter a descriptive name. The name must be unique within this detector"
+              label="Find anomalies based on"
               isInvalid={isInvalid(field.name, form)}
               error={getError(field.name, form)}
             >
-              <EuiFieldText
-                // name="featureName"
-                // id="featureName"
-                placeholder="Enter feature name"
-                value={field.value ? field.value:feature.featureName }
+              <EuiSelect
                 {...field}
-              />
-            </EuiFormRow>
-          )}
-        </Field>
-
-        <Field name={`featureList.${index}.featureEnabled`}>
-          {({ field, form }: FieldProps) => (
-            <EuiFormRow
-              label="Feature state"
-              isInvalid={isInvalid(field.name, form)}
-              error={getError(field.name, form)}
-            >
-              <EuiCheckbox
-                // id={feature ? feature.featureId : null}
-                label="Enable feature"
-                checked={field.value ? field.value:feature.featureEnabled}
-                {...field}
-              />
-            </EuiFormRow>
-          )}
-        </Field>
-
-        <Field name={`featureList.${index}.featureType`} validate={required}>
-          {({ field, form }: FieldProps) => (
-            <Fragment>
-              <EuiFormRow
-                label="Find anomalies based on"
+                options={FEATURE_TYPE_OPTIONS}
                 isInvalid={isInvalid(field.name, form)}
-                error={getError(field.name, form)}
-              >
-                <EuiSelect
-                  {...field}
-                  options={FEATURE_TYPE_OPTIONS}
-                  isInvalid={isInvalid(field.name, form)}
-                  data-test-subj="featureType"
-                />
-              </EuiFormRow>
-              {field.value === FEATURE_TYPE.SIMPLE ? (
-                <AggregationSelector index={index}/>
-              ) : (
-                <CustomAggregation index={index}/>
-              )}
-            </Fragment>
-          )}
-        </Field>
-      </EuiAccordion>
-    // </Field>
+                data-test-subj="featureType"
+              />
+            </EuiFormRow>
+            {field.value === FEATURE_TYPE.SIMPLE ? (
+              <AggregationSelector index={index} />
+            ) : (
+              <CustomAggregation index={index} />
+            )}
+          </Fragment>
+        )}
+      </Field>
+    </EuiAccordion>
   );
 
-  const renderFeatures = (values) => {
+  const renderFeatures = values => {
     // const features = get(detector, 'featureAttributes', []);
     console.log('++++++++', get(detector, 'uiMetadata.features', []));
     const featureUiMetaData = get(detector, 'uiMetadata.features', []);
 
+    return (
+      <FieldArray
+        name={'featureList'}
+        render={arrayHelpers => (
+          <React.Fragment>
+            {values.featureList.map((feature: any, index: number) =>
+              featureAccordion(
+                () => {
+                  arrayHelpers.remove(index);
+                  // window.alert('remove feature');
+                  // remove(features, f => f.featureId === feature.featureId);
+                  // setFeatures([...features]);
+                },
+                index,
+                feature,
+                featureUiMetaData[feature.featureName]
+              )
+            )}
 
-    return (<FieldArray name={'featureList'}
-                       render={arrayHelpers => (
-
-                         values.featureList.map((feature: any, index: number) => (
-                             // <button type={'button'}>{index}</button>
-                             featureAccordion(
-                               () => {
-                                 arrayHelpers.remove(index);
-                                 // window.alert('remove feature');
-                                 // remove(features, f => f.featureId === feature.featureId);
-                                 // setFeatures([...features]);
-                               },
-                               index,
-                               feature,
-                               featureUiMetaData[feature.featureName],
-                             )
-                         ))
-                       )}/>);
-
-    // features.map((feature: any) =>
-    //   featureAccordion(
-    //     () => {
-    //       window.alert('remove feature');
-    //       remove(features, f => f.featureId === feature.featureId);
-    //       setFeatures([...features]);
-    //     },
-    //     feature,
-    //     featureUiMetaData[feature.featureName],
-    //   ),
-    // );
+            <EuiFlexGroup alignItems="center" style={{ padding: '12px 24px' }}>
+              <EuiFlexItem grow={false}>
+                <EuiButton
+                  data-test-subj="addFeature"
+                  onClick={() =>
+                    arrayHelpers.push({
+                      featureType: 'simple_aggs',
+                      featureEnabled: true,
+                      aggregationQuery: JSON.stringify(
+                        { aggregation_name: { sum: { field: 'field_name' } } },
+                        null,
+                        4
+                      ),
+                    })
+                  }
+                >
+                  Add another feature
+                </EuiButton>
+                <EuiText size="s">You can add {9} more features</EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </React.Fragment>
+        )}
+      />
+    );
   };
 
   const generateInitialValue = () => {
@@ -324,248 +349,132 @@ export function CreateFeature(props: CreateFeatureProps) {
     // });
     const a = features.map(feature => {
       return {
-        ...(featureUiMetaData[feature.featureName]), ...feature,
-        'aggregationQuery': JSON.stringify(feature['aggregationQuery'], null, 4),
-        'aggregationOf': get(featureUiMetaData[feature.featureName], 'aggregationOf') ?
-          ([{label: get(featureUiMetaData[feature.featureName], 'aggregationOf')}]) : [],
+        ...featureUiMetaData[feature.featureName],
+        ...feature,
+        aggregationQuery: JSON.stringify(feature['aggregationQuery'], null, 4),
+        aggregationOf: get(
+          featureUiMetaData[feature.featureName],
+          'aggregationOf'
+        )
+          ? [
+              {
+                label: get(
+                  featureUiMetaData[feature.featureName],
+                  'aggregationOf'
+                ),
+              },
+            ]
+          : [],
       };
     });
     console.log('343434', a);
     return a;
-  }
-
-
-  // const handleSubmit = async (values: FeaturesFormikValues, formikBag: any) => {
-  //   const requestBody = prepareDetector(
-  //     values,
-  //     props.detector,
-  //     props.featureToEdit
-  //   );
-  //   try {
-  //     await dispatch(updateDetector(props.detector.id, requestBody));
-  //     if (isEdit) {
-  //       toastNotifications.addSuccess(`Feature updated: ${values.featureName}`);
-  //     } else {
-  //       toastNotifications.addSuccess(`Feature created: ${values.featureName}`);
-  //     }
-  //     formikBag.setSubmitting(false);
-  //     props.onUpdatePreview();
-  //     props.onClose();
-  //   } catch (err) {
-  //     if (isEdit) {
-  //       toastNotifications.addDanger(
-  //         getErrorMessage(
-  //           err,
-  //           `There was a problem updating feature ${values.featureName}`
-  //         )
-  //       );
-  //     } else {
-  //       toastNotifications.addDanger(
-  //         getErrorMessage(
-  //           err,
-  //           `There was a problem creating feature ${values.featureName}`
-  //         )
-  //       );
-  //     }
-  //     formikBag.setSubmitting(false);
-  //   }
-  // };
-
-  const handleSubmit = () => {
-    alert("Submit..");
-    console.log("submit");
   };
 
+  const handSubmit = async (values: FeaturesFormikValues, formikBag: any) => {
+    alert('Submit..');
+
+    const requestBody = prepareDetector(
+      get(values, 'featureList', []),
+      detector
+    );
+    console.log('submit detector', requestBody);
+    try {
+      await dispatch(updateDetector(detector.id, requestBody));
+      toastNotifications.addSuccess(`Feature updated: ${values.featureName}`);
+      formikBag.setSubmitting(false);
+    } catch (err) {
+      toastNotifications.addDanger(
+        getErrorMessage(
+          err,
+          `There was a problem updating feature ${values.featureName}`
+        )
+      );
+      formikBag.setSubmitting(false);
+    }
+  };
 
   return (
     <React.Fragment>
-
-      <EuiPage>
-        <EuiPageBody>
-          <EuiPageHeader>
-            <EuiPageHeaderSection>
-              <EuiTitle size="l">
-                <h1>Edit features</h1>
-              </EuiTitle>
-            </EuiPageHeaderSection>
-          </EuiPageHeader>
-          <ContentPanel
-            title="Features"
-            titleSize="m"
-            description={featureDescription()}
-          >
-
-            <Formik
-              enableReinitialize
-              initialValues={{featureList: generateInitialValue()}}
-              onSubmit={handleSubmit}
-            >
-              {({ values, isSubmitting, dirty }) => (
-                <Form>
+      <Formik
+        enableReinitialize
+        initialValues={{ featureList: generateInitialValue() }}
+        onSubmit={handSubmit}
+      >
+        {({ values, isSubmitting, dirty }) => (
+          <Form>
+            <EuiPage>
+              <EuiPageBody>
+                <EuiPageHeader>
+                  <EuiPageHeaderSection>
+                    <EuiTitle size="l">
+                      <h1>Edit features</h1>
+                    </EuiTitle>
+                  </EuiPageHeaderSection>
+                </EuiPageHeader>
+                <ContentPanel
+                  title="Features"
+                  titleSize="m"
+                  description={featureDescription()}
+                >
                   <pre>{JSON.stringify(values, null, 2)}</pre>
 
                   {renderFeatures(values)}
 
-                  {/*<FieldArray name={'features'}>*/}
-                  {/*  {(arrayHelpers) => (*/}
-                  {/*    <div>*/}
-                  {/*      {features && features.length > 0 ? (*/}
-                  {/*        features.map((f, index) => (*/}
-                  {/*          <div key={index}>*/}
-                  {/*            <Field name={`features.${index}`}/>*/}
-                  {/*            <button type='button'>{f.featureName}</button>*/}
-                  {/*          </div>*/}
-                  {/*        ))*/}
-                  {/*      ) : (<button type='button'>add a feature</button>)*/}
-                  {/*      }*/}
-                  {/*    </div>*/}
-                  {/*  )}*/}
-                  {/*</FieldArray>*/}
+                  {/* {createFeature
+                    ? featureAccordion(() => setCreateFeature(false))
+                    : null} */}
 
+                  {/* <EuiFlexGroup
+                    alignItems="center"
+                    style={{ padding: '12px 24px' }}
+                  >
+                    <EuiFlexItem grow={false}>
+                      <EuiButton
+                        data-test-subj="addFeature"
+                        onClick={() => {
+                          console.log('addFeature button clicked');
+                          setCreateFeature(true);
+                        }}
+                      >
+                        Add another feature
+                      </EuiButton>
+                      <EuiText size="s">You can add {9} more features</EuiText>
+                    </EuiFlexItem>
+                  </EuiFlexGroup> */}
+                </ContentPanel>
+              </EuiPageBody>
+            </EuiPage>
 
-                  {/*{createFeature*/}
-                  {/*  ? featureAccordion(() => setCreateFeature(false))*/}
-                  {/*  : null}*/}
-
-                </Form>
-              )}
-            </Formik>
-
-            <EuiFlexGroup
-              alignItems="center"
-              style={{ padding: '12px 24px' }}
-            >
-              <EuiFlexItem grow={false}>
-                <EuiButton
-                  data-test-subj="addFeature"
-                  onClick={() => {
-                    console.log('addFeature button clicked');
-                    setCreateFeature(true);
-                  }}
-                >
-                  Add another feature
-                </EuiButton>
-                <EuiText size="s">You can add {9} more features</EuiText>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-
-          </ContentPanel>
-        </EuiPageBody>
-      </EuiPage>
-
-
-      <SampleAnomalies/>
-      <React.Fragment>
-        <EuiPage>
-          <EuiPageBody>
-            <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-              <EuiFlexItem grow={false}>
-                <EuiButtonEmpty
-                  onClick={() => window.alert('Cancel button clicked')}
-                >
-                  Cancel
-                </EuiButtonEmpty>
-              </EuiFlexItem>
-              <EuiFlexItem grow={false}>
-                <EuiButton
-                  fill
-                  type="submit"
-                  isLoading={false}
-                  data-test-subj="updateAdjustModel"
-                >
-                  Save
-                </EuiButton>
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </EuiPageBody>
-        </EuiPage>
-      </React.Fragment>
+            <SampleAnomalies />
+            <React.Fragment>
+              <EuiPage>
+                <EuiPageBody>
+                  <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
+                    <EuiFlexItem grow={false}>
+                      <EuiButtonEmpty
+                        onClick={() => window.alert('Cancel button clicked')}
+                      >
+                        Cancel
+                      </EuiButtonEmpty>
+                    </EuiFlexItem>
+                    <EuiFlexItem grow={false}>
+                      <EuiButton
+                        fill
+                        type="submit"
+                        isLoading={false}
+                        data-test-subj="updateAdjustModel"
+                      >
+                        Save
+                      </EuiButton>
+                    </EuiFlexItem>
+                  </EuiFlexGroup>
+                </EuiPageBody>
+              </EuiPage>
+            </React.Fragment>
+          </Form>
+        )}
+      </Formik>
     </React.Fragment>
   );
-
-
-  // return (
-  //   <React.Fragment>
-  //     <Formik
-  //       enableReinitialize
-  //       initialValues={cloneDeep(INITIAL_VALUES)}
-  //       onSubmit={() => {}}
-  //     >
-  //       {({ values, isSubmitting, dirty }) => (
-  //         <Form>
-  //           {JSON.stringify(values)}
-  //           <EuiPage>
-  //             <EuiPageBody>
-  //               <EuiPageHeader>
-  //                 <EuiPageHeaderSection>
-  //                   <EuiTitle size="l">
-  //                     <h1>Edit features</h1>
-  //                   </EuiTitle>
-  //                 </EuiPageHeaderSection>
-  //               </EuiPageHeader>
-  //               <ContentPanel
-  //                 title="Features"
-  //                 titleSize="m"
-  //                 description={featureDescription()}
-  //               >
-  //                 {renderFeatures(detector)}
-  //
-  //                 {/* {get(detector, 'featureAttributes', []).length
-  //                   ? setCreateFeature(true)
-  //                   : setCreateFeature(false)} */}
-  //
-  //                 {createFeature
-  //                   ? featureAccordion(() => setCreateFeature(false))
-  //                   : null}
-  //                 <EuiFlexGroup
-  //                   alignItems="center"
-  //                   style={{ padding: '12px 24px' }}
-  //                 >
-  //                   <EuiFlexItem grow={false}>
-  //                     <EuiButton
-  //                       data-test-subj="addFeature"
-  //                       onClick={() => {
-  //                         console.log('addFeature button clicked');
-  //                         setCreateFeature(true);
-  //                       }}
-  //                     >
-  //                       Add another feature
-  //                     </EuiButton>
-  //                     <EuiText size="s">You can add {9} more features</EuiText>
-  //                   </EuiFlexItem>
-  //                 </EuiFlexGroup>
-  //               </ContentPanel>
-  //             </EuiPageBody>
-  //           </EuiPage>
-  //         </Form>
-  //       )}
-  //     </Formik>
-  //     <SampleAnomalies />
-  //     <React.Fragment>
-  //       <EuiPage>
-  //         <EuiPageBody>
-  //           <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
-  //             <EuiFlexItem grow={false}>
-  //               <EuiButtonEmpty
-  //                 onClick={() => window.alert('Cancel button clicked')}
-  //               >
-  //                 Cancel
-  //               </EuiButtonEmpty>
-  //             </EuiFlexItem>
-  //             <EuiFlexItem grow={false}>
-  //               <EuiButton
-  //                 fill
-  //                 type="submit"
-  //                 isLoading={false}
-  //                 data-test-subj="updateAdjustModel"
-  //               >
-  //                 Save
-  //               </EuiButton>
-  //             </EuiFlexItem>
-  //           </EuiFlexGroup>
-  //         </EuiPageBody>
-  //       </EuiPage>
-  //     </React.Fragment>
-  //   </React.Fragment>
-  // );
 }

@@ -44,7 +44,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
           >
             <EuiComboBox
               singleSelection
-              selectedOptions={field ? field.value : []}
+              selectedOptions={field.value}
               //@ts-ignore
               options={numberFields}
               {...field}
