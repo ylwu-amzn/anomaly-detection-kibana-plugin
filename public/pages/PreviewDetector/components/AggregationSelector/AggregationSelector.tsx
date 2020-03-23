@@ -29,10 +29,10 @@ interface AggregationSelectorProps {
 export const AggregationSelector = (props: AggregationSelectorProps) => {
   const numberFields = getNumberFields(useSelector(getAllFields));
   const s = useSelector(state => state);
-  console.log('090909 state', s);
-  console.log('++++ numberFields, ', numberFields);
-  console.log('++++10101 numberFields, ', get(numberFields,'0.number'));
-  console.log('=====11index', props.index);
+  // console.log('090909 state', s);
+  // console.log('++++ numberFields, ', numberFields);
+  // console.log('++++10101 numberFields, ', get(numberFields,'0.number'));
+  // console.log('=====11index', props.index);
   return (
     <Fragment>
       <Field name={`featureList.${props.index}.aggregationOf`} validate={required}>

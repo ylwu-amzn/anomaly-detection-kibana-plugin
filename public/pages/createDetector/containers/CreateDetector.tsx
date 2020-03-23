@@ -203,7 +203,7 @@ export function CreateDetector(props: CreateADProps) {
                     type="submit"
                     isLoading={formikProps.isSubmitting}
                     //@ts-ignore
-                    onClick={formikProps.handleSubmit}
+                    onClick={formikProps.handleSubmit} // why not use submit?
                   >
                     {props.isEdit ? 'Update' : 'Create'}
                   </EuiButton>

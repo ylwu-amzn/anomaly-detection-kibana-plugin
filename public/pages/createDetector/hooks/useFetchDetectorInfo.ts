@@ -42,16 +42,11 @@ export const useFetchDetectorInfo = (
   useEffect(
     () => {
       const fetchDetector = async () => {
-        console.log('090909, 11', detector, isDetectorRequesting, detectorId, selectedIndices);
         if (!detector && !isDetectorRequesting) {
-          console.log('090909, 22 get detector', detectorId);
           await dispatch(getDetector(detectorId));
         }
         if (selectedIndices && !isIndicesRequesting) {
-          console.log('090909 33 start to get mapping in useFetchDetectorInfo', selectedIndices);
           await dispatch(getMappings(selectedIndices));
-          // const s = useSelector(state => state);
-          // console.log('090909 44 state', s);
         }
       };
       if (detectorId) {

@@ -139,11 +139,11 @@ export const YlwuTT = (props: CreateFeatureProps) => {
   };
 
   useEffect(() => {
-    console.log('----------', featureName);
+    // console.log('----------', featureName);
   }, [featureName]);
 
   useEffect(() => {
-    console.log('----------', featureEnabled);
+    // console.log('----------', featureEnabled);
   }, [featureEnabled]);
 
   const MAX_NAME_SIZE = 256;

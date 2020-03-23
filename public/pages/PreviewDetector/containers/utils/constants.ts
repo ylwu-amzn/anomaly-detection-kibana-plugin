@@ -16,6 +16,8 @@
 import { FeaturesFormikValues } from './formikToFeatures';
 import { FEATURE_TYPE } from '../../../../models/interfaces';
 
+export const MAX_FEATURE_NUM = 5;
+
 export const FEATURE_TYPE_OPTIONS = [
   { text: 'Field value', value: FEATURE_TYPE.SIMPLE },
   { text: 'Custom expression', value: FEATURE_TYPE.CUSTOM },

@@ -49,6 +49,7 @@ export interface FeaturesFormikValues {
   aggregationQuery: string;
   aggregationBy: string;
   aggregationOf: AggregationOption[];
+  newFeature: boolean;
 }
 
 export function prepareDetector(
@@ -59,23 +60,6 @@ export function prepareDetector(
   // TODO::Verify why immutable is creating an issue
   const detector = cloneDeep(ad);
   const featureAttributes = formikToFeatures(values);
-  // const featureAttributes: FeatureAttributes[] = get(
-  //   detector,
-  //   'featureAttributes',
-  //   []
-  // );
-  // const editIndex = featureAttributes.findIndex(
-  //   feature => feature.featureId === featureToEdit
-  // );
-
-  // if (editIndex >= 0) {
-  //   featureAttributes.splice(editIndex, 1, {
-  //     featureId: featureToEdit,
-  //     ...feature,
-  //   });
-  // } else {
-  //   featureAttributes.unshift(feature);
-  // }
 
   return {
     ...detector,
@@ -130,18 +114,13 @@ function formikToFeatureAttributes(
   values: FeaturesFormikValues[]
 ): FeatureAttributes[] {
   return values.map(function(value) {
+    const id = value.newFeature ? undefined : value.featureId ;
     return {
-      featureId: value.featureId,
+      featureId: id,
       featureName: value.featureName,
       featureEnabled: value.featureEnabled,
       importance: 1,
       aggregationQuery: formikToAggregation(value),
     };
   });
-  // return {
-  //   featureName: values.featureName,
-  //   featureEnabled: values.enabled,
-  //   importance: 1,
-  //   aggregationQuery: formikToAggregation(values),
-  // };
 }

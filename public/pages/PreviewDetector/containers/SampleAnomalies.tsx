@@ -29,10 +29,7 @@ import React, { useState } from 'react';
 import { toastNotifications } from 'ui/notify';
 
 export function SampleAnomalies(props: any) {
-
-  const [] = useState<boolean>(
-    false
-  );
+  const [] = useState<boolean>(false);
 
   const sampleAnomaliesDescription = () => {
     return (
@@ -49,41 +46,39 @@ export function SampleAnomalies(props: any) {
     );
   };
   return (
-    <React.Fragment>
-      <EuiPage>
-        <EuiPageBody>
-          <ContentPanel
-            title="Sample anomalies"
-            titleSize="m"
-            description={sampleAnomaliesDescription()}
+    <EuiPage>
+      <EuiPageBody>
+        <ContentPanel
+          title="Sample anomalies"
+          titleSize="m"
+          description={sampleAnomaliesDescription()}
+        >
+          <EuiCallOut
+            title="You can preview anomalies based on sample feature input"
+            iconType="eye"
           >
-            <EuiCallOut
-              title="You can preview anomalies based on sample feature input"
-              iconType="eye"
-            >
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <EuiText>
-                    You can preview how your anomalies may look like from sample
-                    feature output and adjust the feature settings as needed.
-                  </EuiText>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <EuiFlexGroup>
-                <EuiFlexItem grow={false}>
-                  <EuiButton
-                    type="submit"
-                    isLoading={false}
-                    data-test-subj="previewDetector"
-                  >
-                    Preview anomalies
-                  </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiCallOut>
-          </ContentPanel>
-        </EuiPageBody>
-      </EuiPage>
-    </React.Fragment>
+            <EuiFlexGroup>
+              <EuiFlexItem>
+                <EuiText>
+                  You can preview how your anomalies may look like from sample
+                  feature output and adjust the feature settings as needed.
+                </EuiText>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+            <EuiFlexGroup>
+              <EuiFlexItem grow={false}>
+                <EuiButton
+                  type="submit"
+                  isLoading={false}
+                  data-test-subj="previewDetector"
+                >
+                  Preview anomalies
+                </EuiButton>
+              </EuiFlexItem>
+            </EuiFlexGroup>
+          </EuiCallOut>
+        </ContentPanel>
+      </EuiPageBody>
+    </EuiPage>
   );
 }
