@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,12 +13,15 @@
  * permissions and limitations under the License.
  */
 
-import { SORT_DIRECTION } from '../../../../server/utils/constants';
+import {
+  SORT_DIRECTION,
+  AD_DOC_FIELDS,
+} from '../../../../server/utils/constants';
 
 export const DEFAULT_QUERY_PARAMS = {
   from: 0,
   search: '',
-  size: 20,
+  size: 30,
   sortDirection: SORT_DIRECTION.ASC,
-  sortField: 'startTime',
+  sortField: AD_DOC_FIELDS.DATA_START_TIME,
 };

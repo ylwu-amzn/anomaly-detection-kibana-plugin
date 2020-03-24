@@ -24,6 +24,7 @@ import { Detector, DetectorListItem } from '../../models/interfaces';
 import { AD_NODE_API } from '../../../utils/constants';
 import { GetDetectorsQueryParams } from '../../../server/models/types';
 import { cloneDeep } from 'lodash';
+import moment from 'moment';
 
 const CREATE_DETECTOR = 'ad/CREATE_DETECTOR';
 const GET_DETECTOR = 'ad/GET_DETECTOR';
@@ -91,7 +92,7 @@ const reducer = handleActions<Detectors>(
       FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
         ...state,
         requesting: false,
-        errorMessage: action.error.data.error,
+        errorMessage: action.error,
       }),
     },
     [START_DETECTOR]: {
@@ -105,8 +106,9 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: {
-            ...[action.detectorId],
+            ...state.detectors[action.detectorId],
             enabled: true,
+            enabledTime: moment().valueOf(),
           },
         },
       }),
@@ -128,8 +130,9 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: {
-            ...[action.detectorId],
+            ...state.detectors[action.detectorId],
             enabled: false,
+            disabledTime: moment().valueOf(),
           },
         },
       }),
@@ -198,7 +201,9 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: {
+            ...state.detectors[action.detectorId],
             ...action.result.data.response,
+            lastUpdateTime: moment().valueOf(),
           },
         },
       }),
@@ -283,7 +288,7 @@ export const deleteDetector = (detectorId: string): APIAction => ({
 export const startDetector = (detectorId: string): APIAction => ({
   type: START_DETECTOR,
   request: (client: IHttpService) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/_start`, {
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/start`, {
       detectorId: detectorId,
     }),
   detectorId,
@@ -292,7 +297,7 @@ export const startDetector = (detectorId: string): APIAction => ({
 export const stopDetector = (detectorId: string): APIAction => ({
   type: STOP_DETECTOR,
   request: (client: IHttpService) =>
-    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/_stop`, {
+    client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop`, {
       detectorId: detectorId,
     }),
   detectorId,

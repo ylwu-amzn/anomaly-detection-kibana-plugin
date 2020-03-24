@@ -62,9 +62,34 @@ export type Detector = {
   windowDelay?: { period: Schedule };
   detectionInterval?: { period: Schedule };
   uiMetadata?: { [key: string]: any };
+  lastUpdateTime: number;
+  enabled: boolean;
+  enabledTime?: number;
+  disabledTime?: number;
+};
+
+
+export type Monitor = {
+  id: string;
+  name: string;
+  enabled: boolean;
+  enabledTime?: number;
+  schedule: { period: Schedule };
+  inputs: any[];
+  triggers: any[];
+  lastUpdateTime: number;
 };
 
 export type GetDetectorsQueryParams = {
+  from: number;
+  size: number;
+  search: string;
+  indices: string;
+  sortDirection: SORT_DIRECTION;
+  sortField: string;
+};
+
+export type GetAdMonitorsQueryParams = {
   from: number;
   size: number;
   search: string;
@@ -77,18 +102,29 @@ export type DetectorResultsQueryParams = {
   size: number;
   sortDirection: SORT_DIRECTION;
   sortField: string;
+  range?: object;
+  dataStartTimeLowerLimit?: number;
+  dataStartTimeUpperLimit?: number;
 };
 
 export type AnomalyResult = {
   startTime: number;
   endTime: number;
-  grade: number;
+  plotTime: number;
+  anomalyGrade: number;
   confidence: number;
+};
+export type FeatureResult = {
+  startTime: number;
+  endTime: number;
+  plotTime: number;
+  data: number;
 };
 
 export type AnomalyResultsResponse = {
   totalAnomalies: number;
   results: AnomalyResult[];
+  featureResults: {[key:string]: FeatureResult[]}
 };
 
 export type ServerResponse<T> =

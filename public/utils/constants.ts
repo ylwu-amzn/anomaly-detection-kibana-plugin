@@ -21,19 +21,25 @@ export enum DATA_TYPES {
 }
 
 export const BREADCRUMBS = Object.freeze({
-  ANOMALY_DETECTOR: { text: 'Anomaly detector', href: '#/' },
+  ANOMALY_DETECTOR: { text: 'Anomaly detection', href: '#/' },
   MODEL_DEFINITION: { text: 'Model definition' },
   CONFIGURE_FEATURE: { text: 'Add feature' },
   ANOMALY_RESULTS: { text: 'Anomaly results' },
-  DETECTORS: { text: 'Detectors' },
+  DETECTORS: { text: 'Detectors', href: '#/detectors' },
   CREATE_DETECTOR: { text: 'Create detector' },
   EDIT_DETECTOR: { text: 'Edit detector' },
   DASHBOARD: { text: 'Dashboard', href: '#/' },
+  EDIT_FEATURES: { text: 'Edit features' },
 });
 
 export const APP_PATH = {
   CREATE_DETECTOR: '/create-ad',
+  DASHBOARD: '/dashboard',
+  LIST_DETECTORS: '/detectors',
+  DETECTOR_DETAILS: '/detectors/:detectorId/',
 };
 export const PLUGIN_NAME = 'opendistro-anomaly-detection';
 
 export const ALERTING_PLUGIN_NAME = 'opendistro-alerting';
+
+export const ANOMALY_RESULT_INDEX = '.opendistro-anomaly-results';

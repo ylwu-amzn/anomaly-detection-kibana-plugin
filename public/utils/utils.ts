@@ -20,13 +20,23 @@ import { isAngularHttpError } from 'ui/notify/lib/format_angular_http_error';
 import { npStart } from 'ui/new_platform';
 import { ALERTING_PLUGIN_NAME } from './constants';
 
-export const isInvalid = (name: string, form: any) =>
-  !!get(form.touched, name, false) && !!get(form.errors, name, false);
+export const isInvalid = (name: string, form: any) => {
+  return !!get(form.touched, name, false) && !!get(form.errors, name, false);
+}
+
+export const isInvalidField = (name: string, form: any) => {
+  return !!get(form.errors, name, false);
+}
+  
 
 export const getError = (name: string, form: any) => get(form.errors, name);
 
 export const required = (val: any): string | undefined => {
   return !val ? 'Required' : undefined;
+};
+
+export const requiredNonEmptyArray = (val: any): string | undefined => {
+  return !val || val.length === 0 ? 'Required' : undefined;
 };
 
 export const validatePositiveInteger = (value: any) => {
@@ -80,13 +90,14 @@ export const getAlertingCreateMonitorLink = (
 
 export const getAlertingMonitorListLink = (): string => {
   try {
-    const navLinks = get(
-      npStart,
-      'core.chrome.navLinks',
-      undefined
-    );
-    return `${navLinks.get(ALERTING_PLUGIN_NAME).url}#/monitors`;
-  } catch (e) {
+        const navLinks = get(npStart, 'core.chrome.navLinks', undefined);
+        const url = `${navLinks.get(ALERTING_PLUGIN_NAME).url}`;
+        // console.log(`1: ${url}`);
+        const alertingRootUrl = url.slice(0, url.indexOf(ALERTING_PLUGIN_NAME) + ALERTING_PLUGIN_NAME.length);
+        // console.log(`2: ${alertingRootUrl}`);
+        //http://localhost:5610/app/opendistro-alerting#/create-monitor?searchType=ad&adId=BSo1T3EB-1NkRyE9vZ9T&name=ylwu1#/monitors/jis3T3EB-1NkRyE93Pn8
+        return `${alertingRootUrl}#/monitors`;
+      } catch (e) {
     //Not installed
     console.error('unable to get the alerting URL', e);
     return '';

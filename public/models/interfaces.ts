@@ -56,7 +56,7 @@ export type UIFilter = {
 };
 
 export type FeatureAttributes = {
-  featureId?: string;
+  featureId: string;
   featureName: string;
   featureEnabled: boolean;
   importance: number;
@@ -74,8 +74,8 @@ export type Schedule = {
 
 export type UiFeature = {
   featureType: FEATURE_TYPE;
-  aggregationBy: string;
-  aggregationOf: string;
+  aggregationBy?: string;
+  aggregationOf?: string;
 };
 
 export type UiMetaData = {
@@ -98,14 +98,20 @@ export type Detector = {
   windowDelay: { period: Schedule };
   detectionInterval: { period: Schedule };
   uiMetadata: UiMetaData;
+  lastUpdateTime: number;
   enabled?: boolean;
+  enabledTime?: number;
+  disabledTime?: number;
 };
 
 export type DetectorListItem = {
   id: string;
   name: string;
+  indices: string[];
+  curState: string;
   totalAnomalies: number;
   lastActiveAnomaly: number;
+  lastUpdated: number;
 };
 
 export type AnomalyData = {
@@ -115,6 +121,16 @@ export type AnomalyData = {
   detectorId: string;
   endTime: number;
   startTime: number;
+  plotTime: number;
+};
+
+export type AnomalySummary = {
+  anomalyOccurence: number;
+  minAnomalyGrade: number;
+  maxAnomalyGrade: number;
+  minConfidence: number;
+  maxConfidence: number;
+  lastAnomalyOccurence: string;
 };
 
 export type FeatureAggregationData = {
@@ -126,4 +142,26 @@ export type FeatureAggregationData = {
 export type AnomalyPreview = {
   anomalies: AnomalyData[];
   featureData: { [key: string]: FeatureAggregationData[] };
+};
+
+export type Monitor = {
+  id: string;
+  name: string;
+  enabled: boolean;
+  enabledTime?: number;
+  schedule: { period: Schedule };
+  inputs: any[];
+  triggers: any[];
+  lastUpdateTime: number;
+};
+
+export type MonitorAlert = {
+  monitorName: string;
+  triggerName: string;
+  severity: number;
+  state: string;
+  error: string;
+  startTime: number;
+  endTime: number;
+  acknowledgedTime: number;
 };

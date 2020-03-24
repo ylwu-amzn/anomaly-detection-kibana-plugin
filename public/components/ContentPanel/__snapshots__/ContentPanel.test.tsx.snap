@@ -25,14 +25,14 @@ exports[`<ContentPanel /> spec renders the component 1`] = `
         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
       >
         <div
-          class="euiFlexItem"
+          class="euiFlexItem euiFlexItem--flexGrowZero"
         >
           <div>
             Hello
           </div>
         </div>
         <div
-          class="euiFlexItem"
+          class="euiFlexItem euiFlexItem--flexGrowZero"
         >
           <div>
             World

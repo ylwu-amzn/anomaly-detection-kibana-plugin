@@ -15,45 +15,102 @@
 
 import { Switch, Route, RouteComponentProps, Redirect } from 'react-router-dom';
 import React from 'react';
+import { AppState } from '../../redux/reducers';
 import { CreateDetector } from '../createDetector';
-
 import { DetectorList } from '../DetectorsList';
+import { DetectorDetail } from '../DetectorDetail';
 import { ListRouterParams } from '../DetectorsList/List/List';
-// import { PreviewDetector } from '../PreviewDetector/containers/PreviewDetector';
-// import { ConfigureFeature } from '../PreviewDetector/containers/ConfigureFeature';
-import { CreateFeature } from '../PreviewDetector/containers/CreateFeature';
+import { EditFeatures } from '../PreviewDetector/containers/EditFeatures';
+// @ts-ignore
+import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
+import { useSelector } from 'react-redux';
+import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
 
-interface MainProps {}
+enum Navigation {
+  AnomalyDetection = 'Anomaly detection',
+  Dashboard = 'Dashboard',
+  Detectors = 'Detectors',
+}
 
-export function Main(mainProps: MainProps) {
+enum Pathname {
+  Dashboard = '/dashboard',
+  Detectors = '/detectors',
+}
+
+interface MainProps extends RouteComponentProps {}
+
+export function Main(props: MainProps) {
+  const hideSideNavBar = useSelector(
+    (state: AppState) => state.adApp.hideSideNavBar
+  );
+  const sideNav = [
+    {
+      name: Navigation.AnomalyDetection,
+      id: 0,
+      href: `#${Pathname.Dashboard}`,
+      items: [
+        {
+          name: Navigation.Dashboard,
+          id: 1,
+          href: `#${Pathname.Dashboard}`,
+          isSelected: props.location.pathname === Pathname.Dashboard,
+        },
+        {
+          name: Navigation.Detectors,
+          id: 2,
+          href: `#${Pathname.Detectors}`,
+          isSelected: props.location.pathname === Pathname.Detectors,
+        },
+      ],
+    },
+  ];
+
   return (
-    <Switch>
-      <Route
-        exact
-        path="/detectors"
-        render={(props: RouteComponentProps<ListRouterParams>) => (
-          <DetectorList {...props} />
-        )}
-      />
-      <Route
-        exact
-        path="/create-ad/"
-        render={(props: RouteComponentProps) => (
-          <CreateDetector {...props} isEdit={false} />
-        )}
-      />
-      <Route
-        exact
-        path="/detectors/:detectorId/edit"
-        render={(props: RouteComponentProps) => (
-          <CreateDetector {...props} isEdit={true} />
-        )}
-      />
-      <Route
-        path="/detectors/:detectorId/features/"
-        render={(props: RouteComponentProps) => <CreateFeature {...props} />}
-      />
-      <Redirect to="/detectors" />
-    </Switch>
+    <EuiPage>
+      <EuiPageSideBar style={{ minWidth: 150 }} hidden={hideSideNavBar}>
+        <EuiSideNav style={{ width: 150 }} items={sideNav} />
+      </EuiPageSideBar>
+      <EuiPageBody>
+        <Switch>
+          <Route
+            path="/dashboard"
+            render={(props: RouteComponentProps) => <DashboardOverview />}
+          />
+          <Route
+            exact
+            path="/detectors"
+            render={(props: RouteComponentProps<ListRouterParams>) => (
+              <DetectorList {...props} />
+            )}
+          />
+          <Route
+            exact
+            path="/create-ad/"
+            render={(props: RouteComponentProps) => (
+              <CreateDetector {...props} isEdit={false} />
+            )}
+          />
+          <Route
+            exact
+            path="/detectors/:detectorId/edit"
+            render={(props: RouteComponentProps) => (
+              <CreateDetector {...props} isEdit={true} />
+            )}
+          />
+          <Route
+            exact
+            path="/detectors/:detectorId/features/"
+            render={(props: RouteComponentProps) => <EditFeatures {...props} />}
+          />
+          <Route
+            path="/detectors/:detectorId/"
+            render={(props: RouteComponentProps) => (
+              <DetectorDetail {...props} />
+            )}
+          />
+          <Redirect from="/" to="/dashboard" />
+        </Switch>
+      </EuiPageBody>
+    </EuiPage>
   );
 }

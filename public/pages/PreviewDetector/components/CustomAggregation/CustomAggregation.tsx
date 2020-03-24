@@ -17,12 +17,12 @@ import React from 'react';
 //@ts-ignore
 import { EuiFormRow, EuiCodeEditor } from '@elastic/eui';
 import { Field, FieldProps } from 'formik';
-import { isInvalid, getError } from '../../../../utils/utils';
+import { isInvalidField, getError } from '../../../../utils/utils';
 
 import 'brace/ext/language_tools';
 
 interface CustomAggregationProps {
-  index?: number;
+  index: number;
 }
 
 export const validateQuery = (value: string) => {
@@ -35,7 +35,6 @@ export const validateQuery = (value: string) => {
 };
 
 export const CustomAggregation = (props: CustomAggregationProps) => {
-  // console.log('=====index', props.index);
   return (
     <Field name={`featureList.${props.index}.aggregationQuery`} validate={validateQuery}>
       {({ field, form }: FieldProps) => (
@@ -43,11 +42,11 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
           fullWidth
           label="Expression"
           helpText="Custom expression use the Elasticsearch query DSL."
-          isInvalid={isInvalid(field.name, form)}
+          isInvalid={isInvalidField(field.name, form)}
           error={getError(field.name, form)}
         >
           <EuiCodeEditor
-            name="customAggregation"
+            name={`featureList.${props.index}.aggregationQuery`}
             mode="object"
             height="300px"
             width="100%"
@@ -57,7 +56,6 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
               className: 'custom-query-editor',
               showPrintMargin: false,
             }}
-            isInvalid={isInvalid(field.name, form)}
             onChange={(query: string) => {
               //Reset operator and values
               form.setFieldValue(`featureList.${props.index}.aggregationQuery`, query);

@@ -13,7 +13,6 @@
  * permissions and limitations under the License.
  */
 
-import { get } from 'lodash';
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { EuiFormRow, EuiSelect, EuiComboBox } from '@elastic/eui';
@@ -21,25 +20,29 @@ import { getAllFields } from '../../../../redux/selectors/elasticsearch';
 import { getNumberFields } from '../../utils/helpers';
 import { Field, FieldProps } from 'formik';
 import { AGGREGATION_TYPES } from '../../utils/constants';
-import { required, isInvalid, getError } from '../../../../utils/utils';
+import {
+  required,
+  requiredNonEmptyArray,
+  // isInvalid,
+  isInvalidField,
+  getError,
+} from '../../../../utils/utils';
 
 interface AggregationSelectorProps {
   index?: number;
 }
 export const AggregationSelector = (props: AggregationSelectorProps) => {
   const numberFields = getNumberFields(useSelector(getAllFields));
-  const s = useSelector(state => state);
-  // console.log('090909 state', s);
-  // console.log('++++ numberFields, ', numberFields);
-  // console.log('++++10101 numberFields, ', get(numberFields,'0.number'));
-  // console.log('=====11index', props.index);
   return (
     <Fragment>
-      <Field name={`featureList.${props.index}.aggregationOf`} validate={required}>
+      <Field
+        name={`featureList.${props.index}.aggregationOf`}
+        validate={requiredNonEmptyArray}
+      >
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Field"
-            isInvalid={isInvalid(field.name, form)}
+            isInvalid={isInvalidField(field.name, form)}
             error={getError(field.name, form)}
           >
             <EuiComboBox
@@ -59,12 +62,15 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
         )}
       </Field>
 
-      <Field name={`featureList.${props.index}.aggregationBy`} validate={required}>
+      <Field
+        name={`featureList.${props.index}.aggregationBy`}
+        validate={required}
+      >
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Aggregation method"
             helpText="The aggregation method determins what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
-            isInvalid={isInvalid(field.name, form)}
+            isInvalid={isInvalidField(field.name, form)}
             error={getError(field.name, form)}
           >
             <EuiSelect

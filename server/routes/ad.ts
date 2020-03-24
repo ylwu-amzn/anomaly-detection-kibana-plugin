@@ -15,7 +15,7 @@
 
 import { Request, ResponseToolkit } from 'hapi';
 //@ts-ignore
-import get from 'lodash/get';
+import { get, set } from 'lodash';
 import orderBy from 'lodash/orderBy';
 import pullAll from 'lodash/pullAll';
 //@ts-ignore
@@ -25,12 +25,12 @@ import {
   AnomalyResult,
   AnomalyResultsResponse,
   Detector,
-  DetectorResultsQueryParams,
   GetDetectorsQueryParams,
   ServerResponse,
+  FeatureResult,
 } from '../models/types';
 import { Router } from '../router';
-import { SORT_DIRECTION } from '../utils/constants';
+import { SORT_DIRECTION, AD_DOC_FIELDS } from '../utils/constants';
 import { mapKeysDeep, toCamel, toSnake } from '../utils/helpers';
 import {
   anomalyResultMapper,
@@ -46,7 +46,7 @@ type PutDetectorParams = {
   body: string;
 };
 
-export default function (apiRouter: Router) {
+export default function(apiRouter: Router) {
   apiRouter.post('/detectors', putDetector);
   apiRouter.put('/detectors/{detectorId}', putDetector);
   apiRouter.post('/detectors/_search', searchDetector);
@@ -55,8 +55,8 @@ export default function (apiRouter: Router) {
   apiRouter.post('/detectors/{detectorId}/preview', previewDetector);
   apiRouter.get('/detectors/{detectorId}/results', getAnomalyResults);
   apiRouter.delete('/detectors/{detectorId}', deleteDetector);
-  apiRouter.post('/detectors/{detectorId}/_start', startDetector);
-  apiRouter.post('/detectors/{detectorId}/_stop', stopDetector);
+  apiRouter.post('/detectors/{detectorId}/start', startDetector);
+  apiRouter.post('/detectors/{detectorId}/stop', stopDetector);
 }
 
 const deleteDetector = async (
@@ -137,6 +137,7 @@ const putDetector = async (
       id: response._id,
       primaryTerm: response._primary_term,
       seqNo: response._seq_no,
+      adJob: response.anomaly_detector_job,
     };
     return {
       ok: true,
@@ -167,6 +168,7 @@ const getDetector = async (
       id: response._id,
       primaryTerm: response._primary_term,
       seqNo: response._seq_no,
+      adJob: { ...response.anomaly_detector_job },
     };
     return {
       ok: true,
@@ -193,7 +195,7 @@ const startDetector = async (
       response: response,
     };
   } catch (err) {
-    console.log('Anomaly detector - strartDetector', err);
+    console.log('Anomaly detector - startDetector', err);
     return { ok: false, error: err.body || err.message };
   }
 };
@@ -267,6 +269,7 @@ const getDetectors = async (
       from = 0,
       size = 20,
       search = '',
+      indices = '',
       sortDirection = SORT_DIRECTION.DESC,
       sortField = 'name',
       //@ts-ignore
@@ -278,6 +281,18 @@ const getDetectors = async (
           fields: ['name', 'description'],
           default_operator: 'AND',
           query: `*${search
+            .trim()
+            .split(' ')
+            .join('* *')}*`,
+        },
+      });
+    }
+    if (indices.trim()) {
+      mustQueries.push({
+        query_string: {
+          fields: ['indices'],
+          default_operator: 'AND',
+          query: `*${indices
             .trim()
             .split(' ')
             .join('* *')}*`,
@@ -317,19 +332,24 @@ const getDetectors = async (
         [detector._id]: {
           name: get(detector, '_source.name', ''),
           id: detector._id,
+          description: get(detector, '_source.description', ''),
+          indices: get(detector, '_source.indices', []),
+          lastUpdateTime: get(detector, '_source.last_update_time', 0),
+          // TODO: get the state of the detector once possible (enabled/disabled for now)
         },
       }),
       {}
     );
     //Given each detector from previous result, get aggregation to power list
     const allDetectorIds = Object.keys(allDetectors);
-    const aggregationResult = await callWithRequest(req, 'ad.searchDetector', {
+    const aggregationResult = await callWithRequest(req, 'ad.searchResults', {
       body: getResultAggregationQuery(allDetectorIds, {
         from,
         size,
         sortField,
         sortDirection,
         search,
+        indices,
       }),
     });
     const aggsDetectors = get(
@@ -397,58 +417,126 @@ const getAnomalyResults = async (
   try {
     const {
       from = 0,
-      size = 20,
+      size = 30,
       sortDirection = SORT_DIRECTION.DESC,
-      sortField = 'startTime',
+      // sortField = 'startTime',
+      sortField = AD_DOC_FIELDS.DATA_START_TIME,
+      dataStartTimeLowerLimit = undefined,//TODO: use date range to replace these two data paramters
+      dataEndTimeUpperLimit = undefined,
+      range = undefined,
       //@ts-ignore
-    } = req.query as DetectorResultsQueryParams;
+      // } = req.query as DetectorResultsQueryParams;
+    } = req.query as {
+      from: number;
+      size: number;
+      sortDirection: SORT_DIRECTION;
+      sortField?: string;
+      range?: any;
+      dataStartTimeLowerLimit: number;
+      dataEndTimeUpperLimit: number;
+    };
     const { detectorId } = req.params;
 
     //Allowed sorting columns
     const sortQueryMap = {
       anomalyGrade: { anomaly_grade: sortDirection },
       confidence: { confidence: sortDirection },
-      startTime: { start_time: sortDirection },
-      endTime: { end_time: sortDirection },
+      startTime: { data_start_time: sortDirection },
+      endTime: { data_end_time: sortDirection },
+      [AD_DOC_FIELDS.DATA_START_TIME]: {
+        [AD_DOC_FIELDS.DATA_START_TIME]: sortDirection,
+      },
+      [AD_DOC_FIELDS.DATA_END_TIME]: {
+        [AD_DOC_FIELDS.DATA_END_TIME]: sortDirection,
+      },
     } as { [key: string]: object };
     let sort = {};
     const sortQuery = sortQueryMap[sortField];
     if (sortQuery) {
       sort = sortQuery;
     }
+
+    let rangeObj = range;
+
+    if (range !== undefined && typeof range === 'string') {
+      rangeObj = JSON.parse(range);
+    }
+
+    // const dataStartTimeRange = dataStartTime ?
     //Preparing search request
-    const requestBody = {
+    let requestBody = {
       sort,
       size,
       from,
       query: {
         bool: {
-          filter: {
-            term: {
-              detector_id: detectorId,
+          filter: [
+            {
+              term: {
+                detector_id: detectorId,
+              },
             },
-          },
+            { ...(rangeObj !== undefined && { range: rangeObj }) },
+          ],
         },
       },
     };
+
+    
+    if (dataStartTimeLowerLimit) {
+      set(requestBody.query.bool.filter, '1.range.data_start_time.gte', dataStartTimeLowerLimit);
+      set(requestBody.query.bool.filter, '1.range.data_start_time.format', 'epoch_millis');
+    }
+    if (dataEndTimeUpperLimit) {
+      set(requestBody.query.bool.filter, '1.range.data_end_time.lte', dataEndTimeUpperLimit);
+      set(requestBody.query.bool.filter, '1.range.data_end_time.format', 'epoch_millis');
+    }
+
     const response = await callWithRequest(req, 'ad.searchResults', {
       body: requestBody,
     });
-    const totalResults: number = get(response, 'hits.total.value', 0);
-    // Get all detectors from search detector API
-    const detectorResults: AnomalyResult[] = get(response, 'hits.hits', []).map(
-      (result: any) => ({
-        startTime: result._source.start_time,
-        endTime: result._source.end_time,
-        confidence: result._source.confidence != null && result._source.confidence > 0 ? Number.parseFloat(result._source.confidence).toFixed(3) : 0,
-        anomalyGrade: result._source.anomaly_grade != null && result._source.anomaly_grade > 0 ? Number.parseFloat(result._source.anomaly_grade).toFixed(3) : 0
+    const totalResults: number = get(response, 'hits.total.value', 0); // ？ why 10000 when return 300
+
+    const detectorResult: AnomalyResult[] = []
+    const featureResult: { [key: string]: FeatureResult[] } = {};
+    get(response, 'hits.hits', []).forEach((result: any) => {
+      const confidence: number = Number.parseFloat(result._source.confidence != null && result._source.confidence !== 'NaN' && result._source.confidence > 0 ? Number.parseFloat(result._source.confidence).toFixed(3) : '0')
+      const anomalyGrade: number = Number.parseFloat(result._source.anomaly_grade != null && result._source.anomaly_grade !== 'NaN' && result._source.anomaly_grade > 0 ? Number.parseFloat(result._source.anomaly_grade).toFixed(3) : '0')
+      
+      detectorResult.push({
+        startTime: result._source.data_start_time,
+        endTime: result._source.data_end_time,
+        plotTime:
+          result._source.data_start_time +
+          Math.floor(
+            (result._source.data_end_time - result._source.data_start_time) / 2
+          ),
+        confidence: confidence,
+        anomalyGrade: anomalyGrade,
+      });
+      result._source.feature_data.forEach((featureData: any) => {
+        if (!featureResult[featureData.feature_id]) {
+          featureResult[featureData.feature_id] = []
+        }
+        featureResult[featureData.feature_id].push({
+          startTime: result._source.data_start_time,
+          endTime: result._source.data_end_time,
+          plotTime:
+            result._source.data_start_time +
+            Math.floor(
+              (result._source.data_end_time - result._source.data_start_time) / 2
+            ),
+          data: Number.parseFloat(featureData.data != null ? Number.parseFloat(featureData.data).toFixed(3) : '0')
+        })
       })
-    );
+    })
+
     return {
       ok: true,
       response: {
         totalAnomalies: totalResults,
-        results: detectorResults,
+        results: detectorResult,
+        featureResults: featureResult,
       },
     };
   } catch (err) {

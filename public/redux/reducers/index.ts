@@ -16,14 +16,20 @@
 import { combineReducers } from 'redux';
 import indicesReducer from './elasticsearch';
 import adReducer from './ad';
+import alertingReducer from './alerting';
 import anomalies from './anomalies';
 import anomalyResults from './anomalyResults';
+import liveAnomalyResults from './liveAnomalyResults';
+import adAppReducer from './adAppReducer';
 
 const rootReducer = combineReducers({
   elasticsearch: indicesReducer,
   anomalies: anomalies,
   anomalyResults: anomalyResults,
+  liveAnomalyResults: liveAnomalyResults,
   ad: adReducer,
+  adApp: adAppReducer,
+  alerting: alertingReducer,
 });
 
 export default rootReducer;

@@ -27,6 +27,7 @@ import {
 type ContentPanelProps = {
   title: string;
   description?: any;
+  customTitle?: any;
   titleSize?: EuiTitleSize;
   bodyStyles?: React.CSSProperties;
   panelStyles?: React.CSSProperties;
@@ -35,11 +36,13 @@ type ContentPanelProps = {
   titleContainerStyles?: React.CSSProperties;
   actions?: React.ReactNode | React.ReactNode[];
   children: React.ReactNode | React.ReactNode[];
+  className?: string;
 };
 
 const ContentPanel = (props: ContentPanelProps) => (
   <EuiPanel
     style={{ paddingLeft: '0px', paddingRight: '0px', ...props.panelStyles }}
+    className={props.className? props.className : undefined}
   >
     <EuiFlexGroup
       style={{ padding: '0px 10px', ...props.titleContainerStyles }}
@@ -51,7 +54,8 @@ const ContentPanel = (props: ContentPanelProps) => (
           size={props.titleSize || 'l'}
           className={props.titleClassName || ''}
         >
-          <h3>{props.title}</h3>
+          {props.customTitle ? props.customTitle : (<h3>{props.title}</h3>)}
+          
         </EuiTitle>
         {props.description}
       </EuiFlexItem>
@@ -59,7 +63,7 @@ const ContentPanel = (props: ContentPanelProps) => (
         <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
           {Array.isArray(props.actions) ? (
             props.actions.map((action: React.ReactNode, idx: number) => (
-              <EuiFlexItem key={idx}>{action}</EuiFlexItem>
+              <EuiFlexItem key={idx} grow={false}>{action}</EuiFlexItem>
             ))
           ) : (
             <EuiFlexItem>{props.actions}</EuiFlexItem>

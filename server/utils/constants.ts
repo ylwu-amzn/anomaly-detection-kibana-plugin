@@ -15,10 +15,13 @@
 
 import { ADApis, DefaultHeaders } from '../models/interfaces';
 
-export const API_ROUTE_PREFIX = '/_opendistro/_anomaly_detection';
+export const AD_API_ROUTE_PREFIX = '/_opendistro/_anomaly_detection';
+export const ALERTING_API_ROUTE_PREFIX = '/_opendistro/_alerting';
+// export const ALERTING_SEARCH_API = '/_opendistro/_alerting/monitors/_search';
 
 export const API: ADApis = {
-  DETECTOR_BASE: `${API_ROUTE_PREFIX}/detectors`,
+  DETECTOR_BASE: `${AD_API_ROUTE_PREFIX}/detectors`,
+  ALERTING_BASE: `${ALERTING_API_ROUTE_PREFIX}/monitors`
 };
 
 export const DEFAULT_HEADERS: DefaultHeaders = {
@@ -36,4 +39,18 @@ export enum CLUSTER {
 export enum SORT_DIRECTION {
   ASC = 'asc',
   DESC = 'desc',
+}
+
+export const SEC_IN_MILLI_SECS = 1000;
+
+export const MIN_IN_MILLI_SECS = 60 * SEC_IN_MILLI_SECS;
+
+export enum AD_DOC_FIELDS {
+  DATA_START_TIME = 'data_start_time',
+  DATA_END_TIME = 'data_end_time',
+  DETECTOR_ID = 'detector_id',
+  DETECTOR_NAME = 'name',
+  PLOT_TIME = 'plot_time',
+  ANOMALY_GRADE = 'anomaly_grade',
+  ERROR = 'error',
 }

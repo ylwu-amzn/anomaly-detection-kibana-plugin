@@ -22,3 +22,7 @@ export const AD_NODE_API = Object.freeze({
   _MAPPINGS: `${BASE_NODE_API_PATH}/_mappings`,
   DETECTOR: `${BASE_NODE_API_PATH}/detectors`,
 });
+export const ALERTING_NODE_API = Object.freeze({
+  _SEARCH: `${BASE_NODE_API_PATH}/monitors/_search`,
+  MONITORS: `${BASE_NODE_API_PATH}/monitors`,
+});

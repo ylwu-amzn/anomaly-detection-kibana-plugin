@@ -17,6 +17,7 @@ import { get, omit } from 'lodash';
 import { AnomalyResults } from 'server/models/interfaces';
 import { GetDetectorsQueryParams } from '../../models/types';
 import { mapKeysDeep, toCamel, toSnake } from '../../utils/helpers';
+import moment from 'moment';
 
 export const convertDetectorKeysToSnakeCase = (payload: any) => {
   return {
@@ -45,6 +46,7 @@ export const convertDetectorKeysToCamelCase = (response: object) => {
         'ui_metadata',
         'feature_query',
         'feature_attributes',
+        'adJob',
       ]),
       toCamel
     ),
@@ -56,6 +58,9 @@ export const convertDetectorKeysToCamelCase = (response: object) => {
       })
     ),
     uiMetadata: get(response, 'ui_metadata', {}),
+    enabled: get(response, 'adJob.enabled', false),
+    enabledTime: get(response, 'adJob.enabled_time'),
+    disabledTime: get(response, 'adJob.disabled_time'),
   };
 };
 
@@ -81,11 +86,10 @@ export const getResultAggregationQuery = (
     size: 0,
     query: {
       bool: {
-        must: {
-          terms: {
-            detector_id: detectors,
-          },
-        },
+        must: [
+          { terms: { detector_id: detectors } },
+          { range: { anomaly_grade: { gt: 0 } } },
+        ],
       },
     },
     aggs: {
@@ -107,6 +111,7 @@ export const getResultAggregationQuery = (
 };
 
 export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
+  // debugger
   let resultData: AnomalyResults = {
     anomalies: [],
     featureData: {},
@@ -118,8 +123,9 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
     resultData.featureData[feature.featureId] = [];
   });
   anomalyResults.forEach(({ featureData, ...rest }) => {
+    const {dataStartTime, dataEndTime, ...others} = rest;
     resultData.anomalies.push({
-      ...rest,
+      ...others,
       anomalyGrade:
         rest.anomalyGrade != null && rest.anomalyGrade > 0
           ? Number.parseFloat(rest.anomalyGrade).toFixed(3)
@@ -128,15 +134,17 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
         rest.anomalyGrade != null && rest.anomalyGrade > 0
           ? Number.parseFloat(rest.confidence).toFixed(3)
           : 0,
+      startTime: rest.dataStartTime,
+      endTime: rest.dataEndTime,
       plotTime:
-        rest.startTime + Math.floor((rest.endTime - rest.startTime) / 2),
+        rest.dataStartTime + Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
     });
     featureData.forEach((feature: any) => {
       resultData.featureData[feature.featureId].push({
-        startTime: rest.startTime,
-        endTime: rest.endTime,
+        startTime: rest.dataStartTime,
+        endTime: rest.dataEndTime,
         plotTime:
-          rest.startTime + Math.floor((rest.endTime - rest.startTime) / 2),
+          rest.dataStartTime + Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
         data: feature.data,
       });
     });

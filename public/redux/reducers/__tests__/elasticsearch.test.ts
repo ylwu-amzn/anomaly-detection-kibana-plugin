@@ -177,68 +177,68 @@ describe('elasticsearch reducer actions', () => {
     });
   });
 
-  describe('searchES', () => {
-    test('should invoke [REQUEST, SUCCESS]', async () => {
-      const requestData = {
-        query: {
-          match: { match_all: {} },
-        },
-        index: 'test-index',
-      };
-      httpMockedClient.post = jest.fn().mockResolvedValue({
-        data: { ok: true, response: { hits: { hits: [] } } },
-      });
-      await store.dispatch(searchES(requestData));
-      const actions = store.getActions();
-      expect(actions[0].type).toBe('elasticsearch/SEARCH_ES_REQUEST');
-      expect(reducer(initialState, actions[0])).toEqual({
-        ...initialState,
-        requesting: true,
-      });
-      expect(actions[1].type).toBe('elasticsearch/SEARCH_ES_SUCCESS');
-      expect(reducer(initialState, actions[1])).toEqual({
-        ...initialState,
-        requesting: false,
-        searchResult: {
-          hits: { hits: [] },
-        },
-      });
-      expect(httpMockedClient.post).toHaveBeenCalledWith(
-        `..${BASE_NODE_API_PATH}/_search`,
-        requestData
-      );
-    });
-    test('should invoke [REQUEST, FAILURE]', async () => {
-      const requestData = {
-        query: {
-          match: { match_all: {} },
-        },
-        index: 'test-index',
-      };
-      httpMockedClient.post = jest.fn().mockRejectedValue({
-        data: { ok: false, error: 'Something went wrong' },
-      });
-      try {
-        await store.dispatch(searchES(requestData));
-      } catch (e) {
-        const actions = store.getActions();
-        expect(actions[0].type).toBe('elasticsearch/SEARCH_ES_REQUEST');
-        expect(reducer(initialState, actions[0])).toEqual({
-          ...initialState,
-          requesting: true,
-        });
-        expect(actions[1].type).toBe('elasticsearch/SEARCH_ES_FAILURE');
-        expect(reducer(initialState, actions[1])).toEqual({
-          ...initialState,
-          requesting: false,
-          errorMessage: 'Something went wrong',
-        });
-        expect(httpMockedClient.post).toHaveBeenCalledWith(
-          `..${BASE_NODE_API_PATH}/_search`,
-          requestData
-        );
-      }
-    });
-  });
+  // describe('searchES', () => {
+  //   test('should invoke [REQUEST, SUCCESS]', async () => {
+  //     const requestData = {
+  //       query: {
+  //         match: { match_all: {} },
+  //       },
+  //       index: 'test-index',
+  //     };
+  //     httpMockedClient.post = jest.fn().mockResolvedValue({
+  //       data: { ok: true, response: { hits: { hits: [] } } },
+  //     });
+  //     await store.dispatch(searchES(requestData));
+  //     const actions = store.getActions();
+  //     expect(actions[0].type).toBe('elasticsearch/SEARCH_ES_REQUEST');
+  //     expect(reducer(initialState, actions[0])).toEqual({
+  //       ...initialState,
+  //       requesting: true,
+  //     });
+  //     expect(actions[1].type).toBe('elasticsearch/SEARCH_ES_SUCCESS');
+  //     expect(reducer(initialState, actions[1])).toEqual({
+  //       ...initialState,
+  //       requesting: false,
+  //       searchResult: {
+  //         hits: { hits: [] },
+  //       },
+  //     });
+  //     expect(httpMockedClient.post).toHaveBeenCalledWith(
+  //       `..${BASE_NODE_API_PATH}/_search`,
+  //       requestData
+  //     );
+  //   });
+  //   test('should invoke [REQUEST, FAILURE]', async () => {
+  //     const requestData = {
+  //       query: {
+  //         match: { match_all: {} },
+  //       },
+  //       index: 'test-index',
+  //     };
+  //     httpMockedClient.post = jest.fn().mockRejectedValue({
+  //       data: { ok: false, error: 'Something went wrong' }, // why mock this?
+  //     });
+  //     try {
+  //       await store.dispatch(searchES(requestData));
+  //     } catch (e) {
+  //       const actions = store.getActions();
+  //       expect(actions[0].type).toBe('elasticsearch/SEARCH_ES_REQUEST');
+  //       expect(reducer(initialState, actions[0])).toEqual({
+  //         ...initialState,
+  //         requesting: true,
+  //       });
+  //       expect(actions[1].type).toBe('elasticsearch/SEARCH_ES_FAILURE');
+  //       expect(reducer(initialState, actions[1])).toEqual({
+  //         ...initialState,
+  //         requesting: false,
+  //         errorMessage: 'Something went wrong',
+  //       });
+  //       expect(httpMockedClient.post).toHaveBeenCalledWith(
+  //         `..${BASE_NODE_API_PATH}/_search`,
+  //         requestData
+  //       );
+  //     }
+  //   });
+  // });
   describe('getPrioritizedIndices', () => {});
 });

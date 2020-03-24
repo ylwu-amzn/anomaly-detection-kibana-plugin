@@ -58,11 +58,9 @@ export function getTypeFromMappings(
 }
 
 export function getPathsPerDataType(mappings: Mappings): DataTypes {
-  // console.log('090909 mappings', mappings);
   let dataTypesPath: DataTypes = {};
   Object.entries(mappings).forEach(([index, { mappings: docMappings }]) => {
     dataTypesPath = getTypeFromMappings(docMappings, dataTypesPath);
   });
-  // console.log('090909 datatypes path', dataTypesPath);
   return dataTypesPath;
 }
