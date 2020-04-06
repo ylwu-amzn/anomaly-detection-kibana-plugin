@@ -46,6 +46,9 @@ import moment from 'moment';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../../DetectorResults/hooks/useFetchMonitorInfo';
 import { MonitorCallout } from '../components/ConfirmModal/MonitorCallout';
+import { DetectorView } from '../../DetectorView/containers/DetectorView';
+import { DetectorResults } from '../../DetectorView/containers/DetectorResults';
+import { DetectorConfig } from '../../DetectorView/containers/DetectorConfig';
 
 interface DetectorRouterProps {
   detectorId?: string;
@@ -321,7 +324,12 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           exact
           path="/detectors/:detectorId/configurations"
           render={props => (
-            <DetectorConfiguration
+            // <DetectorConfiguration
+            //   {...props}
+            //   detectorId={detectorId}
+            //   detector={detector}
+            // />
+            <DetectorConfig
               {...props}
               detectorId={detectorId}
               detector={detector}

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React from 'react';
+import React, { ReactElement } from 'react';
 //@ts-ignore
 import {
   EuiTitleSize,
@@ -22,10 +22,16 @@ import {
   EuiHorizontalRule,
   EuiPanel,
   EuiTitle,
+  EuiFormRow,
+  EuiText,
+  EuiDescriptionList,
+  EuiDescriptionListTitle,
+  EuiDescriptionListDescription,
 } from '@elastic/eui';
 
 type ContentPanelProps = {
   title: string;
+  subTitle?: ReactElement;
   description?: any;
   customTitle?: any;
   titleSize?: EuiTitleSize;
@@ -33,6 +39,7 @@ type ContentPanelProps = {
   panelStyles?: React.CSSProperties;
   horizontalRuleClassName?: string;
   titleClassName?: string;
+  subTitleClassName?: string;
   titleContainerStyles?: React.CSSProperties;
   actions?: React.ReactNode | React.ReactNode[];
   children: React.ReactNode | React.ReactNode[];
@@ -42,20 +49,19 @@ type ContentPanelProps = {
 const ContentPanel = (props: ContentPanelProps) => (
   <EuiPanel
     style={{ paddingLeft: '0px', paddingRight: '0px', ...props.panelStyles }}
-    className={props.className? props.className : undefined}
+    className={props.className ? props.className : undefined}
   >
     <EuiFlexGroup
       style={{ padding: '0px 10px', ...props.titleContainerStyles }}
       justifyContent="spaceBetween"
       alignItems="center"
     >
-      <EuiFlexItem>
+      <EuiFlexItem style={{ maxWidth: '70%' }}>
         <EuiTitle
           size={props.titleSize || 'l'}
           className={props.titleClassName || ''}
         >
-          {props.customTitle ? props.customTitle : (<h3>{props.title}</h3>)}
-          
+          {props.customTitle ? props.customTitle : <h3>{props.title}</h3>}
         </EuiTitle>
         {props.description}
       </EuiFlexItem>
@@ -63,7 +69,9 @@ const ContentPanel = (props: ContentPanelProps) => (
         <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
           {Array.isArray(props.actions) ? (
             props.actions.map((action: React.ReactNode, idx: number) => (
-              <EuiFlexItem key={idx} grow={false}>{action}</EuiFlexItem>
+              <EuiFlexItem key={idx} grow={false}>
+                {action}
+              </EuiFlexItem>
             ))
           ) : (
             <EuiFlexItem>{props.actions}</EuiFlexItem>
@@ -71,6 +79,12 @@ const ContentPanel = (props: ContentPanelProps) => (
         </EuiFlexGroup>
       </EuiFlexItem>
     </EuiFlexGroup>
+    <EuiText
+      style={{ padding: '0px 10px', ...props.titleContainerStyles }}
+      className={props.subTitleClassName}
+    >
+      {props.subTitle}
+    </EuiText>
     {props.title != '' && (
       <EuiHorizontalRule
         margin="xs"
