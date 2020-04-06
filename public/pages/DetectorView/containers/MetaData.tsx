@@ -32,7 +32,6 @@ import {
   UIFilter,
 } from '../../../models/interfaces';
 import React, { Component } from 'react';
-import styled from 'styled-components';
 import { displayText } from '../../createDetector/components/DataFilters/utils/helpers';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { RouteComponentProps } from 'react-router';
@@ -41,14 +40,6 @@ interface MetaDataProps extends RouteComponentProps {
   detectorId: string;
   detector: Detector;
 }
-
-const FixedWidthRow = styled(EuiFormRow)`
-  width: 250px;
-`;
-
-const GridNoBorder = styled(EuiFlexGrid)`
-  border: none;
-`;
 
 function toString(obj: { period: Schedule }): string;
 function toString(utcEpochSeconds: number): string;
@@ -182,62 +173,62 @@ export const MetaData = (props: MetaDataProps) => {
         width: '1120px',
       }}
     >
-      <GridNoBorder columns={4} gutterSize="l">
+      <EuiFlexGrid columns={4} gutterSize="l" style={{ border: 'none' }}>
         <EuiFlexItem>
-          <FixedWidthRow label="Name">
+          <EuiFormRow label="Name" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{detector.name}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="Data source index">
+          <EuiFormRow label="Data source index" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{detector.indices}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="Detector interval">
+          <EuiFormRow label="Detector interval" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{toString(detector.detectionInterval)}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="Last Updated">
+          <EuiFormRow label="Last Updated" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{toString(detector.lastUpdateTime)}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="ID">
+          <EuiFormRow label="ID" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{detector.id}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="Window delay">
+          <EuiFormRow label="Window delay" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{toString(detector.windowDelay)}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="Description">
+          <EuiFormRow label="Description" style={{ width: '250px' }}>
             <EuiText>
               <p className="enabled">{detector.description}</p>
             </EuiText>
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
         <EuiFlexItem>
-          <FixedWidthRow label="Data filter">
+          <EuiFormRow label="Data filter" style={{ width: '250px' }}>
             <FilterDisplay filterInputs={detector} />
-          </FixedWidthRow>
+          </EuiFormRow>
         </EuiFlexItem>
-      </GridNoBorder>
+      </EuiFlexGrid>
     </ContentPanel>
   );
 };

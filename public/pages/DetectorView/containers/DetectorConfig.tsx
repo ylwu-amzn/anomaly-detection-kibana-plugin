@@ -17,7 +17,7 @@ import { Detector } from '../../../models/interfaces';
 import React, { Component } from 'react';
 import { MetaData } from './MetaData';
 import { Features } from './Features';
-import { EuiSpacer } from '@elastic/eui';
+import { EuiSpacer, EuiPage, EuiPageBody } from '@elastic/eui';
 
 interface DetectorConfigProps {
   detectorId: string;
@@ -39,9 +39,14 @@ export class DetectorConfig extends Component<
   public render() {
     return (
       <React.Fragment>
-        <MetaData {...this.props} />
-        <EuiSpacer />
-        <Features {...this.props} />
+        <EuiPage>
+          <EuiPageBody>
+            <EuiSpacer size="l" />
+            <MetaData {...this.props} />
+            <EuiSpacer />
+            <Features {...this.props} />
+          </EuiPageBody>
+        </EuiPage>
       </React.Fragment>
     );
   }
