@@ -27,7 +27,6 @@ import { toastNotifications } from 'ui/notify';
 import { get } from 'lodash';
 import { RouteComponentProps, Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { DetectorConfiguration } from './DetectorConfiguration';
 import { AnomalyResults } from '../../DetectorResults/containers/AnomalyResults';
 import { useFetchDetectorInfo } from '../../createDetector/hooks/useFetchDetectorInfo';
 import { useHideSideNavBar } from '../hooks/useHideSideNavBar';
@@ -46,8 +45,6 @@ import moment from 'moment';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../../DetectorResults/hooks/useFetchMonitorInfo';
 import { MonitorCallout } from '../components/ConfirmModal/MonitorCallout';
-import { DetectorView } from '../../DetectorView/containers/DetectorView';
-import { DetectorResults } from '../../DetectorView/containers/DetectorResults';
 import { DetectorConfig } from '../../DetectorView/containers/DetectorConfig';
 
 interface DetectorRouterProps {
@@ -70,8 +67,8 @@ const tabs = [
 ];
 
 const getSelectedTabId = (pathname: string) => {
-  if (pathname.includes('results')) return 'results';
-  return 'configurations';
+  if (pathname.includes('configurations')) return 'configurations';
+  return 'results';
 };
 
 export const DetectorDetail = (props: DetectorDetailProps) => {
@@ -101,6 +98,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       props.history.push('/detectors');
     }
   }, [hasError]);
+
   useEffect(() => {
     if (detector) {
       chrome.breadcrumbs.set([
@@ -304,7 +302,10 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           confirmButtonColor="primary"
           onClose={() => setShowMonitorCalloutModal(false)}
           onCancel={() => setShowMonitorCalloutModal(false)}
-          onConfirm={() => handleStopAdJob(detectorId)}
+          onConfirm={() => {
+            handleStopAdJob(detectorId);
+            setShowMonitorCalloutModal(false);
+          }}
         />
       ) : null}
 
@@ -324,11 +325,6 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           exact
           path="/detectors/:detectorId/configurations"
           render={props => (
-            // <DetectorConfiguration
-            //   {...props}
-            //   detectorId={detectorId}
-            //   detector={detector}
-            // />
             <DetectorConfig
               {...props}
               detectorId={detectorId}
@@ -336,7 +332,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             />
           )}
         />
-        <Redirect to="/detectors/:detectorId/configurations" />
+        <Redirect to="/detectors/:detectorId/results" />
       </Switch>
     </React.Fragment>
   );

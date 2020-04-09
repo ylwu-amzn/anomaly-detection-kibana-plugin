@@ -91,9 +91,7 @@ export function CreateDetector(props: CreateADProps) {
       toastNotifications.addSuccess(
         `Detector updated: ${detectorToBeUpdated.name}`
       );
-      props.isEdit
-        ? props.history.push(`/detectors/${detectorId}/`)
-        : props.history.push(`/detectors/${detectorId}/features/`);
+      props.history.push(`/detectors/${detectorId}/configurations`);
     } catch (err) {
       toastNotifications.addDanger(
         getErrorMessage(err, 'There was a problem updating detector')
@@ -107,7 +105,7 @@ export function CreateDetector(props: CreateADProps) {
         `Detector created: ${detectorResp.data.response.name}`
       );
       props.history.push(
-        `/detectors/${detectorResp.data.response.id}/features/`
+        `/detectors/${detectorResp.data.response.id}/configurations`
       );
     } catch (err) {
       toastNotifications.addDanger(

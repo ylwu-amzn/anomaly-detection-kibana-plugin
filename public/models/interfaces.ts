@@ -111,7 +111,7 @@ export type DetectorListItem = {
   curState: string;
   totalAnomalies: number;
   lastActiveAnomaly: number;
-  lastUpdated: number;
+  lastUpdateTime: number;
 };
 
 export type AnomalyData = {

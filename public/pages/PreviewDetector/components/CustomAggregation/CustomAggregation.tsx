@@ -36,7 +36,10 @@ export const validateQuery = (value: string) => {
 
 export const CustomAggregation = (props: CustomAggregationProps) => {
   return (
-    <Field name={`featureList.${props.index}.aggregationQuery`} validate={validateQuery}>
+    <Field
+      name={`featureList.${props.index}.aggregationQuery`}
+      validate={validateQuery}
+    >
       {({ field, form }: FieldProps) => (
         <EuiFormRow
           fullWidth
@@ -44,6 +47,12 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
           helpText="Custom expression use the Elasticsearch query DSL."
           isInvalid={isInvalidField(field.name, form)}
           error={getError(field.name, form)}
+          onClick={() => {
+            form.setFieldTouched(
+              `featureList.${props.index}.aggregationQuery`,
+              true
+            );
+          }}
         >
           <EuiCodeEditor
             name={`featureList.${props.index}.aggregationQuery`}
@@ -58,7 +67,10 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
             }}
             onChange={(query: string) => {
               //Reset operator and values
-              form.setFieldValue(`featureList.${props.index}.aggregationQuery`, query);
+              form.setFieldValue(
+                `featureList.${props.index}.aggregationQuery`,
+                query
+              );
             }}
             onBlur={field.onBlur}
             value={field.value}

@@ -69,6 +69,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
     <ContentPanel
       title={props.enabled ? props.title : `${props.title} ( disabled )`}
       titleSize="xs"
+      titleClassName="preview-title"
       panelStyles={props.isEdit ? { border: '5px solid #96C8DA' } : {}}
       bodyStyles={
         !props.enabled ? { backgroundColor: getDisabledChartBackground() } : {}
@@ -82,7 +83,6 @@ export const FeatureChart = (props: FeatureChartProps) => {
           Edit
         </EuiButton>
       }
-      titleClassName="preview-title"
     >
       {props.featureData.length > 0 ? (
         <div

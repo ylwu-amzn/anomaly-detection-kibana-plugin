@@ -22,12 +22,16 @@ import { ALERTING_PLUGIN_NAME } from './constants';
 
 export const isInvalid = (name: string, form: any) => {
   return !!get(form.touched, name, false) && !!get(form.errors, name, false);
-}
+};
 
 export const isInvalidField = (name: string, form: any) => {
-  return !!get(form.errors, name, false);
-}
-  
+  debugger
+  const a = get(form.touched, name, false);
+  const b = get(form.errors, name, false);
+  // return !!get(form.errors, name, false) && !!get(form.errors, name, false);
+  // return !!get(form.touched, name, false) && !!get(form.errors, name, false);
+  return !!get(form.touched, name, false) && !!get(form.errors, name, false);
+};
 
 export const getError = (name: string, form: any) => get(form.errors, name);
 
@@ -57,32 +61,30 @@ export const getErrorMessage = (err: any, defaultMessage: string) => {
 };
 
 export const isAlertingInstalled = (): boolean => {
-  const navLinks = get(
-    npStart,
-    'core.chrome.navLinks',
-    undefined
-  );
+  const navLinks = get(npStart, 'core.chrome.navLinks', undefined);
   if (navLinks) {
     return navLinks.has(ALERTING_PLUGIN_NAME);
   }
   return false;
 };
 
+const getPluginRootPath = (url: string, pluginName: string) => {
+  return url.slice(0, url.indexOf(pluginName) + pluginName.length);
+};
+
 export const getAlertingCreateMonitorLink = (
   detectorId: string,
-  detectorName: string
+  detectorName: string,
+  detectorInterval: number,
+  unit: string
 ): string => {
   try {
-    const navLinks = get(
-      npStart,
-      'core.chrome.navLinks',
-      undefined
-    );
-    return `${
-      navLinks.get(ALERTING_PLUGIN_NAME).url
-    }#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}`;
+    const navLinks = get(npStart, 'core.chrome.navLinks', undefined);
+    const url = `${navLinks.get(ALERTING_PLUGIN_NAME).url}`;
+    const alertingRootUrl = getPluginRootPath(url, ALERTING_PLUGIN_NAME);
+    return `${alertingRootUrl}#/create-monitor?searchType=ad&adId=${detectorId}&name=${detectorName}&interval=${2 *
+      detectorInterval}&unit=${unit}`;
   } catch (e) {
-    //Not installed
     console.error('unable to get the alerting URL', e);
     return '';
   }
@@ -90,15 +92,11 @@ export const getAlertingCreateMonitorLink = (
 
 export const getAlertingMonitorListLink = (): string => {
   try {
-        const navLinks = get(npStart, 'core.chrome.navLinks', undefined);
-        const url = `${navLinks.get(ALERTING_PLUGIN_NAME).url}`;
-        // console.log(`1: ${url}`);
-        const alertingRootUrl = url.slice(0, url.indexOf(ALERTING_PLUGIN_NAME) + ALERTING_PLUGIN_NAME.length);
-        // console.log(`2: ${alertingRootUrl}`);
-        //http://localhost:5610/app/opendistro-alerting#/create-monitor?searchType=ad&adId=BSo1T3EB-1NkRyE9vZ9T&name=ylwu1#/monitors/jis3T3EB-1NkRyE93Pn8
-        return `${alertingRootUrl}#/monitors`;
-      } catch (e) {
-    //Not installed
+    const navLinks = get(npStart, 'core.chrome.navLinks', undefined);
+    const url = `${navLinks.get(ALERTING_PLUGIN_NAME).url}`;
+    const alertingRootUrl = getPluginRootPath(url, ALERTING_PLUGIN_NAME);
+    return `${alertingRootUrl}#/monitors`;
+  } catch (e) {
     console.error('unable to get the alerting URL', e);
     return '';
   }

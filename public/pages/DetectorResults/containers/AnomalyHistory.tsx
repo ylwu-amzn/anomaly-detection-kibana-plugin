@@ -33,7 +33,7 @@ import { AppState } from 'public/redux/reducers';
 import { AnomalyData, Detector, Monitor } from '../../../models/interfaces';
 import { getAnomalyResultsWithDateRange } from '../utils/anomalyResultUtils';
 import { TotalAnomaliesChart } from '../../PreviewDetector/components/AnomaliesChart/TotalAnomaliesChart';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { FeatureAnomaliesChart } from '../../PreviewDetector/containers/FeatureAnomaliesChart';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 
@@ -159,7 +159,11 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         showAlerts={true}
         detectorId={props.detectorId}
         detectorName={props.detector.name}
+        detector={props.detector}
+        detectorInterval={props.detector.detectionInterval.period.interval}
+        unit={props.detector.detectionInterval.period.unit}
         monitor={props.monitor}
+        noFeature={isEmpty(props.detector.featureAttributes)}
       />
       <EuiTabs>{renderTabs()}</EuiTabs>
       <EuiSpacer />

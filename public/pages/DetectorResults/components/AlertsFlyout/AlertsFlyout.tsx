@@ -24,21 +24,19 @@ import {
   EuiText,
   EuiLink,
   EuiSteps,
-  EuiButtonProps,
 } from '@elastic/eui';
-import React, { Fragment } from 'react';
+import React from 'react';
 //@ts-ignore
 import { toastNotifications } from 'ui/notify';
-import {
-  getAlertingCreateMonitorLink,
-  getAlertingMonitorListLink,
-} from '../../../../utils/utils';
 import { EuiIcon } from '@elastic/eui';
 import { Monitor } from '../../../../models/interfaces';
+import { SetUpAlertsButton } from '../SetupAlert/SetupAlertsButton';
 
 type AlertsFlyoutProps = {
   detectorId: string;
   detectorName: string;
+  detectorInterval: number;
+  unit: string;
   monitor?: Monitor;
   onClose(): void;
 };
@@ -73,35 +71,6 @@ const alertSteps = [
   },
 ];
 
-export interface SetUpAlertsButtonProps extends EuiButtonProps {
-  monitor?: Monitor;
-  detectorId: string;
-  detectorName: string;
-}
-
-export const SetUpAlertsButton = (props: SetUpAlertsButtonProps) => (
-  <Fragment>
-    {props.monitor ? (
-      <EuiButton
-        href={`${getAlertingMonitorListLink()}/${props.monitor.id}`}
-        {...props}
-      >
-        View monitor
-      </EuiButton>
-    ) : (
-      <EuiButton
-        href={`${getAlertingCreateMonitorLink(
-          props.detectorId,
-          props.detectorName
-        )}`}
-        {...props}
-      >
-        Set up alerts
-      </EuiButton>
-    )}
-  </Fragment>
-);
-
 export const AlertsFlyout = (props: AlertsFlyoutProps) => {
   return (
     <EuiFlyout size="s" onClose={props.onClose}>
@@ -112,10 +81,10 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
       </EuiFlyoutHeader>
       <EuiFlyoutBody
         // @ts-ignore
-        style={{ overflowY: 'auto', padding: '20px' }}
-        className="flyout"
+        style={{ overflowY: 'auto' }}
+        // className="flyout"
       >
-        <EuiFlexGroup direction="column" style={{ padding: '10px' }}>
+        <EuiFlexGroup direction="column">
           <EuiFlexItem>
             <EuiText>
               <p>
@@ -139,7 +108,7 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlyoutBody>
-      <EuiFlyoutFooter className="flyout">
+      <EuiFlyoutFooter>
         <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
           <EuiFlexItem grow={true}>
             <EuiButton
@@ -157,6 +126,8 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
               monitor={props.monitor}
               detectorId={props.detectorId}
               detectorName={props.detectorName}
+              detectorInterval={props.detectorInterval}
+              unit={props.unit}
               fill
             />
           </EuiFlexItem>

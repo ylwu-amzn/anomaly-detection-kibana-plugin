@@ -22,6 +22,10 @@ import {
   EuiIcon,
   EuiLink,
   EuiLoadingChart,
+  EuiEmptyPrompt,
+  EuiText,
+  EuiButton,
+  EuiStat,
 } from '@elastic/eui';
 import moment, { Moment } from 'moment';
 import {
@@ -38,22 +42,27 @@ import {
   timeFormatter,
   LineAnnotation,
   AnnotationDomainTypes,
+  RectAnnotation,
+  getAnnotationId,
 } from '@elastic/charts';
 import { useDelayedLoader } from '../../../../hooks/useDelayedLoader';
 import {
   AnomalySummary,
   Monitor,
   MonitorAlert,
+  Detector,
 } from '../../../../models/interfaces';
 import { getAlertingMonitorListLink } from '../../../../utils/utils';
 import { get } from 'lodash';
 import { prepareDataForChart } from '../../../DetectorResults/utils/anomalyResultUtils';
-import {
-  AlertsFlyout,
-  SetUpAlertsButton,
-} from '../../../DetectorResults/components/AlertsFlyout/AlertsFlyout';
+import { AlertsFlyout } from '../../../DetectorResults/components/AlertsFlyout/AlertsFlyout';
 import { useDispatch } from 'react-redux';
 import { searchES } from '../../../../redux/reducers/elasticsearch';
+import { SetUpAlertsButton } from '../../../DetectorResults/components/SetupAlert/SetupAlertsButton';
+import { NoFeaturePrompt } from '../FeatureChart/NoFeaturePrompt';
+import { detectorToFormik } from 'public/pages/createDetector/containers/utils/detectorToFormik';
+import { darkModeEnabled } from '../../../../utils/kibanaUtils';
+import { AlertsStat, AnomalyStatWithTooltip } from './AnomalyStat';
 
 interface TotalAnomaliesChartProps {
   onDateRangeChange(
@@ -73,6 +82,10 @@ interface TotalAnomaliesChartProps {
   dateRangeOption: string;
   detectorId: string;
   detectorName: string;
+  detector?: Detector;
+  detectorInterval?: number;
+  unit?: string;
+  noFeature?: boolean;
   monitor?: Monitor;
 }
 export const TotalAnomaliesChart = React.memo(
@@ -155,10 +168,8 @@ export const TotalAnomaliesChart = React.memo(
         details: alert.error
           ? `There is a severity ${alert.severity} alert with state ${
               alert.state
-            } between ${moment(alert.startTime).format(
-              'MM/DD/YY h:mm a'
-            )} and ${moment(alert.endTime).format(
-              'MM/DD/YY h:mm a'
+            } between ${dateFormatter(alert.startTime)} and ${dateFormatter(
+              alert.endTime
             )}. Some error happened for this alert: ${alert.error}`
           : `There is a severity ${alert.severity} alert with state ${
               alert.state
@@ -229,7 +240,7 @@ export const TotalAnomaliesChart = React.memo(
 
       const lastAnomalyOccurence =
         targetAnomalies.length > 0
-          ? moment(targetAnomalies[0].startTime).format('MM/DD/YYYY hh:mm a')
+          ? moment(targetAnomalies[0].startTime).format('MM/DD hh:mm a')
           : '-';
 
       return {
@@ -248,19 +259,19 @@ export const TotalAnomaliesChart = React.memo(
       setAnomalySummary(summary);
     }, [props.anomalies]);
 
-    const lineCustomSeriesColors: CustomSeriesColorsMap = new Map();
+    const confidenceCustomSeriesColors: CustomSeriesColorsMap = new Map();
     const lineDataSeriesColorValues: DataSeriesColorsValues = {
       colorValues: [],
       specId: getSpecId('confidence'),
     };
-    lineCustomSeriesColors.set(lineDataSeriesColorValues, '#017F75');
+    confidenceCustomSeriesColors.set(lineDataSeriesColorValues, '#017F75');
 
-    const barCustomSeriesColors: CustomSeriesColorsMap = new Map();
+    const anomalyGradeCustomSeriesColors: CustomSeriesColorsMap = new Map();
     const barDataSeriesColorValues: DataSeriesColorsValues = {
       colorValues: [],
       specId: getSpecId('anomalyGrade'),
     };
-    barCustomSeriesColors.set(barDataSeriesColorValues, '#E5830E');
+    anomalyGradeCustomSeriesColors.set(barDataSeriesColorValues, '#D13212');
 
     const liveChartTimeFormatter = niceTimeFormatter([
       props.startDateTime.valueOf(),
@@ -310,6 +321,8 @@ export const TotalAnomaliesChart = React.memo(
         monitor={props.monitor}
         detectorId={props.detectorId}
         detectorName={props.detectorName}
+        detectorInterval={props.detectorInterval}
+        unit={props.unit}
       />
     );
 
@@ -318,6 +331,61 @@ export const TotalAnomaliesChart = React.memo(
       props.startDateTime,
       props.endDateTime
     );
+
+    const disabledHistoryAnnotations = () => {
+      debugger;
+      if (!props.detector) {
+        return [];
+      }
+      const startTime = props.detector.disabledTime;
+      const endTime = props.detector.enabled
+        ? props.detector.enabledTime
+        : props.endDateTime.valueOf();
+
+      if (startTime) {
+        const details =
+          props.detector.enabled && props.detector.enabledTime
+            ? `Detector was stopped from ${dateFormatter(
+                startTime
+              )} to ${dateFormatter(props.detector.enabledTime)}`
+            : `Detector was stopped from ${dateFormatter(startTime)} until now`;
+        const coordinateX0 =
+          startTime >= props.startDateTime.valueOf()
+            ? startTime
+            : props.startDateTime.valueOf();
+        return [
+          {
+            coordinates: {
+              x0: coordinateX0,
+              x1: endTime,
+            },
+            details: details,
+          },
+        ];
+      }
+      return [];
+
+      // return startTime && endTime && endTime >= props.startDateTime.valueOf()
+      //   ? [
+      //       {
+      //         coordinates: {
+      //           x0:
+      //             startTime >= props.startDateTime.valueOf()
+      //               ? startTime
+      //               : props.startDateTime.valueOf(),
+      //           x1: endTime,
+      //         },
+      //         details: props.detector.enabledTime
+      //           ? `Detector was stopped from ${dateFormatter(
+      //               startTime
+      //             )} to ${dateFormatter(props.detector.enabledTime)}`
+      //           : `Detector was stopped from ${dateFormatter(
+      //               startTime
+      //             )} until now`,
+      //       },
+      //     ]
+      //   : [];
+    };
 
     return (
       <React.Fragment>
@@ -334,71 +402,67 @@ export const TotalAnomaliesChart = React.memo(
           <EuiFlexGroup direction="column">
             <EuiFlexGroup style={{ padding: '20px' }}>
               <EuiFlexItem>
-                <p>Anomaly occurences</p>
-                <h5>
-                  {props.isLoading || isLoadingAlerts
-                    ? '-'
-                    : anomalySummary.anomalyOccurence}
-                </h5>
+                <EuiStat
+                  title={
+                    props.isLoading || isLoadingAlerts
+                      ? '-'
+                      : anomalySummary.anomalyOccurence
+                  }
+                  description={
+                    props.showAlerts
+                      ? 'Anomaly occurences'
+                      : 'Sample anomaly occurences'
+                  }
+                  titleSize="m"
+                />
               </EuiFlexItem>
               <EuiFlexItem>
-                <p>Anomaly grade</p>
-                <h5>
-                  {props.isLoading || isLoadingAlerts
-                    ? ''
-                    : anomalySummary.minAnomalyGrade}
-                  -
-                  {props.isLoading || isLoadingAlerts
-                    ? ''
-                    : anomalySummary.maxAnomalyGrade}
-                </h5>
+                <AnomalyStatWithTooltip
+                  isLoading={props.isLoading}
+                  isLoadingAlerts={isLoadingAlerts}
+                  minValue={anomalySummary.minAnomalyGrade}
+                  maxValue={anomalySummary.maxAnomalyGrade}
+                  description={
+                    props.showAlerts ? 'Anomaly grade' : 'Sample anomaly grade'
+                  }
+                  tooltip="Anomaly grade indicates to what extend this data is abnormal"
+                />
               </EuiFlexItem>
               <EuiFlexItem>
-                <p>Confidence</p>
-                <h5>
-                  {props.isLoading || isLoadingAlerts
-                    ? ''
-                    : anomalySummary.minConfidence}
-                  -
-                  {props.isLoading || isLoadingAlerts
-                    ? ''
-                    : anomalySummary.maxConfidence}
-                </h5>
+                <AnomalyStatWithTooltip
+                  isLoading={props.isLoading}
+                  isLoadingAlerts={isLoadingAlerts}
+                  minValue={anomalySummary.minConfidence}
+                  maxValue={anomalySummary.maxConfidence}
+                  description={
+                    props.showAlerts ? 'Confidence' : 'Sample confidence'
+                  }
+                  tooltip="Confidence shows how confident we are about the anomaly result"
+                />
               </EuiFlexItem>
               <EuiFlexItem>
-                <p>Last anomaly occurance</p>
-                <h5>
-                  {props.isLoading || isLoadingAlerts
-                    ? ''
-                    : anomalySummary.lastAnomalyOccurence}
-                </h5>
+                <EuiStat
+                  title={
+                    props.isLoading || isLoadingAlerts
+                      ? ''
+                      : anomalySummary.lastAnomalyOccurence
+                  }
+                  description={
+                    props.showAlerts
+                      ? 'Last anomaly occurance'
+                      : 'Last sample anomaly occurance'
+                  }
+                  titleSize="m"
+                />
               </EuiFlexItem>
               {props.showAlerts ? (
                 <EuiFlexItem>
-                  <p>
-                    Alerts{' '}
-                    <EuiLink
-                      onClick={() => setShowAlertsFlyout(true)}
-                      style={{ fontSize: '15px' }}
-                    >
-                      info
-                    </EuiLink>
-                  </p>
-                  <h5>
-                    {totalAlerts !== undefined ? (
-                      <EuiLink
-                        href={`${getAlertingMonitorListLink()}/${
-                          // @ts-ignore
-                          props.monitor.id
-                        }`}
-                        target="_blank"
-                      >
-                        {totalAlerts}
-                      </EuiLink>
-                    ) : (
-                      '-'
-                    )}
-                  </h5>
+                  <AlertsStat
+                    monitor={props.monitor}
+                    showAlertsFlyout={() => setShowAlertsFlyout(true)}
+                    totalAlerts={totalAlerts}
+                    isLoading={props.isLoading}
+                  />
                 </EuiFlexItem>
               ) : null}
             </EuiFlexGroup>
@@ -406,7 +470,7 @@ export const TotalAnomaliesChart = React.memo(
               <EuiFlexItem grow={true}>
                 <div
                   style={{
-                    height: '300px',
+                    height: '200px',
                     width: '100%',
                     opacity: showLoader ? 0.2 : 1,
                   }}
@@ -426,6 +490,16 @@ export const TotalAnomaliesChart = React.memo(
                         showLegend
                         legendPosition={Position.Right}
                         showLegendDisplayValue={false}
+                      />
+                      <RectAnnotation
+                        dataValues={disabledHistoryAnnotations()}
+                        annotationId={getAnnotationId('react')}
+                        style={{
+                          stroke: darkModeEnabled() ? 'red' : '#D5DBDB',
+                          strokeWidth: 1,
+                          opacity: 0.8,
+                          fill: darkModeEnabled() ? 'red' : '#D5DBDB',
+                        }}
                       />
                       {alertAnnotations ? (
                         <LineAnnotation
@@ -454,7 +528,7 @@ export const TotalAnomaliesChart = React.memo(
                         yScaleType="linear"
                         xAccessor={'plotTime'}
                         yAccessors={['confidence']}
-                        customSeriesColors={lineCustomSeriesColors}
+                        customSeriesColors={confidenceCustomSeriesColors}
                         data={anomalies}
                       />
                       <LineSeries
@@ -465,7 +539,7 @@ export const TotalAnomaliesChart = React.memo(
                         yScaleType="linear"
                         xAccessor={'plotTime'}
                         yAccessors={['anomalyGrade']}
-                        customSeriesColors={barCustomSeriesColors}
+                        customSeriesColors={anomalyGradeCustomSeriesColors}
                       />
                     </Chart>
                   )}
@@ -481,6 +555,8 @@ export const TotalAnomaliesChart = React.memo(
             detectorId={props.detectorId}
             // @ts-ignore
             detectorName={props.detectorName}
+            detectorInterval={props.detectorInterval}
+            unit={props.unit}
             monitor={props.monitor}
             onClose={() => setShowAlertsFlyout(false)}
           />

@@ -21,8 +21,9 @@ import {
   EuiSpacer,
   EuiCallOut,
   EuiButton,
+  EuiEmptyPrompt,
 } from '@elastic/eui';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import React, { useEffect, Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { RouteComponentProps } from 'react-router';
@@ -59,43 +60,70 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       <EuiPage>
         <EuiPageBody>
           <EuiSpacer size="l" />
-          {detector ? (
-            <Fragment>
-              {!detector.enabled &&
-              detector.disabledTime &&
-              detector.lastUpdateTime > detector.disabledTime ? (
-                <EuiCallOut
-                  title="There are change(s) to the detector configuration after the detector is stopped."
-                  color="warning"
-                  iconType="alert"
-                >
+          {detector && isEmpty(detector.featureAttributes) ? (
+            <EuiEmptyPrompt
+              // iconType="editorStrike"
+              title={<h2>Features are required to run a detector</h2>}
+              body={
+                <Fragment>
                   <p>
-                    Restart the detector to see accurate anomalies based on your
-                    latest configuration.
+                    Specify index fields that you want to find anomalies for by
+                    defining features. Once you define the features, you can
+                    preview your anomalies from a sample feature output.
                   </p>
-                  <EuiButton
-                    onClick={props.onSwitchToConfiguration}
-                    color="warning"
-                  >
-                    View detector configuration
-                  </EuiButton>
-                </EuiCallOut>
+                </Fragment>
+              }
+              actions={
+                <EuiButton
+                  color="primary"
+                  fill
+                  href={`#/detectors/${detectorId}/features`}
+                >
+                  Add features
+                </EuiButton>
+              }
+            />
+          ) : (
+            <Fragment>
+              {detector ? (
+                <Fragment>
+                  {!detector.enabled &&
+                  detector.disabledTime &&
+                  detector.lastUpdateTime > detector.disabledTime ? (
+                    <EuiCallOut
+                      title="There are change(s) to the detector configuration after the detector is stopped."
+                      color="warning"
+                      iconType="alert"
+                    >
+                      <p>
+                        Restart the detector to see accurate anomalies based on
+                        your latest configuration.
+                      </p>
+                      <EuiButton
+                        onClick={props.onSwitchToConfiguration}
+                        color="warning"
+                      >
+                        View detector configuration
+                      </EuiButton>
+                    </EuiCallOut>
+                  ) : null}
+                  <AnomalyResultsLiveChart
+                    detectorId={detectorId}
+                    detector={detector}
+                  />
+                  <EuiSpacer size="l" />
+                  <AnomalyHistory
+                    detectorId={detectorId}
+                    detector={detector}
+                    monitor={monitor}
+                    createFeature={() =>
+                      props.history.push(`/detectors/${detectorId}/features`)
+                    }
+                  />
+                </Fragment>
               ) : null}
-              <AnomalyResultsLiveChart
-                detectorId={detectorId}
-                detector={detector}
-              />
-              <EuiSpacer size="l" />
-              <AnomalyHistory
-                detectorId={detectorId}
-                detector={detector}
-                monitor={monitor}
-                createFeature={() =>
-                  props.history.push(`/detectors/${detectorId}/features`)
-                }
-              />
             </Fragment>
-          ) : null}
+          )}
         </EuiPageBody>
       </EuiPage>
     </Fragment>

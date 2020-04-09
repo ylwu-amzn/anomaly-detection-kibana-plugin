@@ -156,14 +156,17 @@ export function EditFeatures(props: EditFeaturesProps) {
 
   const featureDescription = () => (
     <EuiText size="s">
-      Specify an index field that you want to find anomalies for by defining
-      features. An detector can discover anomalies across up to 10 features.{' '}
-      <EuiLink
-        href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-        target="_blank"
-      >
-        Learn more <EuiIcon size="s" type="popout" />
-      </EuiLink>
+      {/* <p style={{ fontSize: '12pt', color: '#69707D' }}> */}
+      <p className="content-panel-subtitle">
+        Specify an index field that you want to find anomalies for by defining
+        features. An detector can discover anomalies across up to 10 features.{' '}
+        <EuiLink
+          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+          target="_blank"
+        >
+          Learn more <EuiIcon size="s" type="popout" />
+        </EuiLink>
+      </p>
     </EuiText>
   );
 
@@ -265,6 +268,7 @@ export function EditFeatures(props: EditFeaturesProps) {
       <Field
         name={`featureList.${index}.featureName`}
         validate={validateFeatureName}
+        // validate={isInvalidField(field.name, form)}
       >
         {({ field, form }: FieldProps) => (
           <EuiFormRow
@@ -548,15 +552,18 @@ export function EditFeatures(props: EditFeaturesProps) {
   const sampleAnomaliesDescription = () => {
     return (
       <EuiText size="s">
-        Preview how your anomalies may look like from sample feature output and
-        adjust the feature settings as needed.{' '}
-        <EuiLink
-          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-          target="_blank"
-        >
-          Learn more
-          <EuiIcon size="s" type="popout" />
-        </EuiLink>
+        {/* <p style={{ fontSize: '12pt', color: '#69707D' }}> */}
+        <p className="content-panel-subtitle">
+          Preview how your anomalies may look like from sample feature output
+          and adjust the feature settings as needed.{' '}
+          <EuiLink
+            href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+            target="_blank"
+          >
+            Learn more
+            <EuiIcon size="s" type="popout" />
+          </EuiLink>
+        </p>
       </EuiText>
     );
   };
@@ -647,7 +654,7 @@ export function EditFeatures(props: EditFeaturesProps) {
       <EuiPageBody>
         <ContentPanel
           title="Sample anomalies"
-          titleSize="m"
+          titleSize="s"
           description={sampleAnomaliesDescription()}
         >
           {isLoading ? (
@@ -691,7 +698,7 @@ export function EditFeatures(props: EditFeaturesProps) {
           {previewDone ? (
             <Fragment>
               <TotalAnomaliesChart
-                title="Sample anomalies"
+                title="Sample anomaly history"
                 onDateRangeChange={handleDateRangeChange}
                 anomalies={anomaliesResult.anomalies}
                 isLoading={false}
@@ -706,6 +713,7 @@ export function EditFeatures(props: EditFeaturesProps) {
               />
               <EuiSpacer />
               <FeatureAnomaliesChart
+                title="Sample feature breakdown"
                 detector={lastPreviewedDetector}
                 onEdit={() => alert('edit')}
                 featureEditId={''}
@@ -757,7 +765,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                 </EuiPageHeader>
                 <ContentPanel
                   title="Features"
-                  titleSize="m"
+                  titleSize="s"
                   description={featureDescription()}
                 >
                   {renderFeatures(handleChange)}
@@ -807,7 +815,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                         }
                       }}
                     >
-                      Save
+                      Save changes
                     </EuiButton>
                   </EuiFlexItem>
                 </EuiFlexGroup>

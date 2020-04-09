@@ -121,7 +121,8 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
   return (
     <ContentPanel
       title={`Anomaly occurences(${totalAnomalies.length})`}
-      titleSize="s"
+      titleSize="xs"
+      titleClassName="preview-title"
     >
       <ListControls
         activePage={state.page}
@@ -130,9 +131,8 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
         }
         onPageClick={handlePageChange}
       />
-      <EuiHorizontalRule margin="xs" />
+      {/* <EuiHorizontalRule margin="xs" /> */}
 
-      <EuiHorizontalRule margin="xs" />
       <EuiBasicTable
         items={targetAnomalies}
         columns={staticColumn}

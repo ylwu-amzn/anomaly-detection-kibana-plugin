@@ -114,7 +114,7 @@ export const staticColumn = [
         </span>
       </EuiToolTip>
     ),
-    sortable: true,
+    sortable: false,
     dataType: 'string',
     align: 'left',
     width: '100px',
@@ -135,7 +135,7 @@ export const staticColumn = [
         </span>
       </EuiToolTip>
     ),
-    sortable: true,
+    sortable: false,
     dataType: 'number',
     align: 'right',
     width: '100px',
@@ -155,14 +155,14 @@ export const staticColumn = [
         </span>
       </EuiToolTip>
     ),
-    sortable: true,
+    sortable: false,
     dataType: 'date',
     width: '100px',
     align: 'left',
     render: renderTime,
   },
   {
-    field: 'lastUpdated',
+    field: 'lastUpdateTime',
     name: (
       <EuiToolTip content="Time of the last detector update">
         <span>

@@ -302,6 +302,10 @@ const getDetectors = async (
     //Allowed sorting columns
     const sortQueryMap = {
       name: { 'name.keyword': sortDirection },
+      indices: { 'indices.keyword': sortDirection },
+      //totalAnomalies: { totalAnomalies: sortDirection },
+      //lastActiveAnomaly: { lastActiveAnomaly: sortDirection },
+      lastUpdateTime: { last_update_time: sortDirection },
     } as { [key: string]: object };
     let sort = {};
     const sortQuery = sortQueryMap[sortField];
@@ -421,7 +425,7 @@ const getAnomalyResults = async (
       sortDirection = SORT_DIRECTION.DESC,
       // sortField = 'startTime',
       sortField = AD_DOC_FIELDS.DATA_START_TIME,
-      dataStartTimeLowerLimit = undefined,//TODO: use date range to replace these two data paramters
+      dataStartTimeLowerLimit = undefined, //TODO: use date range to replace these two data paramters
       dataEndTimeUpperLimit = undefined,
       range = undefined,
       //@ts-ignore
@@ -482,14 +486,29 @@ const getAnomalyResults = async (
       },
     };
 
-    
     if (dataStartTimeLowerLimit) {
-      set(requestBody.query.bool.filter, '1.range.data_start_time.gte', dataStartTimeLowerLimit);
-      set(requestBody.query.bool.filter, '1.range.data_start_time.format', 'epoch_millis');
+      set(
+        requestBody.query.bool.filter,
+        '1.range.data_start_time.gte',
+        dataStartTimeLowerLimit
+      );
+      set(
+        requestBody.query.bool.filter,
+        '1.range.data_start_time.format',
+        'epoch_millis'
+      );
     }
     if (dataEndTimeUpperLimit) {
-      set(requestBody.query.bool.filter, '1.range.data_end_time.lte', dataEndTimeUpperLimit);
-      set(requestBody.query.bool.filter, '1.range.data_end_time.format', 'epoch_millis');
+      set(
+        requestBody.query.bool.filter,
+        '1.range.data_end_time.lte',
+        dataEndTimeUpperLimit
+      );
+      set(
+        requestBody.query.bool.filter,
+        '1.range.data_end_time.format',
+        'epoch_millis'
+      );
     }
 
     const response = await callWithRequest(req, 'ad.searchResults', {
@@ -497,12 +516,24 @@ const getAnomalyResults = async (
     });
     const totalResults: number = get(response, 'hits.total.value', 0); // ？ why 10000 when return 300
 
-    const detectorResult: AnomalyResult[] = []
+    const detectorResult: AnomalyResult[] = [];
     const featureResult: { [key: string]: FeatureResult[] } = {};
     get(response, 'hits.hits', []).forEach((result: any) => {
-      const confidence: number = Number.parseFloat(result._source.confidence != null && result._source.confidence !== 'NaN' && result._source.confidence > 0 ? Number.parseFloat(result._source.confidence).toFixed(3) : '0')
-      const anomalyGrade: number = Number.parseFloat(result._source.anomaly_grade != null && result._source.anomaly_grade !== 'NaN' && result._source.anomaly_grade > 0 ? Number.parseFloat(result._source.anomaly_grade).toFixed(3) : '0')
-      
+      const confidence: number = Number.parseFloat(
+        result._source.confidence != null &&
+          result._source.confidence !== 'NaN' &&
+          result._source.confidence > 0
+          ? Number.parseFloat(result._source.confidence).toFixed(3)
+          : '0'
+      );
+      const anomalyGrade: number = Number.parseFloat(
+        result._source.anomaly_grade != null &&
+          result._source.anomaly_grade !== 'NaN' &&
+          result._source.anomaly_grade > 0
+          ? Number.parseFloat(result._source.anomaly_grade).toFixed(3)
+          : '0'
+      );
+
       detectorResult.push({
         startTime: result._source.data_start_time,
         endTime: result._source.data_end_time,
@@ -516,7 +547,7 @@ const getAnomalyResults = async (
       });
       result._source.feature_data.forEach((featureData: any) => {
         if (!featureResult[featureData.feature_id]) {
-          featureResult[featureData.feature_id] = []
+          featureResult[featureData.feature_id] = [];
         }
         featureResult[featureData.feature_id].push({
           startTime: result._source.data_start_time,
@@ -524,12 +555,17 @@ const getAnomalyResults = async (
           plotTime:
             result._source.data_start_time +
             Math.floor(
-              (result._source.data_end_time - result._source.data_start_time) / 2
+              (result._source.data_end_time - result._source.data_start_time) /
+                2
             ),
-          data: Number.parseFloat(featureData.data != null ? Number.parseFloat(featureData.data).toFixed(3) : '0')
-        })
-      })
-    })
+          data: Number.parseFloat(
+            featureData.data != null
+              ? Number.parseFloat(featureData.data).toFixed(3)
+              : '0'
+          ),
+        });
+      });
+    });
 
     return {
       ok: true,

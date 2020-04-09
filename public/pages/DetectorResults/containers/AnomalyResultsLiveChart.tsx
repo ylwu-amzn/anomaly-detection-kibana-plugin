@@ -56,7 +56,7 @@ export const AnomalyResultsLiveChart = (
   props: AnomalyResultsLiveChartProps
 ) => {
   const UPDATE_INTERVAL = 5 * 1000; //poll anomaly result every 5 seconds
-  const MONITORING_INTERVALS = 20;
+  const MONITORING_INTERVALS = 60;
   const dispatch = useDispatch();
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
@@ -87,25 +87,27 @@ export const AnomalyResultsLiveChart = (
   ]);
 
   useEffect(() => {
-    getLiveAnomalyResults(
-      dispatch,
-      props.detectorId,
-      detectionInterval,
-      MONITORING_INTERVALS
-    );
-    const intervalId = setInterval(
-      () =>
-        getLiveAnomalyResults(
-          dispatch,
-          props.detectorId,
-          detectionInterval,
-          MONITORING_INTERVALS
-        ),
-      UPDATE_INTERVAL
-    );
-    return () => {
-      clearInterval(intervalId);
-    };
+    if (props.detector.enabled) {
+      getLiveAnomalyResults(
+        dispatch,
+        props.detectorId,
+        detectionInterval,
+        MONITORING_INTERVALS
+      );
+      const intervalId = setInterval(
+        () =>
+          getLiveAnomalyResults(
+            dispatch,
+            props.detectorId,
+            detectionInterval,
+            MONITORING_INTERVALS
+          ),
+        UPDATE_INTERVAL
+      );
+      return () => {
+        clearInterval(intervalId);
+      };
+    }
   }, []);
   const lineCustomSeriesColors: CustomSeriesColorsMap = new Map();
   const lineDataSeriesColorValues: DataSeriesColorsValues = {
@@ -124,7 +126,7 @@ export const AnomalyResultsLiveChart = (
 
   const liveAnomaliesDescription = () => (
     <EuiText size="s" style={{ color: '#879196' }}>
-      Live anomaly results during last 20 intervals
+      Live anomaly results during last {MONITORING_INTERVALS} intervals
     </EuiText>
   );
 
@@ -171,7 +173,8 @@ export const AnomalyResultsLiveChart = (
             </EuiBadge>
           </h3>
         }
-        titleSize="m"
+        titleSize="xs"
+        titleClassName="preview-title"
         description={props.detector.enabled ? liveAnomaliesDescription() : null}
         actions={[fullScreenButton()]}
         className={isFullScreen ? 'full-screen' : undefined}
@@ -180,7 +183,7 @@ export const AnomalyResultsLiveChart = (
           <EuiFlexGroup
             justifyContent="spaceBetween"
             style={{
-              height: '300px',
+              height: isFullScreen ? '400px' : '200px',
               opacity: showLoader ? 0.2 : 1,
             }}
           >
@@ -205,7 +208,7 @@ export const AnomalyResultsLiveChart = (
                   title={'Anomaly grade'}
                   position="left"
                   domain={{ min: 0, max: 1 }}
-                  showGridLines
+                  // showGridLines
                 />
                 <BarSeries
                   id={getSpecId('Anomaly grade')}

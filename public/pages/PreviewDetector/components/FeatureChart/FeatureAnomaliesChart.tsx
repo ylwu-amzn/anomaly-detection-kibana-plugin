@@ -27,18 +27,23 @@ import {
   Position,
   Settings,
 } from '@elastic/charts';
-import { EuiEmptyPrompt, EuiText } from '@elastic/eui';
-import React from 'react';
+import { EuiEmptyPrompt, EuiText, EuiLink } from '@elastic/eui';
+import React, { useState } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { useDelayedLoader } from '../../../../hooks/useDelayedLoader';
 import { Moment } from 'moment';
-import { FeatureAggregationData } from 'public/models/interfaces';
+import {
+  FeatureAggregationData,
+  FeatureAttributes,
+} from 'public/models/interfaces';
 import { darkModeEnabled } from '../../../../utils/kibanaUtils';
 import { prepareDataForChart } from '../../../DetectorResults/utils/anomalyResultUtils';
+import { CodeModal } from '../../../DetectorView/components/CodeModal/CodeModal';
 
 interface FeatureChartProps {
-  title: string;
-  enabled: boolean;
+  // title: string;
+  // enabled: boolean;
+  feature: FeatureAttributes;
   onEdit(ev: React.MouseEvent<HTMLButtonElement>): void;
   isEdit: boolean;
   featureData: FeatureAggregationData[];
@@ -59,6 +64,9 @@ const getDisabledChartBackground = () =>
 const getDisabledLineColor = () => (darkModeEnabled() ? '#434548' : '#C8CBCC');
 
 export const FeatureChart = (props: FeatureChartProps) => {
+  const [showCustomExpression, setShowCustomExpression] = useState<boolean>(
+    false
+  );
   const timeFormatter = niceTimeFormatter([
     props.startDateTime.valueOf(),
     props.endDateTime.valueOf(),
@@ -71,7 +79,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
   };
   lineCustomSeriesColors.set(
     lineDataSeriesColorValues,
-    props.enabled ? '#16191F' : getDisabledLineColor()
+    props.feature.featureEnabled ? '#16191F' : getDisabledLineColor()
   );
 
   const barCustomSeriesColors: CustomSeriesColorsMap = new Map();
@@ -84,13 +92,17 @@ export const FeatureChart = (props: FeatureChartProps) => {
   const featureDescription = () => (
     <EuiText size="s">
       {props.featureType === 'simple_aggs' ? (
-        <p>
+        <p style={{ fontSize: '12px', color: 'grey' }}>
           Field: {props.field}; Aggregation method: {props.aggregationMethod};
-          State: {props.enabled ? 'Enabled' : 'Disabled'}
+          State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}
         </p>
       ) : (
-        <p>
-          Custom expression; State: {props.enabled ? 'Enabled' : 'Disabled'}{' '}
+        <p style={{ fontSize: '12px', color: 'grey' }}>
+          Custom expression:{' '}
+          <EuiLink onClick={() => setShowCustomExpression(true)}>
+            View code
+          </EuiLink>
+          ; State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}{' '}
         </p>
       )}
     </EuiText>
@@ -116,11 +128,17 @@ export const FeatureChart = (props: FeatureChartProps) => {
   );
   return (
     <ContentPanel
-      title={props.enabled ? props.title : `${props.title} ( disabled )`}
+      title={
+        props.feature.featureEnabled
+          ? props.feature.featureName
+          : `${props.feature.featureName} ( disabled )`
+      }
       titleSize="xs"
       panelStyles={props.isEdit ? { border: '5px solid #96C8DA' } : {}}
       bodyStyles={
-        !props.enabled ? { backgroundColor: getDisabledChartBackground() } : {}
+        !props.feature.featureEnabled
+          ? { backgroundColor: getDisabledChartBackground() }
+          : {}
       }
       description={featureDescription()}
       titleClassName="preview-title"
@@ -128,7 +146,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
       {props.featureData.length > 0 ? (
         <div
           style={{
-            height: '300px',
+            height: '200px',
             width: '100%',
             opacity: showLoader ? 0.2 : 1,
           }}
@@ -140,7 +158,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
               showLegendDisplayValue={false}
               theme={[customTheme]}
             />
-            {props.enabled ? (
+            {props.feature.featureEnabled ? (
               <RectAnnotation
                 dataValues={props.annotations || []}
                 annotationId={getAnnotationId('react')}
@@ -154,7 +172,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
             ) : null}
             <Axis
               id={getAxisId('left')}
-              title={'Sample feature output'}
+              title={props.featureDataSeriesName}
               position="left"
               showGridLines
             />
@@ -174,6 +192,15 @@ export const FeatureChart = (props: FeatureChartProps) => {
               data={featureData}
             />
           </Chart>
+          {showCustomExpression ? (
+            <CodeModal
+              title={props.feature.featureName}
+              subtitle="Custom expression"
+              code={JSON.stringify(props.feature.aggregationQuery, null, 4)}
+              getModalVisibilityChange={() => true}
+              closeModal={() => setShowCustomExpression(false)}
+            />
+          ) : null}
         </div>
       ) : (
         <EuiEmptyPrompt

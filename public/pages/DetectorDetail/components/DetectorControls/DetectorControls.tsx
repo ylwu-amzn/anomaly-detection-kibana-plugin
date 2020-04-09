@@ -90,16 +90,17 @@ export const DetectorControls = (props: DetectorControls) => {
               ? props.onStopDetector
               : props.onStartDetector
           }
+          iconType={props.detector.enabled ? 'stop':'play'}
           disabled={
             !props.detector.featureAttributes ||
             props.detector.featureAttributes.length === 0
           }
         >
-          {props.detector.enabled ? (
+          {/* {props.detector.enabled ? (
             <EuiIcon type="stop" />
           ) : (
             <EuiIcon type="play" />
-          )}
+          )} */}
           {props.detector.enabled ? 'Stop detector' : 'Start detector'}
         </EuiButton>
       </EuiFlexItem>

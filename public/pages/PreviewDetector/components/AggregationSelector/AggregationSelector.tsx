@@ -51,6 +51,12 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
               //@ts-ignore
               options={numberFields}
               {...field}
+              onClick={() => {
+                form.setFieldTouched(
+                  `featureList.${props.index}.aggregationOf`,
+                  true
+                );
+              }}
               onChange={(options: any) => {
                 form.setFieldValue(
                   `featureList.${props.index}.aggregationOf`,

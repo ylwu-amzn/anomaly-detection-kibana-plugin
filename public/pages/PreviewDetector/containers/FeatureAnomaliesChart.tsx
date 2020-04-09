@@ -34,8 +34,10 @@ import {
 } from '../../../models/interfaces';
 import moment, { Moment } from 'moment';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
+import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
 
 interface FeatureAnomaliesChartProps {
+  title?: string;
   detector: Detector;
   onCreateFeature(event: React.MouseEvent<HTMLButtonElement>): void;
   onUpdatePreview(): void;
@@ -55,20 +57,24 @@ export const FeatureAnomaliesChart = React.memo(
   (props: FeatureAnomaliesChartProps) => {
     return (
       <React.Fragment>
-        <EuiFlexGroup alignItems="flexEnd">
-          <EuiFlexItem>
-            <EuiTitle size="s" className="preview-title">
-              <h4>Feature breakdown</h4>
-            </EuiTitle>
-          </EuiFlexItem>
-        </EuiFlexGroup>
+        {props.title ? (
+          <EuiFlexGroup alignItems="flexEnd">
+            <EuiFlexItem>
+              <EuiTitle size="s" className="preview-title">
+                <h4>{props.title}</h4>
+              </EuiTitle>
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        ) : null}
+
         <EuiSpacer size="s" />
         {get(props, 'detector.featureAttributes', []).map(
           (feature: FeatureAttributes, index: number) => (
             <React.Fragment key={`${feature.featureName}-${feature.featureId}`}>
               <FeatureChart
-                title={feature.featureName}
-                enabled={feature.featureEnabled}
+                // title={feature.featureName}
+                // enabled={feature.featureEnabled}
+                feature={feature}
                 featureData={get(
                   props,
                   `anomaliesResult.featureData.${feature.featureId}`,
@@ -118,31 +124,7 @@ export const FeatureAnomaliesChart = React.memo(
         )}
         {!props.isLoading &&
         get(props, 'detector.featureAttributes.length', 0) === 0 ? (
-          <ContentPanel title="">
-            <EuiFlexGroup>
-              <EuiFlexItem>
-                <EuiEmptyPrompt
-                  body={
-                    <EuiText>
-                      No features have been added to this anomaly detector. A
-                      feature is a metric that used for anomaly detection. A
-                      detector can discover anomalies across one or many
-                      features. This system reports an anomaly score based on
-                      how strong a signal might be.
-                    </EuiText>
-                  }
-                  actions={[
-                    <EuiButton
-                      data-test-subj="createButton"
-                      onClick={props.onCreateFeature}
-                    >
-                      Add feature
-                    </EuiButton>,
-                  ]}
-                />
-              </EuiFlexItem>
-            </EuiFlexGroup>
-          </ContentPanel>
+          <NoFeaturePrompt detectorId={props.detector.id}/>
         ) : null}
       </React.Fragment>
     );
