@@ -89,7 +89,7 @@ import { BREADCRUMBS } from '../../../utils/constants';
 import { v4 as uuidv4 } from 'uuid';
 import { TotalAnomaliesChart } from '../components/AnomaliesChart/TotalAnomaliesChart';
 import { FeatureAnomaliesChart } from './FeatureAnomaliesChart';
-import { useHideSideNavBar } from '../../DetectorDetail/hooks/useHideSideNavBar';
+import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 
 interface FeaturesRouterProps {
   detectorId?: string;
@@ -116,7 +116,7 @@ export function EditFeatures(props: EditFeaturesProps) {
   // For preview:
   const [isLoading, setIsLoading] = useState(false);
   const [previewDone, setPreviewDone] = useState(false);
-  const [lastPreviewedDetector, setLastPreviewedDetector] = useState<Detector>(
+  const [newDetector, setNewDetector] = useState<Detector>(
     detector
   );
   const [fristPreview, setFristPreview] = useState<boolean>(true);
@@ -156,10 +156,9 @@ export function EditFeatures(props: EditFeaturesProps) {
 
   const featureDescription = () => (
     <EuiText size="s">
-      {/* <p style={{ fontSize: '12pt', color: '#69707D' }}> */}
       <p className="content-panel-subtitle">
         Specify an index field that you want to find anomalies for by defining
-        features. An detector can discover anomalies across up to 10 features.{' '}
+        features. An detector can discover anomalies across up to 5 features.{' '}
         <EuiLink
           href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
           target="_blank"
@@ -640,7 +639,7 @@ export function EditFeatures(props: EditFeaturesProps) {
     try {
       const newDetector = prepareDetector(featureList, detector, true);
       setPreviewDone(false);
-      setLastPreviewedDetector(newDetector);
+      setNewDetector(newDetector);
       getSampleAdResult(newDetector);
     } catch (err) {
       console.log('Fail to get updated detector', err);
@@ -714,7 +713,7 @@ export function EditFeatures(props: EditFeaturesProps) {
               <EuiSpacer />
               <FeatureAnomaliesChart
                 title="Sample feature breakdown"
-                detector={lastPreviewedDetector}
+                detector={newDetector}
                 onEdit={() => alert('edit')}
                 featureEditId={''}
                 anomaliesResult={anomaliesResult}

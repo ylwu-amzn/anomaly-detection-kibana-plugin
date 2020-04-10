@@ -29,7 +29,7 @@ import { RouteComponentProps, Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AnomalyResults } from '../../DetectorResults/containers/AnomalyResults';
 import { useFetchDetectorInfo } from '../../createDetector/hooks/useFetchDetectorInfo';
-import { useHideSideNavBar } from '../hooks/useHideSideNavBar';
+import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import {
   deleteDetector,
   startDetector,

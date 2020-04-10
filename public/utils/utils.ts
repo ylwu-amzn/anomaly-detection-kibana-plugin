@@ -25,11 +25,6 @@ export const isInvalid = (name: string, form: any) => {
 };
 
 export const isInvalidField = (name: string, form: any) => {
-  debugger
-  const a = get(form.touched, name, false);
-  const b = get(form.errors, name, false);
-  // return !!get(form.errors, name, false) && !!get(form.errors, name, false);
-  // return !!get(form.touched, name, false) && !!get(form.errors, name, false);
   return !!get(form.touched, name, false) && !!get(form.errors, name, false);
 };
 

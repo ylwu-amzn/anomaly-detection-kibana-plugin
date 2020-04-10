@@ -333,7 +333,7 @@ export const TotalAnomaliesChart = React.memo(
     );
 
     const disabledHistoryAnnotations = () => {
-      debugger;
+      // debugger;
       if (!props.detector) {
         return [];
       }
