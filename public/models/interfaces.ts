@@ -125,12 +125,12 @@ export type AnomalyData = {
 };
 
 export type AnomalySummary = {
-  anomalyOccurence: number;
+  anomalyOccurrence: number;
   minAnomalyGrade: number;
   maxAnomalyGrade: number;
   minConfidence: number;
   maxConfidence: number;
-  lastAnomalyOccurence: string;
+  lastAnomalyOccurrence: string;
 };
 
 export type FeatureAggregationData = {

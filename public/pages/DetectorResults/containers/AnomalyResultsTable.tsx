@@ -120,7 +120,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
   };
   return (
     <ContentPanel
-      title={`Anomaly occurences(${totalAnomalies.length})`}
+      title={`Anomaly occurrences(${totalAnomalies.length})`}
       titleSize="xs"
       titleClassName="preview-title"
     >

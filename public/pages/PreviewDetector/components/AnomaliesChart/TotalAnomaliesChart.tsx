@@ -91,12 +91,12 @@ interface TotalAnomaliesChartProps {
 export const TotalAnomaliesChart = React.memo(
   (props: TotalAnomaliesChartProps) => {
     const [anomalySummary, setAnomalySummary] = useState<AnomalySummary>({
-      anomalyOccurence: 0,
+      anomalyOccurrence: 0,
       minAnomalyGrade: 0.0,
       maxAnomalyGrade: 0.0,
       minConfidence: 0.0,
       maxConfidence: 0.0,
-      lastAnomalyOccurence: '',
+      lastAnomalyOccurrence: '',
     });
     const [showAlertsFlyout, setShowAlertsFlyout] = useState<boolean>(false);
     const [totalAlerts, setTotalAlerts] = useState<number | undefined>(
@@ -238,19 +238,19 @@ export const TotalAnomaliesChart = React.memo(
         }
       });
 
-      const lastAnomalyOccurence =
+      const lastAnomalyOccurrence =
         targetAnomalies.length > 0
           ? moment(targetAnomalies[0].startTime).format('MM/DD hh:mm a')
           : '-';
 
       return {
-        anomalyOccurence: targetAnomalies.length,
+        anomalyOccurrence: targetAnomalies.length,
         minAnomalyGrade:
           minAnomalyGrade > maxAnomalyGrade ? 0 : minAnomalyGrade,
         maxAnomalyGrade: maxAnomalyGrade,
         minConfidence: minConfidence > maxConfidence ? 0 : minConfidence,
         maxConfidence: maxConfidence,
-        lastAnomalyOccurence: lastAnomalyOccurence,
+        lastAnomalyOccurrence: lastAnomalyOccurrence,
       };
     };
 
@@ -406,12 +406,12 @@ export const TotalAnomaliesChart = React.memo(
                   title={
                     props.isLoading || isLoadingAlerts
                       ? '-'
-                      : anomalySummary.anomalyOccurence
+                      : anomalySummary.anomalyOccurrence
                   }
                   description={
                     props.showAlerts
-                      ? 'Anomaly occurences'
-                      : 'Sample anomaly occurences'
+                      ? 'Anomaly occurrences'
+                      : 'Sample anomaly occurrences'
                   }
                   titleSize="m"
                 />
@@ -425,7 +425,7 @@ export const TotalAnomaliesChart = React.memo(
                   description={
                     props.showAlerts ? 'Anomaly grade' : 'Sample anomaly grade'
                   }
-                  tooltip="Anomaly grade indicates to what extend this data is abnormal"
+                  tooltip="Indicates to what extent this data point is anomalous."
                 />
               </EuiFlexItem>
               <EuiFlexItem>
@@ -437,7 +437,7 @@ export const TotalAnomaliesChart = React.memo(
                   description={
                     props.showAlerts ? 'Confidence' : 'Sample confidence'
                   }
-                  tooltip="Confidence shows how confident we are about the anomaly result"
+                  tooltip="Indicates the level of confidence in the anomaly result."
                 />
               </EuiFlexItem>
               <EuiFlexItem>
@@ -445,12 +445,12 @@ export const TotalAnomaliesChart = React.memo(
                   title={
                     props.isLoading || isLoadingAlerts
                       ? ''
-                      : anomalySummary.lastAnomalyOccurence
+                      : anomalySummary.lastAnomalyOccurrence
                   }
                   description={
                     props.showAlerts
-                      ? 'Last anomaly occurance'
-                      : 'Last sample anomaly occurance'
+                      ? 'Last anomaly occurrence'
+                      : 'Last sample anomaly occurrence'
                   }
                   titleSize="m"
                 />

@@ -120,8 +120,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       disabled: false,
     },
     {
-      id: 'anomalyOccurence',
-      name: 'Anomaly occurence',
+      id: 'anomalyOccurrence',
+      name: 'Anomaly occurrence',
       disabled: false,
     },
   ];
@@ -193,7 +193,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
               startDateTime={dateRange.startDate}
               endDateTime={moment()}
               featureDataSeriesName="Feature output"
-              featureAnomalyAnnotationSeriesName="Anomaly occurence"
+              featureAnomalyAnnotationSeriesName="Anomaly occurrence"
               showAnomalyAsBar={true}
             />
           ) : (

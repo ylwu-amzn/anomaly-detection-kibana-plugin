@@ -22,9 +22,6 @@ export enum DATA_TYPES {
 
 export const BREADCRUMBS = Object.freeze({
   ANOMALY_DETECTOR: { text: 'Anomaly detection', href: '#/' },
-  MODEL_DEFINITION: { text: 'Model definition' },
-  CONFIGURE_FEATURE: { text: 'Add feature' },
-  ANOMALY_RESULTS: { text: 'Anomaly results' },
   DETECTORS: { text: 'Detectors', href: '#/detectors' },
   CREATE_DETECTOR: { text: 'Create detector' },
   EDIT_DETECTOR: { text: 'Edit detector' },

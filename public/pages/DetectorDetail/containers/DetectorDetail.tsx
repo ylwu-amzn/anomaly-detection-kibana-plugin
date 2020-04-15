@@ -43,7 +43,7 @@ import { BREADCRUMBS } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import moment from 'moment';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
-import { useFetchMonitorInfo } from '../../DetectorResults/hooks/useFetchMonitorInfo';
+import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
 import { MonitorCallout } from '../components/ConfirmModal/MonitorCallout';
 import { DetectorConfig } from '../../DetectorView/containers/DetectorConfig';
 
@@ -154,7 +154,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     try {
       await dispatch(stopDetector(detectorId));
       toastNotifications.addSuccess(
-        'Detector job has been stoped successfully'
+        'Detector job has been stopped successfully'
       );
       if (listener) listener.onSuccess();
     } catch (err) {
