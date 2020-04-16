@@ -19,8 +19,7 @@ import { AppState } from '../../../redux/reducers';
 import { getDetectorList } from '../../../redux/reducers/ad';
 import { SORT_DIRECTION } from '../../../../server/utils/constants';
 import { EmptyDashboard } from '../Components/EmptyDashboard/EmptyDashboard';
-import { EuiPage, EuiPageBody, EuiLoadingSpinner } from '@elastic/eui';
-import { SideBar } from '../Components/utils/SideBar';
+import { EuiLoadingSpinner } from '@elastic/eui';
 import { DashboardHeader } from '../Components/utils/DashboardHeader';
 import { DashboardOverview } from './DashboardOverview';
 

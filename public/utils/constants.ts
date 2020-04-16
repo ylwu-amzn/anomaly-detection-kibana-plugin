@@ -30,10 +30,12 @@ export const BREADCRUMBS = Object.freeze({
 });
 
 export const APP_PATH = {
-  CREATE_DETECTOR: '/create-ad',
   DASHBOARD: '/dashboard',
   LIST_DETECTORS: '/detectors',
-  DETECTOR_DETAILS: '/detectors/:detectorId/',
+  CREATE_DETECTOR: '/create-ad/',
+  EDIT_DETECTOR: '/detectors/:detectorId/edit',
+  EDIT_FEATURES: '/detectors/:detectorId/features/',
+  DETECTOR_DETAIL: '/detectors/:detectorId/',
 };
 export const PLUGIN_NAME = 'opendistro-anomaly-detection';
 

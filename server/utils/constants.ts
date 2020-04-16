@@ -20,7 +20,7 @@ export const ALERTING_API_ROUTE_PREFIX = '/_opendistro/_alerting';
 
 export const API: ADApis = {
   DETECTOR_BASE: `${AD_API_ROUTE_PREFIX}/detectors`,
-  ALERTING_BASE: `${ALERTING_API_ROUTE_PREFIX}/monitors`
+  ALERTING_BASE: `${ALERTING_API_ROUTE_PREFIX}/monitors`,
 };
 
 export const DEFAULT_HEADERS: DefaultHeaders = {

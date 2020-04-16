@@ -14,6 +14,7 @@
  */
 
 import { DATA_TYPES } from '../utils/constants';
+import { DETECTOR_STATE } from 'public/pages/utils/constants';
 
 export type FieldInfo = {
   label: string;
@@ -56,7 +57,7 @@ export type UIFilter = {
 };
 
 export type FeatureAttributes = {
-  featureId: string;
+  featureId?: string;
   featureName: string;
   featureEnabled: boolean;
   importance: number;
@@ -74,8 +75,8 @@ export type Schedule = {
 
 export type UiFeature = {
   featureType: FEATURE_TYPE;
-  aggregationBy?: string;
-  aggregationOf?: string;
+  aggregationBy: string;
+  aggregationOf: string;
 };
 
 export type UiMetaData = {
@@ -108,8 +109,8 @@ export type DetectorListItem = {
   id: string;
   name: string;
   indices: string[];
+  curState: DETECTOR_STATE;
   featureAttributes: FeatureAttributes[];
-  curState: string;
   totalAnomalies: number;
   lastActiveAnomaly: number;
   lastUpdateTime: number;
@@ -122,16 +123,6 @@ export type AnomalyData = {
   detectorId: string;
   endTime: number;
   startTime: number;
-  plotTime: number;
-};
-
-export type AnomalySummary = {
-  anomalyOccurrence: number;
-  minAnomalyGrade: number;
-  maxAnomalyGrade: number;
-  minConfidence: number;
-  maxConfidence: number;
-  lastAnomalyOccurrence: string;
 };
 
 export type FeatureAggregationData = {

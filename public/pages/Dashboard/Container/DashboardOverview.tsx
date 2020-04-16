@@ -39,7 +39,8 @@ import {
 } from '../utils/constants';
 import { AppState } from '../../../redux/reducers';
 import { CatIndex, IndexAlias } from '../../../../server/models/types';
-import { getVisibleOptions } from '../../../pages/utils/helpers';
+// import { getVisibleOptions } from '../../../pages/createDetector/containers/DataSource/utils/helpers';
+import { getVisibleOptions } from '../../utils/helpers';
 import {
   DETECTOR_STATE,
   PLUGIN_NAME,
@@ -94,6 +95,7 @@ export function DashboardOverview() {
     [] as string[]
   );
   // TODO: DetectorStates is placeholder for now until backend profile API is ready
+  // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/25
   const [allDetectorStatesSelected, setAllDetectorStatesSelected] = useState(
     true
   );
@@ -133,6 +135,7 @@ export function DashboardOverview() {
   const filterSelectedDetectors = async (
     selectedNameList: string[],
     // TODO: DetectorStates is placeholder for now until backend profile API is ready
+    // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/25
     selectedStateList: string[],
     selectedIndexList: string[]
   ) => {
@@ -172,6 +175,7 @@ export function DashboardOverview() {
     // And after this component does call getDetectorList to get all
     // detectors, we need to refresh the page with result from 2nd call
     // TODO: we need to implement namespacing for redux as per https://tiny.amazon.com/3eszqzpx/stacques4290
+    // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/23
     setCurrentDetectors(Object.values(allDetectorList));
   }, [allDetectorList]);
 

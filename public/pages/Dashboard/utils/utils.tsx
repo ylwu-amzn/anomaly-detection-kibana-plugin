@@ -420,7 +420,7 @@ const buildDetectorAnomalyResultMap = (
 
 export const visualizeAnomalyResultForXYChart = (
   anomalyResult: any
-): object[] => {
+): object => {
   return {
     ...anomalyResult,
     [AD_DOC_FIELDS.PLOT_TIME]: getFloorPlotTime(
@@ -507,7 +507,11 @@ export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
           ).toFixed(2),
           [AD_DOC_FIELDS.DATA_START_TIME]: result._source.data_start_time,
           [AD_DOC_FIELDS.DATA_END_TIME]: result._source.data_end_time,
-          [AD_DOC_FIELDS.DETECTOR_NAME]: get(detector, 'name', ''),
+          [AD_DOC_FIELDS.DETECTOR_NAME]: get(
+            detector,
+            AD_DOC_FIELDS.DETECTOR_NAME,
+            ''
+          ),
         };
       }
     );

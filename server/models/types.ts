@@ -68,7 +68,6 @@ export type Detector = {
   disabledTime?: number;
 };
 
-
 export type Monitor = {
   id: string;
   name: string;
@@ -84,15 +83,7 @@ export type GetDetectorsQueryParams = {
   from: number;
   size: number;
   search: string;
-  indices: string;
-  sortDirection: SORT_DIRECTION;
-  sortField: string;
-};
-
-export type GetAdMonitorsQueryParams = {
-  from: number;
-  size: number;
-  search: string;
+  indices?: string;
   sortDirection: SORT_DIRECTION;
   sortField: string;
 };
@@ -103,28 +94,18 @@ export type DetectorResultsQueryParams = {
   sortDirection: SORT_DIRECTION;
   sortField: string;
   range?: object;
-  dataStartTimeLowerLimit?: number;
-  dataStartTimeUpperLimit?: number;
 };
 
 export type AnomalyResult = {
   startTime: number;
   endTime: number;
-  plotTime: number;
-  anomalyGrade: number;
+  grade: number;
   confidence: number;
-};
-export type FeatureResult = {
-  startTime: number;
-  endTime: number;
-  plotTime: number;
-  data: number;
 };
 
 export type AnomalyResultsResponse = {
   totalAnomalies: number;
   results: AnomalyResult[];
-  featureResults: {[key:string]: FeatureResult[]}
 };
 
 export type ServerResponse<T> =

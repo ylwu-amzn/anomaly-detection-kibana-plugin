@@ -24,7 +24,6 @@ import { Detector, DetectorListItem } from '../../models/interfaces';
 import { AD_NODE_API } from '../../../utils/constants';
 import { GetDetectorsQueryParams } from '../../../server/models/types';
 import { cloneDeep } from 'lodash';
-import moment from 'moment';
 
 const CREATE_DETECTOR = 'ad/CREATE_DETECTOR';
 const GET_DETECTOR = 'ad/GET_DETECTOR';
@@ -34,6 +33,7 @@ const SEARCH_DETECTOR = 'ad/SEARCH_DETECTOR';
 const DELETE_DETECTOR = 'ad/DELETE_DETECTOR';
 const START_DETECTOR = 'ad/START_DETECTOR';
 const STOP_DETECTOR = 'ad/STOP_DETECTOR';
+const GET_DETECTOR_PROFILE = 'ad/GET_DETECTOR_PROFILE';
 
 export interface Detectors {
   requesting: boolean;
@@ -92,7 +92,7 @@ const reducer = handleActions<Detectors>(
       FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
         ...state,
         requesting: false,
-        errorMessage: action.error,
+        errorMessage: action.error.data.error,
       }),
     },
     [START_DETECTOR]: {
@@ -106,9 +106,8 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: {
-            ...state.detectors[action.detectorId],
+            ...[action.detectorId],
             enabled: true,
-            enabledTime: moment().valueOf(),
           },
         },
       }),
@@ -130,9 +129,8 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: {
-            ...state.detectors[action.detectorId],
+            ...[action.detectorId],
             enabled: false,
-            disabledTime: moment().valueOf(),
           },
         },
       }),
@@ -201,9 +199,7 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: {
-            ...state.detectors[action.detectorId],
             ...action.result.data.response,
-            lastUpdateTime: moment().valueOf(),
           },
         },
       }),
@@ -224,6 +220,29 @@ const reducer = handleActions<Detectors>(
         detectors: {
           ...state.detectors,
           [action.detectorId]: undefined,
+        },
+      }),
+      FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
+        ...state,
+        requesting: false,
+        errorMessage: action.error,
+      }),
+    },
+
+    [GET_DETECTOR_PROFILE]: {
+      REQUEST: (state: Detectors): Detectors => {
+        const newState = { ...state, requesting: true, errorMessage: '' };
+        return newState;
+      },
+      SUCCESS: (state: Detectors, action: APIResponseAction): Detectors => ({
+        ...state,
+        requesting: false,
+        detectorList: {
+          ...state.detectorList,
+          [action.detectorId]: {
+            ...state.detectorList[action.detectorId],
+            curState: action.result.data.response.state,
+          },
         },
       }),
       FAILURE: (state: Detectors, action: APIErrorAction): Detectors => ({
@@ -299,6 +318,15 @@ export const stopDetector = (detectorId: string): APIAction => ({
   request: (client: IHttpService) =>
     client.post(`..${AD_NODE_API.DETECTOR}/${detectorId}/stop`, {
       detectorId: detectorId,
+    }),
+  detectorId,
+});
+
+export const getDetectorProfile = (detectorId: string): APIAction => ({
+  type: GET_DETECTOR_PROFILE,
+  request: (client: IHttpService) =>
+    client.get(`..${AD_NODE_API.DETECTOR}/${detectorId}/_profile`, {
+      params: detectorId,
     }),
   detectorId,
 });

@@ -14,6 +14,10 @@
  */
 
 import { CatIndex, IndexAlias } from '../../../server/models/types';
+import sortBy from 'lodash/sortBy';
+import { DetectorListItem } from '../../models/interfaces';
+import { SORT_DIRECTION } from '../../../server/utils/constants';
+import { ALL_INDICES, ALL_DETECTOR_STATES, DETECTOR_STATE } from './constants';
 
 export function sanitizeSearchText(searchValue: string): string {
   if (!searchValue || searchValue == '*') {
@@ -33,47 +37,70 @@ function canAppendWildcard(searchValue: string): boolean {
   return true;
 }
 
-const isSystemIndices = (index: string) => {
+const isUserIndex = (index: string) => {
   if (!index) {
-    return index;
+    return false;
   }
   return !index.startsWith('.');
 };
 
-export function getVisibleOptions(
-  indices: CatIndex[],
-  aliases: IndexAlias[],
-  maxLen: number
-) {
+export function getVisibleOptions(indices: CatIndex[], aliases: IndexAlias[]) {
   const visibleIndices = indices
-    .filter(value => isSystemIndices(value.index))
+    .filter(value => isUserIndex(value.index))
     .map(value => ({ label: value.index, health: value.health }));
   const visibleAliases = aliases
-    .filter(value => isSystemIndices(value.alias))
+    .filter(value => isUserIndex(value.alias))
     .map(value => ({ label: value.alias }));
 
-  // only returning the top maxLen results to display
-  let truncatedIndices = [...visibleIndices];
-  let truncatedAliases = [...visibleAliases];
-  if (visibleIndices.length + visibleAliases.length > maxLen) {
-    if (visibleIndices.length >= maxLen) {
-      truncatedIndices = visibleIndices.slice(0, maxLen);
-      truncatedAliases = [];
-    } else {
-      truncatedAliases = visibleAliases.slice(
-        0,
-        maxLen - visibleIndices.length
-      );
-    }
-  }
   return [
     {
       label: 'Indices',
-      options: truncatedIndices,
+      options: visibleIndices,
     },
     {
       label: 'Aliases',
-      options: truncatedAliases,
+      options: visibleAliases,
     },
   ];
 }
+
+export const filterAndSortDetectors = (
+  detectors: DetectorListItem[],
+  search: string,
+  selectedIndices: string[],
+  selectedDetectorStates: DETECTOR_STATE[],
+  sortField: string,
+  sortDirection: string,
+  size: number,
+  page: number
+) => {
+  let filteredBySearch =
+    search == ''
+      ? detectors
+      : detectors.filter(detector => detector.name.includes(search));
+  let filteredBySearchAndState =
+    selectedDetectorStates == ALL_DETECTOR_STATES
+      ? filteredBySearch
+      : filteredBySearch.filter(detector =>
+          selectedDetectorStates.includes(detector.curState)
+        );
+  let filteredBySearchAndStateAndIndex =
+    selectedIndices == ALL_INDICES
+      ? filteredBySearchAndState
+      : filteredBySearchAndState.filter(detector =>
+          selectedIndices.includes(detector.indices[0])
+        );
+  let sorted = sortBy(filteredBySearchAndStateAndIndex, sortField);
+  if (sortDirection == SORT_DIRECTION.DESC) {
+    sorted = sorted.reverse();
+  }
+  return sorted;
+};
+
+export const getDetectorsToDisplay = (
+  detectors: DetectorListItem[],
+  page: number,
+  size: number
+) => {
+  return detectors.slice(size * page, page * size + size);
+};

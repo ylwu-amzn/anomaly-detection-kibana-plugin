@@ -153,6 +153,8 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
 
   const annotations = [timeNowAnnotation];
 
+  // Add View full screen button
+  // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/26
   return (
     <ContentPanel
       title={[

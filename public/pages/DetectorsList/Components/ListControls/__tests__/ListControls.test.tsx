@@ -16,7 +16,11 @@
 import { fireEvent, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
-import { ALL_DETECTOR_STATES, ALL_INDICES } from '../../../utils/constants';
+import {
+  ALL_DETECTOR_STATES,
+  ALL_INDICES,
+  DETECTOR_STATE,
+} from '../../../../utils/constants';
 import { ListControls } from '../ListControls';
 
 describe('<ListControls /> spec', () => {
@@ -24,8 +28,8 @@ describe('<ListControls /> spec', () => {
     activePage: 1,
     pageCount: 10,
     search: '',
-    selectedDetectorState: ALL_DETECTOR_STATES,
-    selectedIndex: ALL_INDICES,
+    selectedDetectorStates: ALL_DETECTOR_STATES,
+    selectedIndices: ALL_INDICES,
     detectorStateOptions: [],
     indexOptions: [],
     onDetectorStateChange: jest.fn(),
@@ -74,17 +78,29 @@ describe('<ListControls /> spec', () => {
     test('should display selected detector state and index options', () => {
       const updatedProps = {
         ...defaultProps,
-        selectedDetectorState: 'test_state',
-        selectedIndex: 'test_index',
+        selectedDetectorStates: [DETECTOR_STATE.DISABLED],
+        selectedIndices: ['test_index'],
       };
       const { getByText } = render(<ListControls {...updatedProps} />);
-      expect(getByText('test_state')).toBeInTheDocument();
+      expect(getByText(DETECTOR_STATE.DISABLED)).toBeInTheDocument();
       expect(getByText('test_index')).toBeInTheDocument();
     });
     test('should call onIndexSearchChange when searching in index filter', () => {
       const { getAllByTestId } = render(<ListControls {...defaultProps} />);
       userEvent.type(getAllByTestId('comboBoxSearchInput')[1], 'Testing');
       expect(defaultProps.onSearchIndexChange).toHaveBeenCalledTimes(7);
+    });
+    test('should display multiple selected detector state and index options', () => {
+      const updatedProps = {
+        ...defaultProps,
+        selectedDetectorStates: [DETECTOR_STATE.DISABLED, DETECTOR_STATE.INIT],
+        selectedIndices: ['test_index_1', 'test_index_2'],
+      };
+      const { getByText } = render(<ListControls {...updatedProps} />);
+      expect(getByText(DETECTOR_STATE.DISABLED)).toBeInTheDocument();
+      expect(getByText(DETECTOR_STATE.INIT)).toBeInTheDocument();
+      expect(getByText('test_index_1')).toBeInTheDocument();
+      expect(getByText('test_index_2')).toBeInTheDocument();
     });
   });
 });

@@ -13,41 +13,33 @@
  * permissions and limitations under the License.
  */
 
-import { EuiIcon, EuiLink, EuiToolTip } from '@elastic/eui';
+import { EuiIcon, EuiLink, EuiToolTip, EuiHealth } from '@elastic/eui';
 //@ts-ignore
 import moment from 'moment';
+import get from 'lodash/get';
 import React from 'react';
 import { Detector } from '../../../../server/models/types';
 import { PLUGIN_NAME } from '../../../utils/constants';
+import { DETECTOR_STATE, stateToColorMap } from '../../utils/constants';
 
 export const DEFAULT_EMPTY_DATA = '-';
 
 const renderTime = (time: number) => {
   const momentTime = moment(time);
-  if (time && momentTime.isValid()) return momentTime.format('MM/DD/YY h:mm a');
+  if (time && momentTime.isValid())
+    return momentTime.format('MM/DD/YYYY h:mm a');
   return DEFAULT_EMPTY_DATA;
 };
 
-const renderLastUpdateTime = (lastUpdateTime: number, detector: Detector) => {
-  const momentTime = moment(detector.lastUpdateTime);
-  if (detector.lastUpdateTime && momentTime.isValid())
-    return momentTime.format('MM/DD/YY h:mm A');
-  return DEFAULT_EMPTY_DATA;
+const renderIndices = (indices: string[]) => {
+  return get(indices, '0', DEFAULT_EMPTY_DATA);
 };
 
-const renderIndices = (indices: string[], detector: Detector) => {
-  if (
-    detector == null ||
-    detector.indices == null ||
-    detector.indices.length == 0
-  )
-    return DEFAULT_EMPTY_DATA;
-  return detector.indices[0];
-};
-
-// TODO: may not need a separate render fn since it will probably just be a value
-const renderState = (state: string, detector: Detector) => {
-  return '<state placeholder>';
+const renderState = (state: DETECTOR_STATE) => {
+  return (
+    //@ts-ignore
+    <EuiHealth color={stateToColorMap.get(state)}>{state}</EuiHealth>
+  );
 };
 
 export const staticColumn = [
@@ -70,7 +62,6 @@ export const staticColumn = [
     truncateText: true,
     textOnly: true,
     align: 'left',
-    width: '150px',
     render: (name: string, detector: Detector) => (
       <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}`}>
         {name}
@@ -96,7 +87,6 @@ export const staticColumn = [
     truncateText: true,
     textOnly: true,
     align: 'left',
-    width: '150px',
     render: renderIndices,
   },
   {
@@ -114,10 +104,10 @@ export const staticColumn = [
         </span>
       </EuiToolTip>
     ),
-    sortable: false,
+    sortable: true,
     dataType: 'string',
     align: 'left',
-    width: '100px',
+    truncateText: false,
     render: renderState,
   },
   {
@@ -135,10 +125,10 @@ export const staticColumn = [
         </span>
       </EuiToolTip>
     ),
-    sortable: false,
+    sortable: true,
     dataType: 'number',
     align: 'right',
-    width: '100px',
+    truncateText: false,
   },
   {
     field: 'lastActiveAnomaly',
@@ -155,9 +145,9 @@ export const staticColumn = [
         </span>
       </EuiToolTip>
     ),
-    sortable: false,
+    sortable: true,
     dataType: 'date',
-    width: '100px',
+    truncateText: false,
     align: 'left',
     render: renderTime,
   },
@@ -178,8 +168,8 @@ export const staticColumn = [
     ),
     sortable: true,
     dataType: 'date',
-    width: '100px',
+    truncateText: false,
     align: 'left',
-    render: renderLastUpdateTime,
+    render: renderTime,
   },
 ];

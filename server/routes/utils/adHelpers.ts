@@ -17,7 +17,6 @@ import { get, omit } from 'lodash';
 import { AnomalyResults } from 'server/models/interfaces';
 import { GetDetectorsQueryParams } from '../../models/types';
 import { mapKeysDeep, toCamel, toSnake } from '../../utils/helpers';
-import moment from 'moment';
 
 export const convertDetectorKeysToSnakeCase = (payload: any) => {
   return {
@@ -101,9 +100,11 @@ export const getResultAggregationQuery = (
         },
         aggs: {
           total_anomalies_in_24hr: {
-            filter: { range: { start_time: { gte: 'now-24h', lte: 'now' } } },
+            filter: {
+              range: { data_start_time: { gte: 'now-24h', lte: 'now' } },
+            },
           },
-          latest_anomaly_time: { max: { field: 'start_time' } },
+          latest_anomaly_time: { max: { field: 'data_start_time' } },
         },
       },
     },
@@ -111,7 +112,6 @@ export const getResultAggregationQuery = (
 };
 
 export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
-  // debugger
   let resultData: AnomalyResults = {
     anomalies: [],
     featureData: {},
@@ -123,7 +123,7 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
     resultData.featureData[feature.featureId] = [];
   });
   anomalyResults.forEach(({ featureData, ...rest }) => {
-    const {dataStartTime, dataEndTime, ...others} = rest;
+    const { dataStartTime, dataEndTime, ...others } = rest;
     resultData.anomalies.push({
       ...others,
       anomalyGrade:
@@ -137,14 +137,16 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
       startTime: rest.dataStartTime,
       endTime: rest.dataEndTime,
       plotTime:
-        rest.dataStartTime + Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
+        rest.dataStartTime +
+        Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
     });
     featureData.forEach((feature: any) => {
       resultData.featureData[feature.featureId].push({
         startTime: rest.dataStartTime,
         endTime: rest.dataEndTime,
         plotTime:
-          rest.dataStartTime + Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
+          rest.dataStartTime +
+          Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
         data: feature.data,
       });
     });

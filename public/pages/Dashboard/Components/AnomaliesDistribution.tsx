@@ -53,6 +53,7 @@ export const AnomaliesDistributionChart = (
   // TODO: try to find a better way of using redux,
   // which can leverage redux, and also get rid of issue with multiple redux on same page,
   // so that we don't need to manualy update loading status
+  // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/23
   const [anomalyResultsLoading, setAnomalyResultsLoading] = useState(true);
   const [finalDetectors, setFinalDetectors] = useState(
     [] as DetectorListItem[]
@@ -231,6 +232,7 @@ export const AnomaliesDistributionChart = (
                   // TODO: Given only 1 detector exists, the inside Index circle will have issue in following scenarios:
                   // 1: if Linked Label is configured for identifying index, label of Index circle will be invisible;
                   // 2: if Fill Label is configured for identifying index, label of it will be overlapped with outer Detector circle
+                  // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/24
                 }}
               />
             </Chart>
