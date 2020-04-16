@@ -42,7 +42,11 @@ import {
   getIndices,
   getPrioritizedIndices,
 } from '../../../redux/reducers/elasticsearch';
-import { APP_PATH, PLUGIN_NAME } from '../../../utils/constants';
+import {
+  APP_PATH,
+  PLUGIN_NAME,
+  DETECTOR_STATE,
+} from '../../../utils/constants';
 import { getVisibleOptions, sanitizeSearchText } from '../../utils/helpers';
 import { EmptyDetectorMessage } from '../Components/EmptyMessage/EmptyMessage';
 import { ListControls } from '../Components/ListControls/ListControls';
@@ -52,7 +56,6 @@ import {
   GET_ALL_DETECTORS_QUERY_PARAMS,
   ALL_DETECTOR_STATES,
   ALL_INDICES,
-  DETECTOR_STATE,
 } from '../../utils/constants';
 import { getURLQueryParams } from '../utils/helpers';
 import {
@@ -69,7 +72,7 @@ export interface ListRouterParams {
   sortDirection: SORT_DIRECTION;
   sortField: string;
 }
-interface ListProps extends RouteComponentProps<ListRouterParams> {}
+interface ListProps extends RouteComponentProps<ListRouterParams> { }
 interface ListState {
   page: number;
   queryParams: GetDetectorsQueryParams;
@@ -308,11 +311,11 @@ export const DetectorList = (props: ListProps) => {
               isLoading ? (
                 'Loading detectors...'
               ) : (
-                <EmptyDetectorMessage
-                  isFilterApplied={isFilterApplied}
-                  onResetFilters={handleResetFilter}
-                />
-              )
+                  <EmptyDetectorMessage
+                    isFilterApplied={isFilterApplied}
+                    onResetFilters={handleResetFilter}
+                  />
+                )
             }
           />
         </ContentPanel>
