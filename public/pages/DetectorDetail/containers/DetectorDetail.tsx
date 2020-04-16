@@ -45,7 +45,8 @@ import moment from 'moment';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
 import { MonitorCallout } from '../components/ConfirmModal/MonitorCallout';
-import { DetectorConfig } from '../../DetectorView/containers/DetectorConfig';
+// import { DetectorConfig } from '../../DetectorView/containers/DetectorConfig';
+import { DetectorConfig } from '../../DetectorConfig/containers/DetectorConfig';
 
 interface DetectorRouterProps {
   detectorId?: string;
