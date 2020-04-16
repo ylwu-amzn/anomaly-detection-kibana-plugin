@@ -17,7 +17,7 @@ import { Detector } from '../../../models/interfaces';
 import React from 'react';
 import { MetaData } from './MetaData';
 import { Features } from './Features';
-import { EuiSpacer } from '@elastic/eui';
+import { EuiSpacer, EuiPage, EuiPageBody } from '@elastic/eui';
 
 interface DetectorConfigProps {
   detectorId: string;
@@ -37,16 +37,14 @@ const stickyCss = { ...stickyStyles };
 export const DetectorConfig = (props: DetectorConfigProps) => {
   return (
     <React.Fragment>
-      <div
-        style={{
-          padding: '30px 25px',
-          ...stickyCss,
-        }}
-      >
-        <MetaData {...props} />
-        <EuiSpacer />
-        <Features {...props} />
-      </div>
+      <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
+        <EuiPageBody>
+          <EuiSpacer size="l" />
+            <MetaData {...props} />
+            <EuiSpacer />
+            <Features {...props} />
+        </EuiPageBody>
+      </EuiPage>
     </React.Fragment>
   );
 };

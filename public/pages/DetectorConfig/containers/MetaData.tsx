@@ -23,7 +23,6 @@ import {
   EuiLink,
   EuiButton,
   EuiFormRowProps,
-  EuiStat,
 } from '@elastic/eui';
 import { PLUGIN_NAME } from '../../../utils/constants';
 import {
@@ -126,7 +125,7 @@ export class FilterDisplay extends Component<
   public render() {
     let filter = this.props.filterInputs.uiMetadata;
 
-    if (filter.filterType == undefined) {
+    if (filter == undefined || filter.filterType == undefined) {
       return (
         <EuiText>
           <p className="enabled">-</p>

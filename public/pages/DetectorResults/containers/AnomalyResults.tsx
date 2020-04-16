@@ -57,7 +57,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
   const monitor = get(monitors, `${detectorId}.0`);
   return (
     <Fragment>
-      <EuiPage>
+      <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
         <EuiPageBody>
           <EuiSpacer size="l" />
           {detector && isEmpty(detector.featureAttributes) ? (

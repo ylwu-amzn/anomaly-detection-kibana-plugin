@@ -35,6 +35,7 @@ import React, { Component } from 'react';
 import { displayText } from '../../createDetector/components/DataFilters/utils/helpers';
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { RouteComponentProps } from 'react-router';
+import { DetectorControls } from '../../DetectorDetail/components/DetectorControls';
 
 interface MetaDataProps extends RouteComponentProps {
   detectorId: string;

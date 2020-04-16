@@ -104,7 +104,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
       (feature: FeatureAttributes, index: number) => ({
         name: feature.featureName,
         definition: index,
-        state: feature.featureEnabled,
+        state: feature.featureEnabled ? 'Enabled' : 'Disabled',
       })
     );
 
@@ -211,7 +211,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
         // subTitleClassName="fieldsSubtitle"
         actions={[
           <EuiButton
-            href={`${PLUGIN_NAME}#/detectors/${this.props.detectorId}/features/definitions`}
+            href={`${PLUGIN_NAME}#/detectors/${this.props.detectorId}/features`}
           >
             Edit
           </EuiButton>,
@@ -238,7 +238,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
             actions={[
               <EuiButton
                 data-test-subj="createButton"
-                onClick={handleOnCreate}
+                href={`${PLUGIN_NAME}#/detectors/${this.props.detectorId}/features`}
                 fill
               >
                 Add feature
