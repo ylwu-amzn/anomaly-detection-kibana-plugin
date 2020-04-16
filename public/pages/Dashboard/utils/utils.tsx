@@ -475,6 +475,7 @@ export const buildGetAnomalyResultQueryByRange = (
   };
 };
 
+//TODO: clean unused code like server/routes/ad.ts#getAnomalyResults.range
 export const getLatestAnomalyResultsForDetectorsByTimeRange = async (
   func: (request: any) => APIAction,
   selectedDetectors: DetectorListItem[],

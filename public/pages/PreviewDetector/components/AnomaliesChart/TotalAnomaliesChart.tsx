@@ -31,7 +31,6 @@ import {
   niceTimeFormatter,
   Settings,
   Position,
-  timeFormatter,
   LineAnnotation,
   AnnotationDomainTypes,
   RectAnnotation,
@@ -52,6 +51,7 @@ import { searchES } from '../../../../redux/reducers/elasticsearch';
 import { SetUpAlertsButton } from '../../../DetectorResults/components/SetupAlert/SetupAlertsButton';
 import { darkModeEnabled } from '../../../../utils/kibanaUtils';
 import { AlertsStat, AnomalyStatWithTooltip } from './AnomalyStat';
+import { dateFormatter } from '../../../utils/helpers';
 
 interface TotalAnomaliesChartProps {
   onDateRangeChange(
@@ -147,8 +147,6 @@ export const TotalAnomaliesChart = React.memo(
         };
       });
     };
-
-    const dateFormatter = timeFormatter('MM/dd/yy hh:mm:ss a');
 
     const createAlertAnnotations = (alerts: MonitorAlert[]): any[] => {
       return alerts.map((alert: MonitorAlert) => ({

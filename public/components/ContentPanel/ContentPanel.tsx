@@ -14,8 +14,8 @@
  */
 
 import React from 'react';
-//@ts-ignore
 import {
+  //@ts-ignore
   EuiTitleSize,
   EuiFlexGroup,
   EuiFlexItem,
@@ -38,11 +38,13 @@ type ContentPanelProps = {
   titleContainerStyles?: React.CSSProperties;
   actions?: React.ReactNode | React.ReactNode[];
   children: React.ReactNode | React.ReactNode[];
+  contentPanelClassName?: string;
 };
 
 const ContentPanel = (props: ContentPanelProps) => (
   <EuiPanel
     style={{ paddingLeft: '0px', paddingRight: '0px', ...props.panelStyles }}
+    className={props.contentPanelClassName}
   >
     <EuiFlexGroup
       style={{ padding: '0px 10px', ...props.titleContainerStyles }}
@@ -52,7 +54,7 @@ const ContentPanel = (props: ContentPanelProps) => (
       <EuiFlexItem>
         {typeof props.title === 'string' ? (
           <EuiTitle
-            size={props.titleSize || 'l'}
+            size={props.titleSize || 's'}
             className={props.titleClassName || 'content-panel-title'}
           >
             <h3>{props.title}</h3>

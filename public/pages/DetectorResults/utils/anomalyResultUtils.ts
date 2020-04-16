@@ -13,7 +13,10 @@
  * permissions and limitations under the License.
  */
 
-import { SORT_DIRECTION } from '../../../../server/utils/constants';
+import {
+  SORT_DIRECTION,
+  AD_DOC_FIELDS,
+} from '../../../../server/utils/constants';
 import { getDetectorResults } from '../../../redux/reducers/anomalyResults';
 import { getDetectorLiveResults } from '../../../redux/reducers/liveAnomalyResults';
 import moment, { Moment } from 'moment';
@@ -27,36 +30,43 @@ export const getLiveAnomalyResults = (
   detectionInterval: number,
   intervals: number
 ) => {
-  const dataStartTimeLowerLimit = moment()
+  const startTime = moment()
     .subtract(intervals * detectionInterval, 'minutes')
     .valueOf();
   const updatedParams = {
     from: 0,
     size: intervals,
     sortDirection: SORT_DIRECTION.DESC,
-    sortField: 'startTime',
-    dataStartTimeLowerLimit: dataStartTimeLowerLimit,
+    sortField: AD_DOC_FIELDS.DATA_START_TIME,
+    dateRangeFilter: {
+      startTime: startTime.valueOf(),
+      fieldName: AD_DOC_FIELDS.DATA_START_TIME,
+    },
   };
   dispatch(getDetectorLiveResults(detectorId, updatedParams));
 };
 
-export const getAnomalyResults = (
-  dispatch: Dispatch<any>,
-  days: number,
-  detectorId: string
-) => {
-  const dataStartTimeLowerLimit = moment()
-    .subtract(days, 'days')
-    .valueOf();
-  const updatedParams = {
-    from: 0,
-    size: 10000,
-    sortDirection: SORT_DIRECTION.DESC,
-    sortField: 'startTime',
-    dataStartTimeLowerLimit: dataStartTimeLowerLimit,
-  };
-  dispatch(getDetectorResults(detectorId, updatedParams));
-};
+// export const getAnomalyResults = (
+//   dispatch: Dispatch<any>,
+//   days: number,
+//   detectorId: string
+// ) => {
+//   const dataStartTimeLowerLimit = moment()
+//     .subtract(days, 'days')
+//     .valueOf();
+//   const updatedParams = {
+//     from: 0,
+//     size: 10000,
+//     sortDirection: SORT_DIRECTION.DESC,
+//     // sortField: 'startTime',
+//     // dataStartTimeLowerLimit: dataStartTimeLowerLimit,
+//     dateRangeFilter: {
+//       startTime: dataStartTimeLowerLimit.valueOf(),
+//       fieldName: AD_DOC_FIELDS.DATA_START_TIME,
+//     },
+//   };
+//   dispatch(getDetectorResults(detectorId, updatedParams));
+// };
 
 export const getAnomalyResultsWithDateRange = (
   dispatch: Dispatch<any>,
@@ -68,9 +78,12 @@ export const getAnomalyResultsWithDateRange = (
     from: 0,
     size: 10000,
     sortDirection: SORT_DIRECTION.DESC,
-    sortField: 'startTime',
-    dataStartTimeLowerLimit: startTime.valueOf(),
-    dataStartTimeUpperLimit: endTime.valueOf(),
+    sortField: AD_DOC_FIELDS.DATA_START_TIME,
+    dateRangeFilter: {
+      startTime: startTime.valueOf(),
+      endTime: endTime.valueOf(),
+      fieldName: AD_DOC_FIELDS.DATA_START_TIME,
+    },
   };
   dispatch(getDetectorResults(detectorId, updatedParams));
 };

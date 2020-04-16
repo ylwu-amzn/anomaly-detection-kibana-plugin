@@ -11,13 +11,19 @@ exports[`<ContentPanel /> spec renders the component 1`] = `
   >
     <div
       class="euiFlexItem"
-      style="max-width: 70%;"
     >
       <h3
-        class="euiTitle euiTitle--large"
+        class="euiTitle euiTitle--small content-panel-title"
       >
         Testing
       </h3>
+      <div
+        class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--directionRow euiFlexGroup--responsive"
+      >
+        <div
+          class="euiFlexItem"
+        />
+      </div>
     </div>
     <div
       class="euiFlexItem euiFlexItem--flexGrowZero"
@@ -26,14 +32,14 @@ exports[`<ContentPanel /> spec renders the component 1`] = `
         class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
       >
         <div
-          class="euiFlexItem euiFlexItem--flexGrowZero"
+          class="euiFlexItem"
         >
           <div>
             Hello
           </div>
         </div>
         <div
-          class="euiFlexItem euiFlexItem--flexGrowZero"
+          class="euiFlexItem"
         >
           <div>
             World
@@ -42,10 +48,6 @@ exports[`<ContentPanel /> spec renders the component 1`] = `
       </div>
     </div>
   </div>
-  <div
-    class="euiText euiText--medium"
-    style="padding: 0px 10px;"
-  />
   <hr
     class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
   />
