@@ -17,7 +17,6 @@ import { ADApis, DefaultHeaders } from '../models/interfaces';
 
 export const AD_API_ROUTE_PREFIX = '/_opendistro/_anomaly_detection';
 export const ALERTING_API_ROUTE_PREFIX = '/_opendistro/_alerting';
-// export const ALERTING_SEARCH_API = '/_opendistro/_alerting/monitors/_search';
 
 export const API: ADApis = {
   DETECTOR_BASE: `${AD_API_ROUTE_PREFIX}/detectors`,
@@ -30,6 +29,10 @@ export const DEFAULT_HEADERS: DefaultHeaders = {
   'User-Agent': 'Kibana',
 };
 
+export const SEC_IN_MILLI_SECS = 1000;
+
+export const MIN_IN_MILLI_SECS = 60 * SEC_IN_MILLI_SECS;
+
 export enum CLUSTER {
   ADMIN = 'admin',
   AES_AD = 'aes_ad',
@@ -41,10 +44,6 @@ export enum SORT_DIRECTION {
   DESC = 'desc',
 }
 
-export const SEC_IN_MILLI_SECS = 1000;
-
-export const MIN_IN_MILLI_SECS = 60 * SEC_IN_MILLI_SECS;
-
 export enum AD_DOC_FIELDS {
   DATA_START_TIME = 'data_start_time',
   DATA_END_TIME = 'data_end_time',
@@ -53,4 +52,5 @@ export enum AD_DOC_FIELDS {
   PLOT_TIME = 'plot_time',
   ANOMALY_GRADE = 'anomaly_grade',
   ERROR = 'error',
+  INDICES = 'indices',
 }

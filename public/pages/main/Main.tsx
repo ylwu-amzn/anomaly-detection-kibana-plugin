@@ -25,6 +25,7 @@ import { EditFeatures } from '../PreviewDetector/containers/EditFeatures';
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
 import { useSelector } from 'react-redux';
 import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
+import { Dashboard } from '../Dashboard/Container/Dashboard';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',
@@ -74,7 +75,7 @@ export function Main(props: MainProps) {
         <Switch>
           <Route
             path="/dashboard"
-            render={(props: RouteComponentProps) => <DashboardOverview />}
+            render={(props: RouteComponentProps) => <Dashboard />}
           />
           <Route
             exact

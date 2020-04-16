@@ -23,11 +23,6 @@ import {
   EuiLoadingSpinner,
 } from '@elastic/eui';
 import moment, { Moment } from 'moment';
-import {
-  getSpecId,
-  CustomSeriesColorsMap,
-  DataSeriesColorsValues,
-} from '@elastic/charts';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from 'public/redux/reducers';
 import { AnomalyData, Detector, Monitor } from '../../../models/interfaces';
@@ -70,20 +65,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       props.detectorId
     );
   }, [dateRange]);
-
-  const lineCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const lineDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('Confidence'),
-  };
-  lineCustomSeriesColors.set(lineDataSeriesColorValues, '#017F75');
-
-  const barCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const barDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('Anomaly grade'),
-  };
-  barCustomSeriesColors.set(barDataSeriesColorValues, '#D13212');
 
   const anomalyResults = useSelector((state: AppState) => state.anomalyResults);
 

@@ -336,6 +336,7 @@ const getDetectors = async (
         [detector._id]: {
           name: get(detector, '_source.name', ''),
           id: detector._id,
+          ...convertDetectorKeysToCamelCase(get(detector, '_source', {})),
           description: get(detector, '_source.description', ''),
           indices: get(detector, '_source.indices', []),
           lastUpdateTime: get(detector, '_source.last_update_time', 0),

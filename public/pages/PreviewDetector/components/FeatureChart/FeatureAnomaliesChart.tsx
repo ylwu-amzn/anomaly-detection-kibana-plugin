@@ -17,13 +17,8 @@ import {
   Chart,
   Axis,
   LineSeries,
-  getSpecId,
-  getAxisId,
   RectAnnotation,
-  getAnnotationId,
   niceTimeFormatter,
-  CustomSeriesColorsMap,
-  DataSeriesColorsValues,
   Position,
   Settings,
 } from '@elastic/charts';
@@ -72,22 +67,6 @@ export const FeatureChart = (props: FeatureChartProps) => {
     props.endDateTime.valueOf(),
   ]);
   const showLoader = useDelayedLoader(props.isLoading);
-  const lineCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const lineDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('featureData'),
-  };
-  lineCustomSeriesColors.set(
-    lineDataSeriesColorValues,
-    props.feature.featureEnabled ? '#16191F' : getDisabledLineColor()
-  );
-
-  const barCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const barDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('anomlay'),
-  };
-  barCustomSeriesColors.set(barDataSeriesColorValues, '#E5830E');
 
   const featureDescription = () => (
     <EuiText size="s">
@@ -133,15 +112,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
           ? props.feature.featureName
           : `${props.feature.featureName} ( disabled )`
       }
-      titleSize="xs"
+      // titleSize="xs"
       panelStyles={props.isEdit ? { border: '5px solid #96C8DA' } : {}}
       bodyStyles={
         !props.feature.featureEnabled
           ? { backgroundColor: getDisabledChartBackground() }
           : {}
       }
-      description={featureDescription()}
-      titleClassName="preview-title"
+      subTitle={featureDescription()}
     >
       {props.featureData.length > 0 ? (
         <div
@@ -155,13 +133,14 @@ export const FeatureChart = (props: FeatureChartProps) => {
             <Settings
               showLegend
               legendPosition={Position.Right}
-              showLegendDisplayValue={false}
+              // showLegendDisplayValue={false}
               theme={[customTheme]}
             />
             {props.feature.featureEnabled ? (
               <RectAnnotation
                 dataValues={props.annotations || []}
-                annotationId={getAnnotationId('react')}
+                id="annotations"
+                // annotationId={getAnnotationId('react')}
                 style={{
                   stroke: darkModeEnabled() ? 'red' : '#D5DBDB',
                   strokeWidth: 1,
@@ -171,24 +150,20 @@ export const FeatureChart = (props: FeatureChartProps) => {
               />
             ) : null}
             <Axis
-              id={getAxisId('left')}
+              id="left"
               title={props.featureDataSeriesName}
               position="left"
               showGridLines
             />
-            <Axis
-              id={getAxisId('bottom')}
-              position="bottom"
-              tickFormat={timeFormatter}
-            />
+            <Axis id="bottom" position="bottom" tickFormat={timeFormatter} />
             <LineSeries
-              id={getSpecId('featureData')}
+              id="featureData"
               name={props.featureDataSeriesName}
               xScaleType="time"
               yScaleType="linear"
               xAccessor={'plotTime'}
               yAccessors={['data']}
-              customSeriesColors={lineCustomSeriesColors}
+              color={['#16191F']}
               data={featureData}
             />
           </Chart>
@@ -207,7 +182,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
           style={{ maxWidth: '45em' }}
           body={
             <EuiText>
-              <p>{`There is no data to display for feature ${props.title}`}</p>
+              <p>{`There is no data to display for feature ${props.feature.featureName}`}</p>
             </EuiText>
           }
         />

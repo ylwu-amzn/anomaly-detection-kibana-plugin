@@ -20,6 +20,7 @@ import {
   mapKeys,
   mapValues,
   snakeCase,
+  get,
 } from 'lodash';
 
 import { AD_DOC_FIELDS, MIN_IN_MILLI_SECS } from './constants';

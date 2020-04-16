@@ -24,14 +24,10 @@ import {
 import moment from 'moment';
 import {
   Chart,
-  getAxisId,
   Axis,
-  getSpecId,
   BarSeries,
   niceTimeFormatter,
   Settings,
-  CustomSeriesColorsMap,
-  DataSeriesColorsValues,
   LineAnnotation,
   AnnotationDomainTypes,
   LineAnnotationDatum,
@@ -109,18 +105,6 @@ export const AnomalyResultsLiveChart = (
       };
     }
   }, []);
-  const lineCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const lineDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('Confidence'),
-  };
-  lineCustomSeriesColors.set(lineDataSeriesColorValues, '#017F75');
-  const barCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const barDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('Anomaly grade'),
-  };
-  barCustomSeriesColors.set(barDataSeriesColorValues, '#D13212');
 
   const showLoader = useDelayedLoader(isLoading);
 
@@ -164,8 +148,7 @@ export const AnomalyResultsLiveChart = (
   return (
     <React.Fragment>
       <ContentPanel
-        title="Live anomalies"
-        customTitle={
+        title={
           <h3>
             Live anomalies{' '}
             <EuiBadge color={props.detector.enabled ? '#DB1374' : '#DDD'}>
@@ -173,11 +156,9 @@ export const AnomalyResultsLiveChart = (
             </EuiBadge>
           </h3>
         }
-        titleSize="xs"
-        titleClassName="preview-title"
-        description={props.detector.enabled ? liveAnomaliesDescription() : null}
+        subTitle={props.detector.enabled ? liveAnomaliesDescription() : null}
         actions={[fullScreenButton()]}
-        className={isFullScreen ? 'full-screen' : undefined}
+        contentPanelClassName={isFullScreen ? 'full-screen' : undefined}
       >
         {props.detector.enabled ? (
           <EuiFlexGroup
@@ -199,26 +180,26 @@ export const AnomalyResultsLiveChart = (
                   marker={'now'}
                 />
                 <Axis
-                  id={getAxisId('bottom')}
+                  id="bottom"
                   position="bottom"
                   tickFormat={timeFormatter}
                 />
                 <Axis
-                  id={getAxisId('left')}
+                  id="left"
                   title={'Anomaly grade'}
                   position="left"
                   domain={{ min: 0, max: 1 }}
                   // showGridLines
                 />
                 <BarSeries
-                  id={getSpecId('Anomaly grade')}
+                  id="Anomaly grade"
                   name="Anomaly grade"
                   data={anomalies}
                   xScaleType="time"
                   yScaleType="linear"
                   xAccessor={'plotTime'}
                   yAccessors={['anomalyGrade']}
-                  customSeriesColors={barCustomSeriesColors}
+                  color={['#D13212']}
                 />
               </Chart>
             </EuiFlexItem>

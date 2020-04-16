@@ -20,30 +20,21 @@ import {
   EuiFlexGroup,
   EuiSelect,
   EuiIcon,
-  EuiLink,
   EuiLoadingChart,
-  EuiEmptyPrompt,
-  EuiText,
-  EuiButton,
   EuiStat,
 } from '@elastic/eui';
 import moment, { Moment } from 'moment';
 import {
   Chart,
-  getAxisId,
   Axis,
-  getSpecId,
   LineSeries,
   niceTimeFormatter,
   Settings,
   Position,
-  CustomSeriesColorsMap,
-  DataSeriesColorsValues,
   timeFormatter,
   LineAnnotation,
   AnnotationDomainTypes,
   RectAnnotation,
-  getAnnotationId,
 } from '@elastic/charts';
 import { useDelayedLoader } from '../../../../hooks/useDelayedLoader';
 import {
@@ -59,8 +50,6 @@ import { AlertsFlyout } from '../../../DetectorResults/components/AlertsFlyout/A
 import { useDispatch } from 'react-redux';
 import { searchES } from '../../../../redux/reducers/elasticsearch';
 import { SetUpAlertsButton } from '../../../DetectorResults/components/SetupAlert/SetupAlertsButton';
-import { NoFeaturePrompt } from '../FeatureChart/NoFeaturePrompt';
-import { detectorToFormik } from 'public/pages/createDetector/containers/utils/detectorToFormik';
 import { darkModeEnabled } from '../../../../utils/kibanaUtils';
 import { AlertsStat, AnomalyStatWithTooltip } from './AnomalyStat';
 
@@ -259,20 +248,6 @@ export const TotalAnomaliesChart = React.memo(
       setAnomalySummary(summary);
     }, [props.anomalies]);
 
-    const confidenceCustomSeriesColors: CustomSeriesColorsMap = new Map();
-    const lineDataSeriesColorValues: DataSeriesColorsValues = {
-      colorValues: [],
-      specId: getSpecId('confidence'),
-    };
-    confidenceCustomSeriesColors.set(lineDataSeriesColorValues, '#017F75');
-
-    const anomalyGradeCustomSeriesColors: CustomSeriesColorsMap = new Map();
-    const barDataSeriesColorValues: DataSeriesColorsValues = {
-      colorValues: [],
-      specId: getSpecId('anomalyGrade'),
-    };
-    anomalyGradeCustomSeriesColors.set(barDataSeriesColorValues, '#D13212');
-
     const liveChartTimeFormatter = niceTimeFormatter([
       props.startDateTime.valueOf(),
       props.endDateTime.valueOf(),
@@ -321,8 +296,8 @@ export const TotalAnomaliesChart = React.memo(
         monitor={props.monitor}
         detectorId={props.detectorId}
         detectorName={props.detectorName}
-        detectorInterval={props.detectorInterval}
-        unit={props.unit}
+        detectorInterval={get(props, 'detectorInterval', 1)}
+        unit={get(props, 'unit', 'Minutes')}
       />
     );
 
@@ -391,8 +366,6 @@ export const TotalAnomaliesChart = React.memo(
       <React.Fragment>
         <ContentPanel
           title={props.title}
-          titleSize="xs"
-          titleClassName="preview-title"
           actions={
             props.showAlerts
               ? [datePicker(), setUpAlertsButton()]
@@ -489,11 +462,12 @@ export const TotalAnomaliesChart = React.memo(
                       <Settings
                         showLegend
                         legendPosition={Position.Right}
-                        showLegendDisplayValue={false}
+                        // showLegendDisplayValue={false}
                       />
                       <RectAnnotation
                         dataValues={disabledHistoryAnnotations()}
-                        annotationId={getAnnotationId('react')}
+                        id="anomalyAnnotations"
+                        // annotationId={getAnnotationId('react')}
                         style={{
                           stroke: darkModeEnabled() ? 'red' : '#D5DBDB',
                           strokeWidth: 1,
@@ -510,36 +484,36 @@ export const TotalAnomaliesChart = React.memo(
                         />
                       ) : null}
                       <Axis
-                        id={getAxisId('bottom')}
+                        id="bottom"
                         position="bottom"
                         tickFormat={liveChartTimeFormatter}
                       />
                       <Axis
-                        id={getAxisId('left')}
+                        id="left"
                         title={'Anomaly grade / confidence'}
                         position="left"
                         domain={{ min: 0, max: 1 }}
                         showGridLines
                       />
                       <LineSeries
-                        id={getSpecId('confidence')}
+                        id="confidence"
                         name={props.confidenceSeriesName}
                         xScaleType="time"
                         yScaleType="linear"
                         xAccessor={'plotTime'}
                         yAccessors={['confidence']}
-                        customSeriesColors={confidenceCustomSeriesColors}
+                        color={['#017F75']}
                         data={anomalies}
                       />
                       <LineSeries
-                        id={getSpecId('anomalyGrade')}
+                        id="anomalyGrade"
                         name={props.anomalyGradeSeriesName}
                         data={anomalies}
                         xScaleType="time"
                         yScaleType="linear"
                         xAccessor={'plotTime'}
                         yAccessors={['anomalyGrade']}
-                        customSeriesColors={anomalyGradeCustomSeriesColors}
+                        color={['#D13212']}
                       />
                     </Chart>
                   )}
@@ -555,8 +529,8 @@ export const TotalAnomaliesChart = React.memo(
             detectorId={props.detectorId}
             // @ts-ignore
             detectorName={props.detectorName}
-            detectorInterval={props.detectorInterval}
-            unit={props.unit}
+            detectorInterval={get(props, 'detectorInterval', 1)}
+            unit={get(props, 'unit', 'Minutes')}
             monitor={props.monitor}
             onClose={() => setShowAlertsFlyout(false)}
           />

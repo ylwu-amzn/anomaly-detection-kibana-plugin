@@ -13,17 +13,22 @@
  * permissions and limitations under the License.
  */
 import { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { getDetector } from '../../../redux/reducers/ad';
-import { Detector } from '../../../models/interfaces';
+import { useDispatch, useSelector } from 'react-redux';
+import { DetectorListItem } from '../../../models/interfaces';
 import {
-  SORT_DIRECTION,
   AD_DOC_FIELDS,
   MIN_IN_MILLI_SECS,
 } from '../../../../server/utils/constants';
+import {
+  EuiBadge,
+  EuiFlexGroup,
+  EuiFlexItem,
+  EuiLoadingChart,
+  //@ts-ignore
+  EuiStat,
+} from '@elastic/eui';
 import { searchES } from '../../../redux/reducers/elasticsearch';
-import { get } from 'lodash';
-import { getDetectorResults } from '../../../redux/reducers/anomalyResults';
+import { get, isEmpty } from 'lodash';
 import moment, { Moment } from 'moment';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
@@ -31,8 +36,6 @@ import {
   Axis,
   Settings,
   Position,
-  getAxisId,
-  getSpecId,
   BarSeries,
   niceTimeFormatter,
   ScaleType,
@@ -40,16 +43,19 @@ import {
   AnnotationDomainTypes,
   LineAnnotationDatum,
 } from '@elastic/charts';
+import { EuiText, EuiTitle } from '@elastic/eui';
 import React from 'react';
+import { TIME_NOW_LINE_STYLE } from '../utils/constants';
 import {
-  visualizeDetectorAnomalyResult,
+  visualizeAnomalyResultForXYChart,
   getFloorPlotTime,
-} from '../../../../server/utils/helpers';
-import { ANOMALY_RESULT_INDEX } from '../../../utils/constants';
+  getLatestAnomalyResultsForDetectorsByTimeRange,
+} from '../utils/utils';
+import { AppState } from '../../../redux/reducers';
 
 export interface AnomaliesLiveChartProps {
   allDetectorsSelected: boolean;
-  selectedDetectors: Detector[];
+  selectedDetectors: DetectorListItem[];
 }
 
 interface LiveTimeRangeState {
@@ -57,120 +63,39 @@ interface LiveTimeRangeState {
   endDateTime: Moment;
 }
 
+const MAX_LIVE_DETECTORS = 10;
+
 export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const dispatch = useDispatch();
-
-  const getRecentAnomalousDetectorsQuery = {
-    index: ANOMALY_RESULT_INDEX,
-    size: 10,
-    query: {
-      bool: {
-        must: [
-          {
-            exists: {
-              field: AD_DOC_FIELDS.ANOMALY_GRADE,
-            },
-          },
-          {
-            bool: {
-              must_not: [
-                {
-                  exists: {
-                    field: AD_DOC_FIELDS.ERROR,
-                  },
-                },
-              ],
-            },
-          },
-          {
-            range: {
-              [AD_DOC_FIELDS.ANOMALY_GRADE]: {
-                gt: 0.0,
-              },
-            },
-          },
-        ],
-      },
-    },
-    sort: {
-      [AD_DOC_FIELDS.DATA_START_TIME]: SORT_DIRECTION.DESC,
-    },
-    collapse: {
-      field: AD_DOC_FIELDS.DETECTOR_ID,
-    },
-  };
-
-  const getRecentAnomalyResultQuery = {
-    range: {
-      [AD_DOC_FIELDS.DATA_START_TIME]: {
-        gte: 'now-30m',
-      },
-    },
-    size: 30,
-    sortField: AD_DOC_FIELDS.DATA_START_TIME,
-    from: 0,
-    sortDirection: SORT_DIRECTION.DESC,
-  };
-
-  const timeNowLineStyle = {
-    line: {
-      strokeWidth: 1,
-      stroke: '#3F3F3F',
-      dash: [1, 2],
-      opacity: 0.8,
-    },
-  };
 
   const [liveTimeRange, setLiveTimeRange] = useState<LiveTimeRangeState>({
     startDateTime: moment().subtract(30, 'minutes'),
     endDateTime: moment(),
   });
 
-  const [timer, setTimer] = useState();
+  const elasticsearchState = useSelector(
+    (state: AppState) => state.elasticsearch
+  );
+
+  const [lastAnomalyResult, setLastAnomalyResult] = useState();
 
   const [liveAnomalyData, setLiveAnomalyData] = useState([] as object[]);
 
-  const getLiveDetectors = async () => {
-    if (!props.allDetectorsSelected) {
-      return props.selectedDetectors;
-    }
-    const detectorArray = [] as Detector[];
-    const searchResponse = await dispatch(
-      searchES(getRecentAnomalousDetectorsQuery)
-    );
-    const searchResults = searchResponse.data.response;
-    const numDetectors = get(searchResults, 'hits.total.value', 0);
-
-    if (numDetectors < 1) {
-      return detectorArray;
-    }
-    const liveDetectorIds: string[] = get(searchResults, 'hits.hits', []).map(
-      (result: any) => result._source.detector_id
+  const getLiveAnomalyResults = async () => {
+    const finalLiveAnomalyResult = await getLatestAnomalyResultsForDetectorsByTimeRange(
+      searchES,
+      props.selectedDetectors,
+      '30m',
+      MAX_LIVE_DETECTORS,
+      dispatch
     );
 
-    for (let detectorId of liveDetectorIds) {
-      const getDetectorResp = await dispatch(getDetector(detectorId));
-      detectorArray.push(getDetectorResp.data.response);
+    setLiveAnomalyData(finalLiveAnomalyResult);
+    if (!isEmpty(finalLiveAnomalyResult)) {
+      setLastAnomalyResult(finalLiveAnomalyResult[0]);
+    } else {
+      setLastAnomalyResult(undefined);
     }
-
-    return detectorArray;
-  };
-
-  const getLiveAnomalyData = async (currentDetectors: Detector[]) => {
-    // clear previous result
-    const currentLiveAnomalyData = [] as object[];
-    for (let detector of currentDetectors) {
-      const resp = await dispatch(
-        getDetectorResults(detector.id, getRecentAnomalyResultQuery)
-      );
-      currentLiveAnomalyData.push({
-        detector: detector,
-        results: resp.data.response.results,
-      });
-    }
-
-    setLiveAnomalyData(currentLiveAnomalyData);
-
     setLiveTimeRange({
       startDateTime: moment().subtract(30, 'minutes'),
       endDateTime: moment(),
@@ -178,31 +103,21 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   };
 
   useEffect(() => {
-    async function initializeAnomaliesChart() {
-      const liveDetectors = await getLiveDetectors();
-
-      getLiveAnomalyData(liveDetectors);
-
-      setTimer(
-        setInterval(getLiveAnomalyData, MIN_IN_MILLI_SECS, liveDetectors)
-      );
-    }
-    initializeAnomaliesChart();
+    getLiveAnomalyResults();
+    const id = setInterval(getLiveAnomalyResults, MIN_IN_MILLI_SECS);
     return () => {
-      clearInterval(timer);
+      clearInterval(id);
     };
-  }, []);
+  }, [props.selectedDetectors]);
 
   const timeFormatter = niceTimeFormatter([
     liveTimeRange.startDateTime.valueOf(),
     liveTimeRange.endDateTime.valueOf(),
   ]);
 
-  const liveVisualizedAnomalies = liveAnomalyData.flatMap(
-    detectorAnomalyResult =>
-      visualizeDetectorAnomalyResult(detectorAnomalyResult)
+  const visualizedAnomalies = liveAnomalyData.flatMap(anomalyResult =>
+    visualizeAnomalyResultForXYChart(anomalyResult)
   );
-
   const prepareVisualizedAnomalies = (
     liveVisualizedAnomalies: object[]
   ): object[] => {
@@ -233,19 +148,60 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const timeNowAnnotation = {
     dataValue: getFloorPlotTime(liveTimeRange.endDateTime.valueOf()),
     header: 'Now',
-    details: moment(liveTimeRange.endDateTime).format('MM/DD/YY h:mm a'),
+    details: liveTimeRange.endDateTime.format('MM/DD/YY h:mm a'),
   } as LineAnnotationDatum;
 
   const annotations = [timeNowAnnotation];
 
   return (
     <ContentPanel
-      title="Live Anomalies"
-      titleSize="s"
-      isLive={true}
-      subtitle="Live anomaly results across detectors for the last 30 minutes"
-      subtitleClassName="live-anomaly-results-subtile"
+      title={[
+        <EuiTitle size={'s'} className={'content-panel-title'}>
+          <h3>{'Live Anomalies'}</h3>
+        </EuiTitle>,
+        <EuiBadge color={'#db1374'}>{'Live'}</EuiBadge>,
+      ]}
+      subTitle={
+        <EuiFlexItem>
+          <EuiText className={'live-anomaly-results-subtile'}>
+            <p>
+              {'Live anomaly results across detectors for the last 30 minutes'}
+            </p>
+          </EuiText>
+        </EuiFlexItem>
+      }
     >
+      <EuiFlexGroup style={{ padding: '10px' }}>
+        <EuiFlexItem>
+          <EuiStat
+            description={'Detector with most recent anomaly occurrence'}
+            title={
+              lastAnomalyResult === undefined
+                ? '-'
+                : get(lastAnomalyResult, AD_DOC_FIELDS.DETECTOR_NAME, '')
+            }
+            titleSize="s"
+          />
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiStat
+            description={'Most recent anomaly grade'}
+            title={
+              lastAnomalyResult === undefined
+                ? '-'
+                : get(lastAnomalyResult, AD_DOC_FIELDS.ANOMALY_GRADE, 0)
+            }
+            titleSize="s"
+          />
+        </EuiFlexItem>
+        <EuiFlexItem>
+          <EuiStat
+            description={'Last updated time'}
+            title={liveTimeRange.endDateTime.format('MM/DD/YYYY hh:mm a')}
+            titleSize="s"
+          />
+        </EuiFlexItem>
+      </EuiFlexGroup>
       <div
         style={{
           height: '300px',
@@ -253,41 +209,56 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
           opacity: 1,
         }}
       >
-        <Chart>
-          <Settings
-            showLegend
-            legendPosition={Position.Right}
-            showLegendDisplayValue={false}
-          />
-          <LineAnnotation
-            domainType={AnnotationDomainTypes.XDomain}
-            dataValues={annotations}
-            style={timeNowLineStyle}
-            marker={'now'}
-          />
-          <Axis
-            id={getAxisId('bottom')}
-            position={Position.Bottom}
-            tickFormat={timeFormatter}
-            showOverlappingTicks={false}
-          />
-          <Axis
-            id={getAxisId('left')}
-            title={'Anomaly grade'}
-            position={Position.Left}
-            domain={{ min: 0, max: 1 }}
-          />
-          <BarSeries
-            id={getSpecId('Detectors Anomaly grade')}
-            xScaleType={ScaleType.Time}
-            timeZone="local"
-            yScaleType="linear"
-            xAccessor={AD_DOC_FIELDS.PLOT_TIME}
-            yAccessors={[AD_DOC_FIELDS.ANOMALY_GRADE]}
-            splitSeriesAccessors={[AD_DOC_FIELDS.DETECTOR_NAME]}
-            data={prepareVisualizedAnomalies(liveVisualizedAnomalies)}
-          />
-        </Chart>
+        {elasticsearchState.requesting ? (
+          <EuiFlexGroup justifyContent="center">
+            <EuiFlexItem grow={false}>
+              <EuiLoadingChart size="m" />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiLoadingChart size="l" />
+            </EuiFlexItem>
+            <EuiFlexItem grow={false}>
+              <EuiLoadingChart size="xl" />
+            </EuiFlexItem>
+          </EuiFlexGroup>
+        ) : (
+          [
+            <EuiTitle size="xxs" style={{ 'margin-left': '10px' }}>
+              <h4>10 detectors with the most recent anomaly occurrence</h4>
+            </EuiTitle>,
+            <Chart>
+              <Settings showLegend legendPosition={Position.Right} />
+              <LineAnnotation
+                domainType={AnnotationDomainTypes.XDomain}
+                dataValues={annotations}
+                style={TIME_NOW_LINE_STYLE}
+                marker={'Now'}
+              />
+              <Axis
+                id={'bottom'}
+                position={Position.Bottom}
+                tickFormat={timeFormatter}
+                showOverlappingTicks={false}
+              />
+              <Axis
+                id={'left'}
+                title={'Anomaly grade'}
+                position={Position.Left}
+                domain={{ min: 0, max: 1 }}
+              />
+              <BarSeries
+                id={'Detectors Anomaly grade'}
+                xScaleType={ScaleType.Time}
+                timeZone="local"
+                yScaleType="linear"
+                xAccessor={AD_DOC_FIELDS.PLOT_TIME}
+                yAccessors={[AD_DOC_FIELDS.ANOMALY_GRADE]}
+                splitSeriesAccessors={[AD_DOC_FIELDS.DETECTOR_NAME]}
+                data={prepareVisualizedAnomalies(visualizedAnomalies)}
+              />
+            </Chart>,
+          ]
+        )}
       </div>
     </ContentPanel>
   );

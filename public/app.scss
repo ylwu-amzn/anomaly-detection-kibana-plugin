@@ -13,8 +13,9 @@
  * permissions and limitations under the License.
  */
 
+@import 'components/ContentPanel/index.scss';
 @import 'pages/createDetector/index.scss';
 @import 'pages/PreviewDetector/index.scss';
-@import 'pages/Dashboard/index.scss';
 @import 'pages/DetectorResults/index.scss';
 @import 'pages/DetectorView/index.scss';
+@import 'pages/Dashboard/index.scss';

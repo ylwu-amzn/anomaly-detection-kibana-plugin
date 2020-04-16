@@ -17,13 +17,8 @@ import {
   Chart,
   Axis,
   LineSeries,
-  getSpecId,
-  getAxisId,
   RectAnnotation,
-  getAnnotationId,
   niceTimeFormatter,
-  CustomSeriesColorsMap,
-  DataSeriesColorsValues,
   Settings,
 } from '@elastic/charts';
 import { EuiButton, EuiEmptyPrompt, EuiText } from '@elastic/eui';
@@ -55,15 +50,6 @@ export const FeatureChart = (props: FeatureChartProps) => {
     props.endDateTime.valueOf(),
   ]);
   const showLoader = useDelayedLoader(props.isLoading);
-  const lineCustomSeriesColors: CustomSeriesColorsMap = new Map();
-  const lineDataSeriesColorValues: DataSeriesColorsValues = {
-    colorValues: [],
-    specId: getSpecId('lines'),
-  };
-  lineCustomSeriesColors.set(
-    lineDataSeriesColorValues,
-    props.enabled ? '#007DBC' : getDisabledLineColor()
-  );
 
   return (
     <ContentPanel
@@ -96,12 +82,13 @@ export const FeatureChart = (props: FeatureChartProps) => {
             <Settings
               showLegend
               legendPosition="bottom"
-              showLegendDisplayValue={false}
+              // showLegendDisplayValue={false}
             />
             {props.enabled ? (
               <RectAnnotation
                 dataValues={props.annotations || []}
-                annotationId={getAnnotationId('react')}
+                id="annotations"
+                // annotationId={getAnnotationId('react')}
                 style={{
                   stroke: darkModeEnabled() ? 'red' : '#FCAAAA',
                   strokeWidth: 1,
@@ -110,20 +97,16 @@ export const FeatureChart = (props: FeatureChartProps) => {
                 }}
               />
             ) : null}
-            <Axis id={getAxisId('left')} title={props.title} position="left" />
-            <Axis
-              id={getAxisId('bottom')}
-              position="bottom"
-              tickFormat={timeFormatter}
-            />
+            <Axis id="left" title={props.title} position="left" />
+            <Axis id="bottom" position="bottom" tickFormat={timeFormatter} />
             <LineSeries
-              id={getSpecId('lines')}
+              id="lines"
               name={`Aggregated data for ${props.title}`}
               xScaleType="time"
               yScaleType="linear"
               xAccessor={'startTime'}
               yAccessors={['data']}
-              customSeriesColors={lineCustomSeriesColors}
+              // color={['red', 'green']}
               data={props.featureData}
             />
           </Chart>

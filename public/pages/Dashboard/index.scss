@@ -8,9 +8,24 @@
   line-height: 14px;
 }
 
+.anomaly-distribution-subtitle {
+  height: 28px;
+  width: 505px;
+  color: #879196;
+  font-family: 'Helvetica Neue';
+  font-size: 12px;
+  letter-spacing: 0;
+  line-height: 14px;
+}
+
 .live-badge {
   height: 20px;
   width: 46px;
   border-radius: 2px;
   background-color: #db1374;
+}
+
+.anomalies-distribution-sunburst {
+  height: 443px;
+  width: 441px;
 }
