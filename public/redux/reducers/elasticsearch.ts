@@ -130,18 +130,21 @@ const reducer = handleActions<ElasticsearchState>(
       SUCCESS: (
         state: ElasticsearchState,
         action: APIResponseAction
-      ): ElasticsearchState => ({
-        ...state,
-        requesting: false,
-        searchResult: { ...action.result.data.response },
-      }),
+      ): ElasticsearchState => {
+        return {
+          ...state,
+          requesting: false,
+          searchResult: { ...action.result.data.response },
+        };
+      },
       FAILURE: (
         state: ElasticsearchState,
         action: APIErrorAction
       ): ElasticsearchState => ({
         ...state,
         requesting: false,
-        errorMessage: action.error,
+
+        errorMessage: action.error.data.error,
       }),
     },
     [GET_MAPPINGS]: {
@@ -187,14 +190,12 @@ export const getAliases = (searchKey: string = ''): APIAction => ({
   searchKey,
 });
 
-export const getMappings = (searchKey: string = ''): APIAction => {
-  return {
-    type: GET_MAPPINGS,
-    request: (client: IHttpService) =>
-      client.get(`..${AD_NODE_API._MAPPINGS}?index=${searchKey}`),
-    searchKey,
-  };
-};
+export const getMappings = (searchKey: string = ''): APIAction => ({
+  type: GET_MAPPINGS,
+  request: (client: IHttpService) =>
+    client.get(`..${AD_NODE_API._MAPPINGS}?index=${searchKey}`),
+  searchKey,
+});
 
 export const searchES = (requestData: any): APIAction => ({
   type: SEARCH_ES,

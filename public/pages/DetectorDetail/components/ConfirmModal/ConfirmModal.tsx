@@ -17,7 +17,6 @@ import React from 'react';
 import {
   EuiFlexGroup,
   EuiFlexItem,
-  EuiOverlayMask,
   EuiModal,
   EuiModalFooter,
   EuiModalHeader,
@@ -28,10 +27,6 @@ import {
   EuiButton,
   ButtonColor,
 } from '@elastic/eui';
-// @ts-ignore
-import { toastNotifications } from 'ui/notify';
-//@ts-ignore
-import chrome from 'ui/chrome';
 
 interface ConfirmModalProps {
   title: string;
@@ -39,7 +34,6 @@ interface ConfirmModalProps {
   callout?: any;
   confirmButtonText: string;
   confirmButtonColor: ButtonColor;
-  otherComponents?: any;
   onClose(): void;
   onCancel(): void;
   onConfirm(): void;
@@ -47,37 +41,34 @@ interface ConfirmModalProps {
 
 export const ConfirmModal = (props: ConfirmModalProps) => {
   return (
-    <EuiOverlayMask>
-      <EuiModal onClose={props.onClose}>
-        <EuiModalHeader>
-          <EuiModalHeaderTitle>{props.title}</EuiModalHeaderTitle>
-        </EuiModalHeader>
-        <EuiModalBody>
-          <EuiFlexGroup direction="column">
-            {props.callout ? (
-              <EuiFlexItem grow={false}>{props.callout}</EuiFlexItem>
-            ) : null}
-            <EuiFlexItem grow={false}>
-              <EuiText>
-                <p>{props.description}</p>
-              </EuiText>
-            </EuiFlexItem>
-            {props.otherComponents}
-          </EuiFlexGroup>
-        </EuiModalBody>
+    <EuiModal onClose={props.onClose}>
+      <EuiModalHeader>
+        <EuiModalHeaderTitle>{props.title}</EuiModalHeaderTitle>
+      </EuiModalHeader>
+      <EuiModalBody style={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        <EuiFlexGroup direction="column">
+          {props.callout ? (
+            <EuiFlexItem grow={false}>{props.callout}</EuiFlexItem>
+          ) : null}
+          <EuiFlexItem grow={false}>
+            <EuiText>
+              <p>{props.description}</p>
+            </EuiText>
+          </EuiFlexItem>
+        </EuiFlexGroup>
+      </EuiModalBody>
 
-        <EuiModalFooter>
-          <EuiButtonEmpty onClick={props.onCancel}>Cancel</EuiButtonEmpty>
+      <EuiModalFooter>
+        <EuiButtonEmpty onClick={props.onCancel}>Cancel</EuiButtonEmpty>
 
-          <EuiButton
-            color={props.confirmButtonColor}
-            fill
-            onClick={props.onConfirm}
-          >
-            {props.confirmButtonText}
-          </EuiButton>
-        </EuiModalFooter>
-      </EuiModal>
-    </EuiOverlayMask>
+        <EuiButton
+          color={props.confirmButtonColor}
+          fill
+          onClick={props.onConfirm}
+        >
+          {props.confirmButtonText}
+        </EuiButton>
+      </EuiModalFooter>
+    </EuiModal>
   );
 };

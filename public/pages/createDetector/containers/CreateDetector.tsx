@@ -82,6 +82,7 @@ export function CreateDetector(props: CreateADProps) {
     if (detector && detector.name) {
       breadCrumbs.splice(2, 0, {
         text: detector.name,
+        //@ts-ignore
         href: `#/detectors/${detectorId}`,
       });
     }

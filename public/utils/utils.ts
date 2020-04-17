@@ -20,9 +20,8 @@ import { isAngularHttpError } from 'ui/notify/lib/format_angular_http_error';
 import { npStart } from 'ui/new_platform';
 import { ALERTING_PLUGIN_NAME } from './constants';
 
-export const isInvalid = (name: string, form: any) => {
-  return !!get(form.touched, name, false) && !!get(form.errors, name, false);
-};
+export const isInvalid = (name: string, form: any) =>
+  !!get(form.touched, name, false) && !!get(form.errors, name, false);
 
 export const isInvalidField = (name: string, form: any) => {
   return !!get(form.touched, name, false) && !!get(form.errors, name, false);
@@ -96,3 +95,8 @@ export const getAlertingMonitorListLink = (): string => {
     return '';
   }
 };
+
+export interface Listener {
+  onSuccess(): void;
+  onException(): void;
+}

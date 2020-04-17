@@ -21,13 +21,13 @@ import {
   EuiFlexItem,
   EuiTitle,
   EuiHealth,
+  EuiOverlayMask,
 } from '@elastic/eui';
 // @ts-ignore
 import { toastNotifications } from 'ui/notify';
 import { get } from 'lodash';
 import { RouteComponentProps, Switch, Route, Redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { AnomalyResults } from '../../DetectorResults/containers/AnomalyResults';
 import { useFetchDetectorInfo } from '../../createDetector/hooks/useFetchDetectorInfo';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import {
@@ -35,7 +35,7 @@ import {
   startDetector,
   stopDetector,
 } from '../../../redux/reducers/ad';
-import { getErrorMessage } from '../../../utils/utils';
+import { getErrorMessage, Listener } from '../../../utils/utils';
 //@ts-ignore
 import chrome from 'ui/chrome';
 import { darkModeEnabled } from '../../../utils/kibanaUtils';
@@ -44,11 +44,12 @@ import { DetectorControls } from '../components/DetectorControls';
 import moment from 'moment';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
 import { useFetchMonitorInfo } from '../hooks/useFetchMonitorInfo';
-import { MonitorCallout } from '../components/ConfirmModal/MonitorCallout';
-// import { DetectorConfig } from '../../DetectorView/containers/DetectorConfig';
+import { MonitorCallout } from '../components/MonitorCallout/MonitorCallout';
+import { DETECTOR_DETAIL_TABS } from '../utils/constants';
 import { DetectorConfig } from '../../DetectorConfig/containers/DetectorConfig';
+import { AnomalyResults } from '../../DetectorResults/containers/AnomalyResults';
 
-interface DetectorRouterProps {
+export interface DetectorRouterProps {
   detectorId?: string;
 }
 interface DetectorDetailProps
@@ -56,40 +57,48 @@ interface DetectorDetailProps
 
 const tabs = [
   {
-    id: 'results',
+    id: DETECTOR_DETAIL_TABS.RESULTS,
     name: 'Anomaly Results',
-    route: 'results',
+    route: DETECTOR_DETAIL_TABS.RESULTS,
   },
   {
-    id: 'configurations',
+    id: DETECTOR_DETAIL_TABS.CONFIGURATIONS,
     name: 'Detector configuration',
-    route: 'configurations',
+    route: DETECTOR_DETAIL_TABS.CONFIGURATIONS,
   },
 ];
 
 const getSelectedTabId = (pathname: string) => {
-  if (pathname.includes('configurations')) return 'configurations';
-  return 'results';
+  return pathname.includes(DETECTOR_DETAIL_TABS.CONFIGURATIONS)
+    ? DETECTOR_DETAIL_TABS.CONFIGURATIONS
+    : DETECTOR_DETAIL_TABS.RESULTS;
 };
+
+interface DetectorDetailModel {
+  selectedTab: DETECTOR_DETAIL_TABS;
+  showDeleteDetectorModal: boolean;
+  showStopDetectorModalFor: string | undefined;
+  showMonitorCalloutModal: boolean;
+}
 
 export const DetectorDetail = (props: DetectorDetailProps) => {
   const dispatch = useDispatch();
-  const [selectedTab, setSelectedTab] = useState(
-    getSelectedTabId(props.location.pathname) // ? getSelectedTabId(props.location.pathname) : 'configurations'
-  );
   const detectorId = get(props, 'match.params.detectorId', '') as string;
   const { monitor, fetchMonitorError } = useFetchMonitorInfo(detectorId);
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
+  //TODO: test dark mode once detector configuration and AD result page merged
   const isDark = darkModeEnabled();
-  const [showDeleteDetectorModal, setShowDeleteDetectorModal] = useState<
-    boolean
-  >(false);
-  const [showStopDetectorModalFor, setShowStopDetectorModalFor] = useState<
-    string | undefined
-  >(undefined);
-  const [showMonitorCalloutModal, setShowMonitorCalloutModal] = useState<
-    boolean
-  >(false);
+
+  const [detecorDetailModel, setDetecorDetailModel] = useState<
+    DetectorDetailModel
+  >({
+    selectedTab: getSelectedTabId(
+      props.location.pathname
+    ) as DETECTOR_DETAIL_TABS,
+    showDeleteDetectorModal: false,
+    showStopDetectorModalFor: undefined,
+    showMonitorCalloutModal: false,
+  });
 
   useHideSideNavBar(true, false);
 
@@ -111,26 +120,53 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   }, [detector]);
 
   const handleSwitchToConfigurationTab = useCallback(() => {
-    setSelectedTab('configurations');
+    setDetecorDetailModel({
+      ...detecorDetailModel,
+      selectedTab: DETECTOR_DETAIL_TABS.CONFIGURATIONS
+    });
     props.history.push(`/detectors/${detectorId}/configurations`);
   }, []);
 
-  const handleTabChange = (route: string) => {
-    setSelectedTab(route);
+  const handleTabChange = (route: DETECTOR_DETAIL_TABS) => {
+    setDetecorDetailModel({
+      ...detecorDetailModel,
+      selectedTab: route,
+    });
     props.history.push(route);
+  };
+
+  const hideMonitorCalloutModal = () => {
+    setDetecorDetailModel({
+      ...detecorDetailModel,
+      showMonitorCalloutModal: false,
+    });
+  };
+
+  const hideStopDetectorModal = () => {
+    setDetecorDetailModel({
+      ...detecorDetailModel,
+      showStopDetectorModalFor: undefined,
+    });
+  };
+
+  const hideDeleteDetectorModal = () => {
+    setDetecorDetailModel({
+      ...detecorDetailModel,
+      showDeleteDetectorModal: false,
+    });
   };
 
   const handleStopDetectorForEditing = (detectorId: string) => {
     const listener: Listener = {
       onSuccess: () => {
-        if (showStopDetectorModalFor === 'detector') {
+        if (detecorDetailModel.showStopDetectorModalFor === 'detector') {
           props.history.push(`/detectors/${detectorId}/edit`);
         } else {
           props.history.push(`/detectors/${detectorId}/features`);
         }
-        setShowStopDetectorModalFor(undefined);
+        hideStopDetectorModal();
       },
-      onException: () => setShowStopDetectorModalFor(undefined),
+      onException: hideStopDetectorModal,
     };
     handleStopAdJob(detectorId, listener);
   };
@@ -147,15 +183,12 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
       );
     }
   };
-  interface Listener {
-    onSuccess(): void;
-    onException(): void;
-  }
+
   const handleStopAdJob = async (detectorId: string, listener?: Listener) => {
     try {
       await dispatch(stopDetector(detectorId));
       toastNotifications.addSuccess(
-        'Detector job has been stopped successfully'
+        'Detector job has been stoped successfully'
       );
       if (listener) listener.onSuccess();
     } catch (err) {
@@ -168,27 +201,15 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   const handleDelete = useCallback(async () => {
     try {
-      if (detector.enabled) {
-        getErrorMessage(
-          'Stop detector before deleting',
-          'There was a problem deleting detector'
-        );
-      }
       await dispatch(deleteDetector(detectorId));
       toastNotifications.addSuccess(`Detector has been deleted successfully`);
-      setShowDeleteDetectorModal(false);
+      hideDeleteDetectorModal();
       props.history.push('/detectors');
     } catch (err) {
-      if (err.includes('Detector job is running')) {
-        toastNotifications.addDanger(
-          'This detector is running. Please stop it before deleting'
-        );
-      } else {
-        toastNotifications.addDanger(
-          getErrorMessage(err, 'There was a problem deleting detector')
-        );
-      }
-      setShowDeleteDetectorModal(false);
+      toastNotifications.addDanger(
+        getErrorMessage(err, 'There was a problem deleting detector')
+      );
+      hideDeleteDetectorModal();
     }
   }, []);
 
@@ -198,6 +219,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const monitorCallout = monitor ? (
     <MonitorCallout monitorId={monitor.id} monitorName={monitor.name} />
   ) : null;
+
   return (
     <React.Fragment>
       <EuiFlexGroup
@@ -240,19 +262,33 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <DetectorControls
               onEditDetector={() => {
                 detector.enabled
-                  ? setShowStopDetectorModalFor('detector')
+                  ? setDetecorDetailModel({
+                      ...detecorDetailModel,
+                      showStopDetectorModalFor: 'detector',
+                    })
                   : props.history.push(`/detectors/${detectorId}/edit`);
               }}
-              onDelete={() => setShowDeleteDetectorModal(true)}
+              onDelete={() =>
+                setDetecorDetailModel({
+                  ...detecorDetailModel,
+                  showDeleteDetectorModal: true,
+                })
+              }
               onStartDetector={() => handleStartAdJob(detectorId)}
               onStopDetector={() =>
                 monitor
-                  ? setShowMonitorCalloutModal(true)
+                  ? setDetecorDetailModel({
+                      ...detecorDetailModel,
+                      showMonitorCalloutModal: true,
+                    })
                   : handleStopAdJob(detectorId)
               }
               onEditFeatures={() => {
                 detector.enabled
-                  ? setShowStopDetectorModalFor('features')
+                  ? setDetecorDetailModel({
+                      ...detecorDetailModel,
+                      showStopDetectorModalFor: 'features',
+                    })
                   : props.history.push(`/detectors/${detectorId}/features`);
               }}
               detector={detector}
@@ -268,7 +304,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                   onClick={() => {
                     handleTabChange(tab.route);
                   }}
-                  isSelected={tab.id === selectedTab}
+                  isSelected={tab.id === detecorDetailModel.selectedTab}
                   key={tab.id}
                 >
                   {tab.name}
@@ -278,48 +314,54 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           </EuiFlexItem>
         </EuiFlexGroup>
       </EuiFlexGroup>
-      {showDeleteDetectorModal ? (
-        <ConfirmModal
-          title="Delete detector?"
-          description="Detector and feature configuration will be removed and the deletion is irreversible and you can’t review anomaly result of this detector on Kibana. To confirm deletion, click the delete button."
-          callout={monitorCallout}
-          confirmButtonText="Delete"
-          confirmButtonColor="danger"
-          onClose={() => setShowDeleteDetectorModal(false)}
-          onCancel={() => setShowDeleteDetectorModal(false)}
-          onConfirm={handleDelete}
-        />
+      {detecorDetailModel.showDeleteDetectorModal ? (
+        <EuiOverlayMask>
+          <ConfirmModal
+            title="Delete detector?"
+            description="Detector and feature configuration will be removed and the deletion is irreversible and you can’t review anomaly result of this detector on Kibana. To confirm deletion, click the delete button."
+            callout={monitorCallout}
+            confirmButtonText="Delete"
+            confirmButtonColor="danger"
+            onClose={hideDeleteDetectorModal}
+            onCancel={hideDeleteDetectorModal}
+            onConfirm={handleDelete}
+          />
+        </EuiOverlayMask>
       ) : null}
 
-      {showStopDetectorModalFor ? (
-        <ConfirmModal
-          title="Stop detector to proceed?"
-          description="Stop the detector before you can edit any detector
+      {detecorDetailModel.showStopDetectorModalFor ? (
+        <EuiOverlayMask>
+          <ConfirmModal
+            title="Stop detector to proceed?"
+            description="Stop the detector before you can edit any detector
                       configuration. Reconfiguration requires a restart and
                       reinitialization."
-          callout={monitorCallout}
-          confirmButtonText="Stop and proceed to edit"
-          confirmButtonColor="primary"
-          onClose={() => setShowStopDetectorModalFor(undefined)}
-          onCancel={() => setShowStopDetectorModalFor(undefined)}
-          onConfirm={() => handleStopDetectorForEditing(detectorId)}
-        />
+            callout={monitorCallout}
+            confirmButtonText="Stop and proceed to edit"
+            confirmButtonColor="primary"
+            onClose={hideStopDetectorModal}
+            onCancel={hideStopDetectorModal}
+            onConfirm={() => handleStopDetectorForEditing(detectorId)}
+          />
+        </EuiOverlayMask>
       ) : null}
 
-      {showMonitorCalloutModal ? (
-        <ConfirmModal
-          title="Stop detector will impact associated monitor"
-          description=""
-          callout={monitorCallout}
-          confirmButtonText="Stop detector"
-          confirmButtonColor="primary"
-          onClose={() => setShowMonitorCalloutModal(false)}
-          onCancel={() => setShowMonitorCalloutModal(false)}
-          onConfirm={() => {
-            handleStopAdJob(detectorId);
-            setShowMonitorCalloutModal(false);
-          }}
-        />
+      {detecorDetailModel.showMonitorCalloutModal ? (
+        <EuiOverlayMask>
+          <ConfirmModal
+            title="Stop detector will impact associated monitor"
+            description=""
+            callout={monitorCallout}
+            confirmButtonText="Stop detector"
+            confirmButtonColor="primary"
+            onClose={hideMonitorCalloutModal}
+            onCancel={hideMonitorCalloutModal}
+            onConfirm={() => {
+              handleStopAdJob(detectorId);
+              hideMonitorCalloutModal();
+            }}
+          />
+        </EuiOverlayMask>
       ) : null}
 
       <Switch>

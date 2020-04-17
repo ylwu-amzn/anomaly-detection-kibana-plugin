@@ -763,7 +763,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                 <ContentPanel
                   title="Features"
                   titleSize="s"
-                  description={featureDescription()}
+                  subTitle={featureDescription()}
                 >
                   {renderFeatures(handleChange)}
                 </ContentPanel>
