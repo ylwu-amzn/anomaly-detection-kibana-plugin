@@ -51,6 +51,7 @@ import { detectorToFormik } from './utils/detectorToFormik';
 import { formikToDetector } from './utils/formikToDetector';
 import { Detector } from '../../../models/interfaces';
 import { Settings } from '../components/Settings/Settings';
+import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 
 interface CreateRouterProps {
   detectorId?: string;
@@ -61,6 +62,7 @@ interface CreateADProps extends RouteComponentProps<CreateRouterProps> {
 }
 
 export function CreateDetector(props: CreateADProps) {
+  useHideSideNavBar(true, false);
   const dispatch = useDispatch<Dispatch<APIAction>>();
   const detectorId: string = get(props, 'match.params.detectorId', '');
   //In case user is refreshing Edit detector page, we'll lose existing detector state
@@ -72,10 +74,18 @@ export function CreateDetector(props: CreateADProps) {
     const createOrEditBreadcrumb = props.isEdit
       ? BREADCRUMBS.EDIT_DETECTOR
       : BREADCRUMBS.CREATE_DETECTOR;
-    chrome.breadcrumbs.set([
+    let breadCrumbs = [
       BREADCRUMBS.ANOMALY_DETECTOR,
+      BREADCRUMBS.DETECTORS,
       createOrEditBreadcrumb,
-    ]);
+    ];
+    if (detector && detector.name) {
+      breadCrumbs.splice(2, 0, {
+        text: detector.name,
+        href: `#/detectors/${detectorId}`,
+      });
+    }
+    chrome.breadcrumbs.set(breadCrumbs);
   });
   // If no detector found with ID, redirect it to list
   useEffect(() => {

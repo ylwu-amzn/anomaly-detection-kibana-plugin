@@ -20,6 +20,7 @@ import {
   EuiText,
   EuiBadge,
   EuiButton,
+  EuiTitle,
 } from '@elastic/eui';
 import moment from 'moment';
 import {
@@ -149,12 +150,14 @@ export const AnomalyResultsLiveChart = (
     <React.Fragment>
       <ContentPanel
         title={
-          <h3>
-            Live anomalies{' '}
-            <EuiBadge color={props.detector.enabled ? '#DB1374' : '#DDD'}>
-              Live
-            </EuiBadge>
-          </h3>
+          <EuiTitle size="s" className="content-panel-title">
+            <h3>
+              Live anomalies{' '}
+              <EuiBadge color={props.detector.enabled ? '#DB1374' : '#DDD'}>
+                Live
+              </EuiBadge>
+            </h3>
+          </EuiTitle>
         }
         subTitle={props.detector.enabled ? liveAnomaliesDescription() : null}
         actions={[fullScreenButton()]}

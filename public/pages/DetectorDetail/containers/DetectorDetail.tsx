@@ -168,14 +168,26 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
   const handleDelete = useCallback(async () => {
     try {
+      if (detector.enabled) {
+        getErrorMessage(
+          'Stop detector before deleting',
+          'There was a problem deleting detector'
+        );
+      }
       await dispatch(deleteDetector(detectorId));
       toastNotifications.addSuccess(`Detector has been deleted successfully`);
       setShowDeleteDetectorModal(false);
       props.history.push('/detectors');
     } catch (err) {
-      toastNotifications.addDanger(
-        getErrorMessage(err, 'There was a problem deleting detector')
-      );
+      if (err.includes('Detector job is running')) {
+        toastNotifications.addDanger(
+          'This detector is running. Please stop it before deleting'
+        );
+      } else {
+        toastNotifications.addDanger(
+          getErrorMessage(err, 'There was a problem deleting detector')
+        );
+      }
       setShowDeleteDetectorModal(false);
     }
   }, []);

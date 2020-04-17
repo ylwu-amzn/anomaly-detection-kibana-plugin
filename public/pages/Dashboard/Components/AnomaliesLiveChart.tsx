@@ -158,10 +158,12 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   return (
     <ContentPanel
       title={[
-        <EuiTitle size={'s'} className={'content-panel-title'}>
-          <h3>{'Live Anomalies'}</h3>
+        <EuiTitle size="s" className="content-panel-title">
+          <h3>
+            Live Anomalies <EuiBadge color={'#DB1374'}>Live</EuiBadge>
+          </h3>
         </EuiTitle>,
-        <EuiBadge color={'#db1374'}>{'Live'}</EuiBadge>,
+        ,
       ]}
       subTitle={
         <EuiFlexItem>

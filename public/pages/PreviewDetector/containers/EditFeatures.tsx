@@ -116,9 +116,7 @@ export function EditFeatures(props: EditFeaturesProps) {
   // For preview:
   const [isLoading, setIsLoading] = useState(false);
   const [previewDone, setPreviewDone] = useState(false);
-  const [newDetector, setNewDetector] = useState<Detector>(
-    detector
-  );
+  const [newDetector, setNewDetector] = useState<Detector>(detector);
   const [fristPreview, setFristPreview] = useState<boolean>(true);
   const [previewDateRangeOption, setPreviewDateRangeOption] = useState<string>(
     'last_7_days'
@@ -776,6 +774,31 @@ export function EditFeatures(props: EditFeaturesProps) {
 
             <EuiPage>
               <EuiPageBody>
+                {detector.enabled ? (
+                  <EuiCallOut
+                    title="Can't save feature changes as detector is running."
+                    color="warning"
+                    iconType="alert"
+                  ></EuiCallOut>
+                ) : null}
+
+                {!dirty && !detector.enabled ? (
+                  <EuiCallOut
+                    title="No need to save as feature configuration not changed."
+                    iconType="help"
+                  ></EuiCallOut>
+                ) : null}
+
+                {!!get(errors, 'featureList', []).filter(
+                  featureError => featureError
+                ).length ? (
+                  <EuiCallOut
+                    title="Can't save feature changes as there are errors"
+                    color="warning"
+                    iconType="alert"
+                  ></EuiCallOut>
+                ) : null}
+
                 <EuiFlexGroup alignItems="center" justifyContent="flexEnd">
                   <EuiFlexItem grow={false}>
                     <EuiButtonEmpty
@@ -791,6 +814,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                       fill
                       type="button"
                       data-test-subj="updateAdjustModel"
+                      isLoading={isSubmitting}
                       disabled={
                         detector.enabled ||
                         isSubmitting ||
