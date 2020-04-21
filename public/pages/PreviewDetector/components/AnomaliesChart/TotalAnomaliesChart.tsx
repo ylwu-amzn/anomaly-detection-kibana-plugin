@@ -98,7 +98,7 @@ export const TotalAnomaliesChart = React.memo(
     const dispatch = useDispatch();
     const getTotalAlertsQuery = (monitorId: string, startTime: number) => {
       return {
-        index: '.opendistro-alerting-alert-history*',
+        index: '.opendistro-alerting-alert*',
         size: 1000,
         rawQuery: {
           aggregations: {
