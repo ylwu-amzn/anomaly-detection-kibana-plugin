@@ -209,7 +209,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
             .valueOf();
         } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_7_DAYS) {
           startDate = moment()
-            .subtract(27, 'days')
+            .subtract(7, 'days')
             .valueOf();
         }
         if (startDate) {

@@ -108,10 +108,10 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                       </EuiButton>
                     </EuiCallOut>
                   ) : null}
-                  {/* <AnomalyResultsLiveChart
+                  <AnomalyResultsLiveChart
                     detectorId={detectorId}
                     detector={detector}
-                  /> */}
+                  />
                   <EuiSpacer size="l" />
                   <AnomalyHistory
                     detectorId={detectorId}

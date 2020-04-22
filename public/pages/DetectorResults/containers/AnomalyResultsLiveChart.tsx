@@ -41,7 +41,7 @@ import { Detector } from 'public/models/interfaces';
 import {
   getLiveAnomalyResults,
   prepareDataForChart,
-} from '../utils/anomalyResultUtils';
+} from '../../utils/anomalyResultUtils';
 import { get } from 'lodash';
 
 interface AnomalyResultsLiveChartProps {
@@ -73,11 +73,10 @@ export const AnomalyResultsLiveChart = (
     'minutes'
   );
   const endDateTime = moment();
-  const anomalies = prepareDataForChart(
-    liveAnomalyResults.liveAnomalies,
-    startDateTime,
-    endDateTime
-  );
+  const anomalies = prepareDataForChart(liveAnomalyResults.liveAnomalies, {
+    startDate: startDateTime.valueOf(),
+    endDate: endDateTime.valueOf(),
+  });
   const timeFormatter = niceTimeFormatter([
     startDateTime.valueOf(),
     endDateTime.valueOf(),
