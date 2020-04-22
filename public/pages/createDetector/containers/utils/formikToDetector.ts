@@ -40,6 +40,7 @@ export function formikToDetector(
   }
   const indices = formikToIndices(values.index);
   const uiMetaData = formikToUIMetadata(values, detector);
+
   let apiRequest = {
     ...detector,
     name: values.detectorName,

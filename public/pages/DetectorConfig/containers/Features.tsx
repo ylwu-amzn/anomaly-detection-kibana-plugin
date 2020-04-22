@@ -30,11 +30,11 @@ import { get, sortBy } from 'lodash';
 import { PLUGIN_NAME } from '../../../utils/constants';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { CodeModal } from '../components/CodeModal/CodeModal';
-import { RouteComponentProps } from 'react-router';
 
-interface FeaturesProps extends RouteComponentProps {
+interface FeaturesProps {
   detectorId: string;
   detector: Detector;
+  onEditFeatures(): void;
 }
 
 interface FeaturesState {
@@ -180,11 +180,6 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
       };
     };
 
-    const handleOnCreate = () => {
-      // TODO: add logic
-      console.log('to be implemented');
-    };
-
     const featureNum = Object.keys(featureAttributes).length;
 
     return (
@@ -210,11 +205,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
         }
         // subTitleClassName="fieldsSubtitle"
         actions={[
-          <EuiButton
-            href={`${PLUGIN_NAME}#/detectors/${this.props.detectorId}/features`}
-          >
-            Edit
-          </EuiButton>,
+          <EuiButton onClick={this.props.onEditFeatures}>Edit</EuiButton>,
         ]}
         panelStyles={{
           left: '10px',

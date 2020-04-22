@@ -18,31 +18,32 @@ import React from 'react';
 import { MetaData } from './MetaData';
 import { Features } from './Features';
 import { EuiSpacer, EuiPage, EuiPageBody } from '@elastic/eui';
+import { RouteComponentProps } from 'react-router';
 
-interface DetectorConfigProps {
+interface DetectorConfigProps extends RouteComponentProps {
   detectorId: string;
   detector: Detector;
+  onEditFeatures(): void;
+  onEditDetector(): void;
 }
-
-const stickyStyles = {
-  position: 'fixed',
-  top: 148,
-  left: 48,
-  right: 0,
-  zIndex: 999999,
-};
-
-const stickyCss = { ...stickyStyles };
 
 export const DetectorConfig = (props: DetectorConfigProps) => {
   return (
     <React.Fragment>
-      <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
+      <EuiPage>
         <EuiPageBody>
           <EuiSpacer size="l" />
-            <MetaData {...props} />
-            <EuiSpacer />
-            <Features {...props} />
+          <MetaData
+            detectorId={props.detectorId}
+            detector={props.detector}
+            onEditDetector={props.onEditDetector}
+          />
+          <EuiSpacer />
+          <Features
+            detectorId={props.detectorId}
+            detector={props.detector}
+            onEditFeatures={props.onEditFeatures}
+          />
         </EuiPageBody>
       </EuiPage>
     </React.Fragment>

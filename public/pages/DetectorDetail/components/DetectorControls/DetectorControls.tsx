@@ -56,7 +56,7 @@ export const DetectorControls = (props: DetectorControls) => {
         >
           <EuiContextMenuPanel>
             <EuiContextMenuItem
-              key="edit"
+              key="editDetector"
               data-test-subj="editDetector"
               onClick={props.onEditDetector}
             >
@@ -64,7 +64,7 @@ export const DetectorControls = (props: DetectorControls) => {
             </EuiContextMenuItem>
 
             <EuiContextMenuItem
-              key="edit"
+              key="editFeatures"
               data-test-subj="editFeature"
               onClick={props.onEditFeatures}
             >

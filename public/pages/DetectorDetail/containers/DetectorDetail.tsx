@@ -122,7 +122,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const handleSwitchToConfigurationTab = useCallback(() => {
     setDetecorDetailModel({
       ...detecorDetailModel,
-      selectedTab: DETECTOR_DETAIL_TABS.CONFIGURATIONS
+      selectedTab: DETECTOR_DETAIL_TABS.CONFIGURATIONS,
     });
     props.history.push(`/detectors/${detectorId}/configurations`);
   }, []);
@@ -213,6 +213,24 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     }
   }, []);
 
+  const handleEditDetector = () => {
+    detector.enabled
+      ? setDetecorDetailModel({
+          ...detecorDetailModel,
+          showStopDetectorModalFor: 'detector',
+        })
+      : props.history.push(`/detectors/${detectorId}/edit`);
+  };
+
+  const handleEditFeature = () => {
+    detector.enabled
+      ? setDetecorDetailModel({
+          ...detecorDetailModel,
+          showStopDetectorModalFor: 'features',
+        })
+      : props.history.push(`/detectors/${detectorId}/features`);
+  };
+
   const lightStyles = {
     backgroundColor: '#FFF',
   };
@@ -260,14 +278,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
 
           <EuiFlexItem grow={false}>
             <DetectorControls
-              onEditDetector={() => {
-                detector.enabled
-                  ? setDetecorDetailModel({
-                      ...detecorDetailModel,
-                      showStopDetectorModalFor: 'detector',
-                    })
-                  : props.history.push(`/detectors/${detectorId}/edit`);
-              }}
+              onEditDetector={handleEditDetector}
               onDelete={() =>
                 setDetecorDetailModel({
                   ...detecorDetailModel,
@@ -283,14 +294,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                     })
                   : handleStopAdJob(detectorId)
               }
-              onEditFeatures={() => {
-                detector.enabled
-                  ? setDetecorDetailModel({
-                      ...detecorDetailModel,
-                      showStopDetectorModalFor: 'features',
-                    })
-                  : props.history.push(`/detectors/${detectorId}/features`);
-              }}
+              onEditFeatures={handleEditFeature}
               detector={detector}
             />
           </EuiFlexItem>
@@ -384,6 +388,8 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
               {...props}
               detectorId={detectorId}
               detector={detector}
+              onEditFeatures={handleEditFeature}
+              onEditDetector={handleEditDetector}
             />
           )}
         />

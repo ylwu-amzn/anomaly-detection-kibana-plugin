@@ -35,11 +35,11 @@ import {
 import React, { Component, FunctionComponent } from 'react';
 import { displayText } from '../../createDetector/components/DataFilters/utils/helpers';
 import { CodeModal } from '../components/CodeModal/CodeModal';
-import { RouteComponentProps } from 'react-router';
 
-interface MetaDataProps extends RouteComponentProps {
+interface MetaDataProps {
   detectorId: string;
   detector: Detector;
+  onEditDetector(): void;
 }
 
 const FixedWidthRow = (props: EuiFormRowProps) => (
@@ -192,11 +192,7 @@ export const MetaData = (props: MetaDataProps) => {
     <ContentPanel
       title="Detector configuration"
       titleSize="s"
-      actions={[
-        <EuiButton href={`${PLUGIN_NAME}#/detectors/${props.detectorId}/edit`}>
-          Edit
-        </EuiButton>,
-      ]}
+      actions={[<EuiButton onClick={props.onEditDetector}>Edit</EuiButton>]}
       panelStyles={{
         left: '10px',
         width: '1120px',
