@@ -16,7 +16,6 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import { FeatureChart } from '../FeatureChart';
-import moment from 'moment';
 import { FEATURE_TYPE } from '../../../../../models/interfaces';
 
 const feature = {
@@ -37,8 +36,8 @@ const featureData = [
   { data: 0.8, endTime: 1587453273000, startTime: 1587446073000 },
 ];
 const dateRange = {
-  startDate: moment(1587431968000),
-  endDate: moment(1587453568000),
+  startDate: 1587431968000,
+  endDate: 1587453568000,
 };
 
 describe('<FeatureChart /> spec', () => {

@@ -38,8 +38,6 @@ describe('<FeatureBreakDown /> spec', () => {
       ];
     }
   });
-  console.log('++++++detector, ', JSON.stringify(detector))
-  console.log('++++++featureData, ', JSON.stringify(featureData))
   const anomaliesResult = {
     anomalies: [
       {

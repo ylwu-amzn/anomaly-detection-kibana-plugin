@@ -13,6 +13,4 @@
  * permissions and limitations under the License.
  */
 
-.euiStep__title {
-    display: contents;
-}
+export { SaveFeaturesConfirmModal } from './SaveFeaturesConfirmModal';

@@ -17,30 +17,60 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { AnomaliesChart } from '../AnomaliesChart';
 import moment from 'moment';
+import { initialState, mockedStore } from '../../../../redux/utils/testUtils';
+import { Provider } from 'react-redux';
 
-describe('<AnomaliesChart /> spec', () => {
-  const initialStartTime = moment('2019-10-10T09:00:00');
-  const initialEndTime = initialStartTime.clone().add(2, 'd');
-  const dateRange = {
-    startDate: initialStartTime,
-    endDate: initialEndTime,
-  };
-  test('renders the component', () => {
-    const { container } = render(
+const initialStartTime = moment('2019-10-10T09:00:00');
+const initialEndTime = initialStartTime.clone().add(2, 'd');
+const dateRange = {
+  startDate: initialStartTime.valueOf(),
+  endDate: initialEndTime.valueOf(),
+};
+const anomalies = [
+  {
+    anomalyGrade: 0.3,
+    confidence: 0.8,
+    startTime: initialStartTime.add(1, 'minutes').valueOf(),
+    endTime: initialStartTime.add(2, 'minutes').valueOf(),
+    plotTime: initialStartTime.add(90, 'seconds').valueOf(),
+  },
+];
+
+const renderDataFilter = () => ({
+  ...render(
+    <Provider
+      store={mockedStore({
+        ...initialState,
+        elasticsearch: {
+          ...initialState.elasticsearch,
+          dataTypes: {
+            keyword: ['cityName.keyword'],
+            integer: ['age'],
+            text: ['cityName'],
+          },
+        },
+      })}
+    >
       <AnomaliesChart
-        title="test"
-        detectorId="testDetectorId"
-        detectorName="testDetectorName"
-        anomalyGradeSeriesName="anoaly grade"
-        confidenceSeriesName="confidence"
-        dateRangeOption="last_24_hours"
         onDateRangeChange={jest.fn()}
-        anomalies={[]}
-        annotations={[]}
+        onZoomRangeChange={jest.fn()}
+        title="test"
+        anomalies={anomalies}
         dateRange={dateRange}
         isLoading={false}
+        anomalyGradeSeriesName="anoaly grade"
+        confidenceSeriesName="confidence"
+        detectorId="testDetectorId"
+        detectorName="testDetectorName"
+        annotations={[]}
       />
-    );
-    expect(container.firstChild).toMatchSnapshot();
+    </Provider>
+  ),
+});
+
+describe('<AnomaliesChart /> spec', () => {
+  test('renders the component', () => {
+    const { getByText } = renderDataFilter();
+    expect(getByText('anoaly grade')).not.toBeNull();
   });
 });

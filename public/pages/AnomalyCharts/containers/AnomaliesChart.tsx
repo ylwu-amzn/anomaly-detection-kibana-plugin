@@ -24,7 +24,7 @@ import {
   EuiStat,
   EuiButton,
 } from '@elastic/eui';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import {
   Chart,
   Axis,
@@ -45,10 +45,9 @@ import {
   MonitorAlert,
   // ZoomRange,
 } from '../../../models/interfaces';
-import { get, isEqual } from 'lodash';
+import { get } from 'lodash';
 import {
   prepareDataForChart,
-  filterAnomalyWithDateRange,
   filterWithDateRange,
 } from '../../utils/anomalyResultUtils';
 import { AlertsFlyout } from '../components/AlertsFlyout/AlertsFlyout';
@@ -61,7 +60,6 @@ import {
 } from '../components/AnomaliesStat/AnomalyStat';
 import { AD_RESULT_DATE_RANGES } from '../../utils/constants';
 import {
-  getAlerts,
   convertAlerts,
   generateAlertAnnotations,
   getAnomalySummary,
@@ -113,31 +111,21 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   );
   const [totalAlerts, setTotalAlerts] = useState<number | undefined>(undefined);
   const [alerts, setAlerts] = useState<MonitorAlert[]>([]);
-  // const [dateRange, setDateRange] = useState<DateRange>({
-  //   startDate: moment()
-  //     .subtract(1, 'hours')
-  //     .valueOf(),
-  //   endDate: moment().valueOf(),
-  // });
   const [zoomRange, setZoomRange] = useState<DateRange>({
     ...props.dateRange,
   });
   const [zoomedAnomalies, setZoomedAnomalies] = useState<any[]>([]);
 
-  // useEffect(() => {
-  //   setAnomalySummary(getAnomalySummary(props.anomalies));
-  // }, [props.anomalies]);
-
   useEffect(() => {
     const anomalies = prepareDataForChart(props.anomalies, zoomRange);
-    console.log('----- anomalies, ', anomalies, props.anomalies, zoomRange);
     setZoomedAnomalies(anomalies);
     setAnomalySummary(
-      // getAnomalySummary(filterAnomalyWithDateRange(props.anomalies, zoomRange))
-      getAnomalySummary(filterWithDateRange(props.anomalies, zoomRange, 'plotTime'))
+      getAnomalySummary(
+        filterWithDateRange(props.anomalies, zoomRange, 'plotTime')
+      )
     );
-    setTotalAlerts(filterWithDateRange(alerts, zoomRange, 'startTime').length)
-  }, [props.anomalies, zoomRange]); //TODO: ylwu filter out alerts based on zoomRange
+    setTotalAlerts(filterWithDateRange(alerts, zoomRange, 'startTime').length);
+  }, [props.anomalies, zoomRange]);
 
   const handleZoomRangeChange = (start: number, end: number) => {
     setZoomRange({
@@ -179,7 +167,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   ]);
 
   const handleDateRangeChange = (startDate: number, endDate: number) => {
-    // setDateRange({ startDate: startDate, endDate: endDate });
     props.onDateRangeChange(startDate, endDate);
     handleZoomRangeChange(startDate, endDate);
   };
@@ -343,12 +330,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                       showLegend
                       legendPosition={Position.Right}
                       onBrushEnd={(start: number, end: number) => {
-                        // handleDateRangeChange(start, end);
-                        // setZoomRange({
-                        //   startDate: start,
-                        //   endDate: end,
-                        // });
-                        // props.onZoomRangeChange(start, end);
                         handleZoomRangeChange(start, end);
                       }}
                     />

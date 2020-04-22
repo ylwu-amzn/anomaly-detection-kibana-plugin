@@ -32,7 +32,6 @@ export const staticColumn = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
-    width: '150px',
   },
   {
     field: 'endTime',
@@ -41,7 +40,6 @@ export const staticColumn = [
     truncateText: false,
     render: renderTime,
     dataType: 'date',
-    width: '150px',
   },
   {
     field: 'confidence',
@@ -49,7 +47,6 @@ export const staticColumn = [
     sortable: true,
     truncateText: false,
     dataType: 'number',
-    width: '150px',
   },
   {
     field: 'anomalyGrade',
@@ -57,6 +54,5 @@ export const staticColumn = [
     sortable: true,
     truncateText: false,
     dataType: 'number',
-    width: '150px',
   },
 ];

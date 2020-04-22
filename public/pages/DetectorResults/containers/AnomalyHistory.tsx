@@ -22,7 +22,7 @@ import {
   EuiTab,
   EuiLoadingSpinner,
 } from '@elastic/eui';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { useSelector, useDispatch } from 'react-redux';
 import { AppState } from 'public/redux/reducers';
 import {
@@ -30,15 +30,17 @@ import {
   Detector,
   Monitor,
   DateRange,
-  // ZoomRange,
 } from '../../../models/interfaces';
-import { getAnomalyResultsWithDateRange, filterAnomalyWithDateRange } from '../../utils/anomalyResultUtils';
+import {
+  getAnomalyResultsWithDateRange,
+  filterAnomalyWithDateRange,
+} from '../../utils/anomalyResultUtils';
 import { get, isEmpty } from 'lodash';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
 import { FeatureBreakDown } from '../../AnomalyCharts/containers/FeatureBreakDown';
 import { minuteDateFormatter } from '../../utils/helpers';
-import { AD_RESULT_DATE_RANGES } from '../../utils/constants';
+import { ANOMALY_HISTORY_TABS } from '../utils/constants';
 
 interface AnomalyHistoryProps {
   detectorId: string;
@@ -52,10 +54,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const isLoading = useSelector(
     (state: AppState) => state.anomalyResults.requesting
   );
-  // type AnomalyResultDateRange = {
-  //   startDate: Moment;
-  //   endDate: Moment;
-  // };
   const initialStartDate = moment().subtract(1, 'hours');
   const initialEndDate = moment();
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -66,11 +64,8 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
     startDate: initialStartDate.valueOf(),
     endDate: initialEndDate.valueOf(),
   });
-  // const [dateRangeOption, setDateRangeOption] = useState<AD_RESULT_DATE_RANGES>(
-  //   AD_RESULT_DATE_RANGES.LAST_1_HOUR
-  // );
   const [selectedTabId, setSelectedTabId] = useState<string>(
-    'featureBreakdown'
+    ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN
   );
 
   useEffect(() => {
@@ -90,20 +85,11 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         startDate: startDate,
         endDate: endDate,
       });
-      // if (dateRangeOption) {
-      //   setDateRangeOption(dateRangeOption);
-      // }
-
-      // setZoomRange({
-      //   startDate: startDate.valueOf(),
-      //   endDate: endDate.valueOf(),
-      // });
     },
     []
   );
 
   const handleZoomChange = useCallback((startDate: number, endDate: number) => {
-    // debugger;
     setZoomRange({
       startDate: startDate,
       endDate: endDate,
@@ -127,12 +113,12 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
 
   const tabs = [
     {
-      id: 'featureBreakdown',
+      id: ANOMALY_HISTORY_TABS.FEATURE_BREAKDOWN,
       name: 'Feature breakdown',
       disabled: false,
     },
     {
-      id: 'anomalyOccurrence',
+      id: ANOMALY_HISTORY_TABS.ANOMALY_OCCURRENCE,
       name: 'Anomaly occurrence',
       disabled: false,
     },
@@ -170,11 +156,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
         detectorId={props.detectorId}
         detectorName={props.detector.name}
         detector={props.detector}
-        detectorInterval={props.detector.detectionInterval.period.interval}
-        unit={props.detector.detectionInterval.period.unit}
+        detectorInterval={get(
+          props.detector,
+          'detectionInterval.period.interval'
+        )}
+        unit={get(props.detector, 'detectionInterval.period.unit')}
         monitor={props.monitor}
         noFeature={isEmpty(props.detector.featureAttributes)}
-        
       />
       <EuiTabs>{renderTabs()}</EuiTabs>
       <EuiSpacer />
@@ -193,24 +181,20 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
           {selectedTabId === 'featureBreakdown' ? (
             <FeatureBreakDown
               detector={props.detector}
-              // onEdit={() => alert('edit')}
-              // featureEditId={''}
               // @ts-ignore
               anomaliesResult={anomalyResults}
               annotations={annotations}
-              // onUpdatePreview={() => alert('update preview')}
               isLoading={isLoading}
-              // onCreateFeature={props.createFeature}
-              // dateRange={{ startDate: dateRange.startDate, endDate: moment() }}
               dateRange={zoomRange}
-              // startDateTime={dateRange.startDate}
-              // endDateTime={moment()}
               featureDataSeriesName="Feature output"
-              // featureDataSeriesName="Anomaly occurrence"
-              // showAnomalyAsBar={true}
             />
           ) : (
-                <AnomalyResultsTable anomalies={filterAnomalyWithDateRange(anomalyResults.anomalies, zoomRange)} />
+            <AnomalyResultsTable
+              anomalies={filterAnomalyWithDateRange(
+                anomalyResults.anomalies,
+                zoomRange
+              )}
+            />
           )}
         </Fragment>
       )}

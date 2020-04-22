@@ -34,7 +34,7 @@ import {
 } from '../../../../models/interfaces';
 import { darkModeEnabled } from '../../../../utils/kibanaUtils';
 import { prepareDataForChart } from '../../../utils/anomalyResultUtils';
-// import { CodeModal } from '../../../DetectorConfig/components/CodeModal/CodeModal';
+import { CodeModal } from '../../../DetectorConfig/components/CodeModal/CodeModal';
 
 interface FeatureChartProps {
   feature: FeatureAttributes;
@@ -155,7 +155,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
               data={featureData}
             />
           </Chart>
-          {/* {showCustomExpression ? (
+          {showCustomExpression ? (
             <CodeModal
               title={props.feature.featureName}
               subtitle="Custom expression"
@@ -163,7 +163,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
               getModalVisibilityChange={() => true}
               closeModal={() => setShowCustomExpression(false)}
             />
-          ) : null} */}
+          ) : null}
         </div>
       ) : (
         <EuiEmptyPrompt

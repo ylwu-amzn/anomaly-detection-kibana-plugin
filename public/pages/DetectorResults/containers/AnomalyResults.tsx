@@ -55,7 +55,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
 
   const monitors = useSelector((state: AppState) => state.alerting.monitors);
   const monitor = get(monitors, `${detectorId}.0`);
-  console.log('monitor,', monitor);
   return (
     <Fragment>
       <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>

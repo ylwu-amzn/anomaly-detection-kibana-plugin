@@ -16,12 +16,10 @@
 import { SORT_DIRECTION, AD_DOC_FIELDS } from '../../../server/utils/constants';
 import { getDetectorResults } from '../../redux/reducers/anomalyResults';
 import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { Dispatch } from 'redux';
-import { cloneDeep, get } from 'lodash';
+import { get } from 'lodash';
 import { AnomalyData, DateRange } from 'public/models/interfaces';
-import { setPriority } from 'os';
-import { AnomaliesLiveChart } from '../Dashboard/Components/AnomaliesLiveChart';
 
 export const getLiveAnomalyResults = (
   dispatch: Dispatch<any>,
@@ -145,13 +143,9 @@ const sampleMaxAnomalyGrade = (anomalies: any[]): any[] => {
 };
 
 export const prepareDataForChart = (data: any[], dateRange: DateRange) => {
-  // if (dateRange && dateRange.startDate && data && data.length) {
-  //   debugger;
-  // }
   if (!data || data.length === 0) {
     return [];
   }
-  // let anomalies = cloneDeep(data);
   let anomalies = data.filter(
     anomaly =>
       anomaly.plotTime >= dateRange.startDate &&
@@ -193,17 +187,17 @@ export const generateAnomalyAnnotations = (anomalies: any[]): any[] => {
     }));
 };
 
-export const filterAnomalyWithDateRange = (
-  data: any[],
-  dateRange: DateRange
-) => {
-  const anomalies = data.filter(
-    anomaly =>
-      anomaly.plotTime >= dateRange.startDate &&
-      anomaly.plotTime <= dateRange.endDate
-  );
-  return anomalies;
-};
+// export const filterAnomalyWithDateRange = (
+//   data: any[],
+//   dateRange: DateRange
+// ) => {
+//   const anomalies = data.filter(
+//     anomaly =>
+//       anomaly.plotTime >= dateRange.startDate &&
+//       anomaly.plotTime <= dateRange.endDate
+//   );
+//   return anomalies;
+// };
 
 export const filterWithDateRange = (
   data: any[],

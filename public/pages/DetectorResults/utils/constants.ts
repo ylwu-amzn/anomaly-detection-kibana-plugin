@@ -25,3 +25,8 @@ export const DEFAULT_QUERY_PARAMS = {
   sortDirection: SORT_DIRECTION.ASC,
   sortField: AD_DOC_FIELDS.DATA_START_TIME,
 };
+
+export enum ANOMALY_HISTORY_TABS {
+  FEATURE_BREAKDOWN = 'featureBreakdown',
+  ANOMALY_OCCURRENCE = 'anomalyOccurrence',
+}
