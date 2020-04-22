@@ -77,7 +77,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
     (state: AppState) => state.elasticsearch
   );
 
-  const [lastAnomalyResult, setLastAnomalyResult] = useState();
+  const [lastAnomalyResult, setLastAnomalyResult] = useState<object>();
 
   const [liveAnomalyData, setLiveAnomalyData] = useState([] as object[]);
 
@@ -157,14 +157,13 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   // Issue link: https://github.com/opendistro-for-elasticsearch/anomaly-detection-kibana-plugin/issues/26
   return (
     <ContentPanel
-      title={[
+      title={
         <EuiTitle size="s" className="content-panel-title">
           <h3>
-            Live Anomalies <EuiBadge color={'#DB1374'}>Live</EuiBadge>
+            Live anomalies <EuiBadge color={'#DB1374'}>Live</EuiBadge>
           </h3>
-        </EuiTitle>,
-        ,
-      ]}
+        </EuiTitle>
+      }
       subTitle={
         <EuiFlexItem>
           <EuiText className={'live-anomaly-results-subtile'}>
@@ -208,7 +207,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
       </EuiFlexGroup>
       <div
         style={{
-          height: '300px',
+          height: '200px',
           width: '100%',
           opacity: 1,
         }}
@@ -227,9 +226,9 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
           </EuiFlexGroup>
         ) : (
           [
-            <EuiTitle size="xxs" style={{ 'margin-left': '10px' }}>
-              <h4>10 detectors with the most recent anomaly occurrence</h4>
-            </EuiTitle>,
+            <EuiText size="s" style={{ marginLeft: '10px' }}>
+              <p>10 detectors with the most recent anomaly occurrence</p>
+            </EuiText>,
             <Chart>
               <Settings showLegend legendPosition={Position.Right} />
               <LineAnnotation

@@ -145,7 +145,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
               >
                 <defs>
                   <clippath
-                    id="echHighlighterClipPath__7d9c7234-0d89-407a-a079-5e3f074441b2"
+                    id="echHighlighterClipPath__e5335f1f-dfac-4536-898b-38bf94aca360"
                   >
                     <rect
                       height="0"
@@ -308,7 +308,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with simple aggre
               >
                 <defs>
                   <clippath
-                    id="echHighlighterClipPath__90ada799-ca52-45d8-9110-012b93140bdd"
+                    id="echHighlighterClipPath__641563b9-3d35-43c7-9863-1b479e809ff9"
                   >
                     <rect
                       height="0"
