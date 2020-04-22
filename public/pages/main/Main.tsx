@@ -20,12 +20,12 @@ import { CreateDetector } from '../createDetector';
 import { DetectorList } from '../DetectorsList';
 import { DetectorDetail } from '../DetectorDetail';
 import { ListRouterParams } from '../DetectorsList/List/List';
-import { EditFeatures } from '../PreviewDetector/containers/EditFeatures';
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
 import { useSelector } from 'react-redux';
 import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
 import { Dashboard } from '../Dashboard/Container/Dashboard';
+import { EditFeatures } from '../EditFeatures/containers/EditFeatures';
 
 enum Navigation {
   AnomalyDetection = 'Anomaly detection',

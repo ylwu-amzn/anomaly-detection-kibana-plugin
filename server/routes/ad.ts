@@ -141,7 +141,6 @@ const putDetector = async (
       id: response._id,
       primaryTerm: response._primary_term,
       seqNo: response._seq_no,
-      adJob: response.anomaly_detector_job,
     };
     return {
       ok: true,

@@ -29,7 +29,7 @@ export interface Anomalies {
   total: number;
   anomalies: AnomalyData[];
   errorMessage: string;
-  featureData: any; //TODO: define interface for feature data.
+  featureData: any;
 }
 export const initialDetectorsState: Anomalies = {
   requesting: false,

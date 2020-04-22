@@ -108,3 +108,13 @@ export const getDetectorsToDisplay = (
 };
 
 export const dateFormatter = timeFormatter('MM/DD/YY hh:mm:ss a');
+export const minuteDateFormatter = timeFormatter('MM/DD/YY hh:mm a');
+
+export const formatNumber = (data: any) => {
+  try {
+    const value = parseFloat(data);
+    return !value ? value : value.toFixed(2);
+  } catch (err) {
+    return '';
+  }
+};

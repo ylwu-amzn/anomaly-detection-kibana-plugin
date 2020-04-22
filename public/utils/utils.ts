@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -13,19 +13,25 @@
  * permissions and limitations under the License.
  */
 
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 //@ts-ignore
 import { isAngularHttpError } from 'ui/notify/lib/format_angular_http_error';
 //@ts-ignore
 import { npStart } from 'ui/new_platform';
 import { ALERTING_PLUGIN_NAME } from './constants';
+import { MAX_FEATURE_NAME_SIZE } from './constants';
+
+export const validateFeatureName = (featureName: string): string | undefined => {
+  if (isEmpty(featureName)) {
+    return 'Required';
+  }
+  if (featureName.length > MAX_FEATURE_NAME_SIZE) {
+    return `Name is too big maximum limit is ${MAX_FEATURE_NAME_SIZE}`;
+  }
+};
 
 export const isInvalid = (name: string, form: any) =>
   !!get(form.touched, name, false) && !!get(form.errors, name, false);
-
-export const isInvalidField = (name: string, form: any) => {
-  return !!get(form.touched, name, false) && !!get(form.errors, name, false);
-};
 
 export const getError = (name: string, form: any) => get(form.errors, name);
 

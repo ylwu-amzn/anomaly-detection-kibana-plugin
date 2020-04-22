@@ -110,7 +110,6 @@ export type AnomalyResult = {
   endTime: number;
   plotTime: number;
   anomalyGrade: number;
-  // grade: number;
   confidence: number;
 };
 

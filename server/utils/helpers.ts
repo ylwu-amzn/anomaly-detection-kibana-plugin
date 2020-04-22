@@ -20,10 +20,9 @@ import {
   mapKeys,
   mapValues,
   snakeCase,
-  get,
 } from 'lodash';
 
-import { AD_DOC_FIELDS, MIN_IN_MILLI_SECS } from './constants';
+import { MIN_IN_MILLI_SECS } from './constants';
 
 export function mapKeysDeep(obj: object, fn: any): object | any[] {
   if (Array.isArray(obj)) {
@@ -40,23 +39,6 @@ export const toSnake = (value: any, key: string) => snakeCase(key);
 
 export const toCamel = (value: any, key: string) => camelCase(key);
 
-export const visualizeDetectorAnomalyResult = (
-  detectorAnomalyResult: any
-): object[] => {
-  const visualizedResult = [] as object[];
-
-  detectorAnomalyResult.results.forEach(
-    (anomaly: { startTime: number; endTime: number; anomalyGrade: any }) => {
-      visualizedResult.push({
-        [AD_DOC_FIELDS.DETECTOR_NAME]: detectorAnomalyResult.detector.name,
-        [AD_DOC_FIELDS.PLOT_TIME]: getFloorPlotTime(anomaly.startTime),
-        [AD_DOC_FIELDS.ANOMALY_GRADE]: Number(anomaly.anomalyGrade).toFixed(2),
-      });
-    }
-  );
-  return visualizedResult;
-};
-
 export const getFloorPlotTime = (plotTime: number): number => {
   return Math.floor(plotTime / MIN_IN_MILLI_SECS) * MIN_IN_MILLI_SECS;
 };
@@ -64,4 +46,4 @@ export const getFloorPlotTime = (plotTime: number): number => {
 export const toFixedNumber = (num: number, digits: number, base?: number) => {
   var pow = Math.pow(base || 10, digits);
   return Math.round(num * pow) / pow;
-}
+};
