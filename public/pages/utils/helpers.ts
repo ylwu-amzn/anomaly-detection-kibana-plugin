@@ -107,8 +107,8 @@ export const getDetectorsToDisplay = (
   return detectors.slice(size * page, page * size + size);
 };
 
-export const dateFormatter = timeFormatter('MM/DD/YY hh:mm:ss a');
-export const minuteDateFormatter = timeFormatter('MM/DD/YY hh:mm a');
+export const dateFormatter = timeFormatter('MM/DD/YY hh:mm:ss A');
+export const minuteDateFormatter = timeFormatter('MM/DD/YY hh:mm A');
 
 export const formatNumber = (data: any) => {
   try {

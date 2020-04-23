@@ -182,8 +182,8 @@ export const generateAnomalyAnnotations = (anomalies: any[]): any[] => {
       details: `There is an anomaly with confidence ${
         anomaly.confidence
       } between ${moment(anomaly.startTime).format(
-        'MM/DD/YY h:mm a'
-      )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm a')}`,
+        'MM/DD/YY h:mm A'
+      )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm A')}`,
     }));
 };
 

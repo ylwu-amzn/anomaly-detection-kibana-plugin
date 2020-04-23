@@ -257,7 +257,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                   <EuiHealth color="success">
                     Running since{' '}
                     {detector.enabledTime
-                      ? moment(detector.enabledTime).format('MM/DD/YY h:mm a')
+                      ? moment(detector.enabledTime).format('MM/DD/YY h:mm A')
                       : '?'}
                   </EuiHealth>
                 ) : (
@@ -266,7 +266,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
                     detector.featureAttributes.length
                       ? detector.disabledTime
                         ? `Stopped at ${moment(detector.disabledTime).format(
-                            'MM/DD/YY h:mm a'
+                            'MM/DD/YY h:mm A'
                           )}`
                         : 'Detector is not started'
                       : 'Feature required to start the detector'}

@@ -584,11 +584,11 @@ const getAnomalyResults = async (
       detectorResult.push({
         startTime: result._source.data_start_time,
         endTime: result._source.data_end_time,
-        plotTime:
-          result._source.data_start_time +
-          Math.floor(
-            (result._source.data_end_time - result._source.data_start_time) / 2
-          ),
+        plotTime: result._source.data_end_time,
+        //   result._source.data_start_time +
+        //   Math.floor(
+        //     (result._source.data_end_time - result._source.data_start_time) / 2
+        //   ),
         confidence:
           result._source.confidence != null &&
           result._source.confidence !== 'NaN' &&
@@ -609,12 +609,12 @@ const getAnomalyResults = async (
         featureResult[featureData.feature_id].push({
           startTime: result._source.data_start_time,
           endTime: result._source.data_end_time,
-          plotTime:
-            result._source.data_start_time +
-            Math.floor(
-              (result._source.data_end_time - result._source.data_start_time) /
-                2
-            ),
+          plotTime: result._source.data_end_time,
+            // result._source.data_start_time +
+            // Math.floor(
+            //   (result._source.data_end_time - result._source.data_start_time) /
+            //     2
+            // ),
           data:
             featureData.data != null && featureData.data !== 'NaN'
               ? toFixedNumber(Number.parseFloat(featureData.data), 3)

@@ -106,6 +106,16 @@ export const generateAlertAnnotations = (alerts: MonitorAlert[]): any[] => {
   }));
 };
 
+const findLatestAnomaly = (anomalies: any[]) => {
+  debugger
+  let latestAnomaly = anomalies[0];
+  for (let i = 1, len = anomalies.length; i < len; i++) {
+    let item = anomalies[i];
+    latestAnomaly = item.startTime > latestAnomaly.startTime ? item : latestAnomaly;
+  }
+  return latestAnomaly;
+}
+
 export const getAnomalySummary = (anomalies: any[]): AnomalySummary => {
   let minConfidence = 1.0,
     maxConfidence = 0.0;
@@ -131,7 +141,7 @@ export const getAnomalySummary = (anomalies: any[]): AnomalySummary => {
 
   const lastAnomalyOccurrence =
     targetAnomalies.length > 0
-      ? minuteDateFormatter(targetAnomalies[0].startTime)
+      ? minuteDateFormatter(findLatestAnomaly(targetAnomalies).endTime)
       : '-';
 
   return {

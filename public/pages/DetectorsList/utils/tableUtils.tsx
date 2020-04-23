@@ -29,7 +29,7 @@ const hintColor = darkModeEnabled() ? '#98A2B3' : '#535966';
 const renderTime = (time: number) => {
   const momentTime = moment(time);
   if (time && momentTime.isValid())
-    return momentTime.format('MM/DD/YYYY h:mm a');
+    return momentTime.format('MM/DD/YYYY h:mm A');
   return DEFAULT_EMPTY_DATA;
 };
 

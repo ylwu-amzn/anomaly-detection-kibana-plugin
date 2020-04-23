@@ -13,10 +13,10 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and loadi
          
         <button
           class="euiLink euiLink--primary"
-          style="font-size: 15px;"
+          style="font-size: 12px;"
           type="button"
         >
-          info
+          Info
         </button>
       </p>
     </div>
@@ -38,7 +38,7 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and loadi
         style="font-size: 15px;"
         target="_blank"
       >
-        view monitor 
+        View monitor 
         <svg
           class="euiIcon euiIcon--medium euiIcon-isLoading"
           focusable="false"
@@ -66,10 +66,10 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and not l
          
         <button
           class="euiLink euiLink--primary"
-          style="font-size: 15px;"
+          style="font-size: 12px;"
           type="button"
         >
-          info
+          Info
         </button>
       </p>
     </div>
@@ -91,7 +91,7 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and not l
         style="font-size: 15px;"
         target="_blank"
       >
-        view monitor 
+        View monitor 
         <svg
           class="euiIcon euiIcon--medium euiIcon-isLoading"
           focusable="false"
@@ -119,10 +119,10 @@ exports[`<AlertsStat /> spec Alert Stat renders component with undefined monitor
          
         <button
           class="euiLink euiLink--primary"
-          style="font-size: 15px;"
+          style="font-size: 12px;"
           type="button"
         >
-          info
+          Info
         </button>
       </p>
     </div>
@@ -155,10 +155,10 @@ exports[`<AlertsStat /> spec Alert Stat renders component with undefined monitor
          
         <button
           class="euiLink euiLink--primary"
-          style="font-size: 15px;"
+          style="font-size: 12px;"
           type="button"
         >
-          info
+          Info
         </button>
       </p>
     </div>

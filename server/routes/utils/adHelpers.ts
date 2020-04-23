@@ -136,17 +136,17 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
           : 0,
       startTime: rest.dataStartTime,
       endTime: rest.dataEndTime,
-      plotTime:
-        rest.dataStartTime +
-        Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
+      plotTime: rest.dataEndTime,
+        // rest.dataStartTime +
+        // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
     });
     featureData.forEach((feature: any) => {
       resultData.featureData[feature.featureId].push({
         startTime: rest.dataStartTime,
         endTime: rest.dataEndTime,
-        plotTime:
-          rest.dataStartTime +
-          Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
+        plotTime: rest.dataEndTime,
+          // rest.dataStartTime +
+          // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
         data: feature.data,
       });
     });

@@ -127,7 +127,7 @@ export const AnomalyResultsLiveChart = (
     return values.map((value, index) => ({
       dataValue: value,
       header: 'Now',
-      details: moment(value).format('MM/DD/YY h:mm a'),
+      details: moment(value).format('MM/DD/YY h:mm A'),
     }));
   };
 

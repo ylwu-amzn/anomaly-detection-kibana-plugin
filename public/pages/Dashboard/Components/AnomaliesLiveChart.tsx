@@ -148,7 +148,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
   const timeNowAnnotation = {
     dataValue: getFloorPlotTime(liveTimeRange.endDateTime.valueOf()),
     header: 'Now',
-    details: liveTimeRange.endDateTime.format('MM/DD/YY h:mm a'),
+    details: liveTimeRange.endDateTime.format('MM/DD/YY h:mm A'),
   } as LineAnnotationDatum;
 
   const annotations = [timeNowAnnotation];
@@ -200,7 +200,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
         <EuiFlexItem>
           <EuiStat
             description={'Last updated time'}
-            title={liveTimeRange.endDateTime.format('MM/DD/YYYY hh:mm a')}
+            title={liveTimeRange.endDateTime.format('MM/DD/YYYY hh:mm A')}
             titleSize="s"
           />
         </EuiFlexItem>
