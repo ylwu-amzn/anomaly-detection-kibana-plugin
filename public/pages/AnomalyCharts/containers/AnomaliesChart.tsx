@@ -142,7 +142,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
         const result = await dispatch(
           searchES(getAlertsQuery(monitorId, startDateTime))
         );
-        console.log('monitor alerts', result);
         setIsLoadingAlerts(false);
         setTotalAlerts(
           get(result, 'data.response.aggregations.total_alerts.value')

@@ -132,6 +132,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
         true
       );
       setPreviewDone(false);
+      setZoomRange({...dateRange})
       setNewDetector(updatedDetector);
       getSampleAdResult(updatedDetector);
     } catch (err) {

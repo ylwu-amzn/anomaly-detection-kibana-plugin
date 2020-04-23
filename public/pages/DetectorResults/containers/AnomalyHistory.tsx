@@ -33,7 +33,7 @@ import {
 } from '../../../models/interfaces';
 import {
   getAnomalyResultsWithDateRange,
-  filterAnomalyWithDateRange,
+  filterWithDateRange,
 } from '../../utils/anomalyResultUtils';
 import { get, isEmpty } from 'lodash';
 import { AnomalyResultsTable } from './AnomalyResultsTable';
@@ -190,9 +190,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             />
           ) : (
             <AnomalyResultsTable
-              anomalies={filterAnomalyWithDateRange(
+              anomalies={filterWithDateRange(
                 anomalyResults.anomalies,
-                zoomRange
+                zoomRange,
+                'plotTime'
               )}
             />
           )}
