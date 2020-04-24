@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, Fragment } from 'react';
 import {
   EuiTabs,
   EuiTab,
@@ -22,6 +22,10 @@ import {
   EuiTitle,
   EuiHealth,
   EuiOverlayMask,
+  EuiCallOut,
+  EuiSpacer,
+  EuiText,
+  EuiFieldText,
 } from '@elastic/eui';
 // @ts-ignore
 import { toastNotifications } from 'ui/notify';
@@ -79,6 +83,7 @@ interface DetectorDetailModel {
   showDeleteDetectorModal: boolean;
   showStopDetectorModalFor: string | undefined;
   showMonitorCalloutModal: boolean;
+  deleteTyped: boolean;
 }
 
 export const DetectorDetail = (props: DetectorDetailProps) => {
@@ -98,6 +103,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     showDeleteDetectorModal: false,
     showStopDetectorModalFor: undefined,
     showMonitorCalloutModal: false,
+    deleteTyped: false,
   });
 
   useHideSideNavBar(true, false);
@@ -199,7 +205,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     }
   };
 
-  const handleDelete = useCallback(async () => {
+  const handleDelete = useCallback(async (detectorId: string) => {
     try {
       await dispatch(deleteDetector(detectorId));
       toastNotifications.addSuccess(`Detector has been deleted successfully`);
@@ -236,6 +242,14 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   };
   const monitorCallout = monitor ? (
     <MonitorCallout monitorId={monitor.id} monitorName={monitor.name} />
+  ) : null;
+
+  const deleteDetectorCallout = detector.enabled ? (
+    <EuiCallOut
+      title="The detector is running. Are you sure you want to proceed?"
+      color="warning"
+      iconType="alert"
+    ></EuiCallOut>
   ) : null;
 
   return (
@@ -322,13 +336,63 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
         <EuiOverlayMask>
           <ConfirmModal
             title="Delete detector?"
-            description="Detector and feature configuration will be permanently removed. This action is irreversible. To confirm deletion, click the Delete button."
-            callout={monitorCallout}
+            description={
+              <EuiFlexGroup direction="column">
+                <EuiFlexItem>
+                  <EuiText>
+                    <p>
+                      Detector and feature configuration will be permanently
+                      removed. This action is irreversible. To confirm deletion,
+                      type <i>delete</i> in the field.
+                    </p>
+                  </EuiText>
+                </EuiFlexItem>
+                <EuiFlexItem grow={true}>
+                  <EuiFieldText
+                    fullWidth={true}
+                    placeholder="delete"
+                    onChange={e => {
+                      if (e.target.value === 'delete') {
+                        setDetecorDetailModel({
+                          ...detecorDetailModel,
+                          deleteTyped: true,
+                        });
+                      } else {
+                        setDetecorDetailModel({
+                          ...detecorDetailModel,
+                          deleteTyped: false,
+                        });
+                      }
+                    }}
+                  />
+                </EuiFlexItem>
+              </EuiFlexGroup>
+            }
+            callout={
+              <Fragment>
+                {deleteDetectorCallout}
+                {deleteDetectorCallout ? <EuiSpacer size="s" /> : null}
+                {monitorCallout}
+              </Fragment>
+            }
             confirmButtonText="Delete"
             confirmButtonColor="danger"
+            confirmButtonDisabled={!detecorDetailModel.deleteTyped}
             onClose={hideDeleteDetectorModal}
             onCancel={hideDeleteDetectorModal}
-            onConfirm={handleDelete}
+            onConfirm={() => {
+              if (detector.enabled) {
+                const listener: Listener = {
+                  onSuccess: () => {
+                    handleDelete(detectorId);
+                  },
+                  onException: hideDeleteDetectorModal,
+                };
+                handleStopAdJob(detectorId, listener);
+              } else {
+                handleDelete(detectorId);
+              }
+            }}
           />
         </EuiOverlayMask>
       ) : null}

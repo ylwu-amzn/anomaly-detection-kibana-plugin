@@ -195,10 +195,10 @@ export const MetaData = (props: MetaDataProps) => {
       title="Detector configuration"
       titleSize="s"
       actions={[<EuiButton onClick={props.onEditDetector}>Edit</EuiButton>]}
-      panelStyles={{
-        left: '10px',
-        width: '1120px',
-      }}
+      // panelStyles={{
+      //   left: '10px',
+      //   width: '1120px',
+      // }}
     >
       <EuiFlexGrid columns={4} gutterSize="l" style={{ border: 'none' }}>
         <EuiFlexItem>

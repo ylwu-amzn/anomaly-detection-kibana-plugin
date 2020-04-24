@@ -207,10 +207,10 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
         actions={[
           <EuiButton onClick={this.props.onEditFeatures}>Edit</EuiButton>,
         ]}
-        panelStyles={{
-          left: '10px',
-          width: '1120px',
-        }}
+        // panelStyles={{
+        //   left: '10px',
+        //   width: '1120px',
+        // }}
       >
         {featureNum == 0 ? (
           <EuiEmptyPrompt

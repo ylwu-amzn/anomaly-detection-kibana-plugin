@@ -30,7 +30,7 @@ interface DetectorConfigProps extends RouteComponentProps {
 export const DetectorConfig = (props: DetectorConfigProps) => {
   return (
     <React.Fragment>
-      <EuiPage>
+      <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
         <EuiPageBody>
           <EuiSpacer size="l" />
           <MetaData

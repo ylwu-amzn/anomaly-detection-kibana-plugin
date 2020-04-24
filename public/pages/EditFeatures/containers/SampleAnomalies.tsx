@@ -187,9 +187,11 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
             <EuiFlexGroup>
               <EuiFlexItem grow={false}>
                 <EuiButton
-                  type="submit"
+                  type="button"
                   data-test-subj="previewDetector"
-                  onClick={() => getSampleAnomalies()}
+                  onClick={() => {
+                    getSampleAnomalies();
+                  }}
                   disabled={
                     !!get(props.errors, 'featureList', []).find(
                       // @ts-ignore

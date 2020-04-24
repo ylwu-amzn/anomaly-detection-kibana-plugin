@@ -32,3 +32,10 @@ export const AGGREGATION_TYPES = [
   { value: 'min', text: 'min()' },
   { value: 'max', text: 'max()' },
 ];
+
+export const FEATURE_FIELDS = [
+  'featureName',
+  'aggregationOf',
+  'aggregationBy',
+  'aggregationQuery',
+];

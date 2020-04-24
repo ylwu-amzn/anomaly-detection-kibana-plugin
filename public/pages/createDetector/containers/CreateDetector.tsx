@@ -213,7 +213,7 @@ export function CreateDetector(props: CreateADProps) {
                     //@ts-ignore
                     onClick={formikProps.handleSubmit}
                   >
-                    {props.isEdit ? 'Save change' : 'Create'}
+                    {props.isEdit ? 'Save changes' : 'Create'}
                   </EuiButton>
                 </EuiFlexItem>
               </EuiFlexGroup>

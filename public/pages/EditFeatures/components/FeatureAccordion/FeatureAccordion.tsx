@@ -41,7 +41,9 @@ interface FeatureAccordionProps {
   onDelete(): void;
   index: number;
   feature: any;
+  // displayError: boolean;
   handleChange(event: React.ChangeEvent<HTMLSelectElement>): void;
+  // ref: any;
 }
 
 export const FeatureAccordion = (props: FeatureAccordionProps) => {
@@ -103,8 +105,8 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       <div>
         <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
           <EuiFlexItem>
-            <EuiTitle size="s" className="euiAccordionForm__title">
-              <h3>{feature.featureName ? feature.featureName : 'Add feature'}</h3>
+            <EuiTitle size="xs" className="euiAccordionForm__title">
+              <h5>{feature.featureName ? feature.featureName : 'Add feature'}</h5>
             </EuiTitle>
           </EuiFlexItem>
         </EuiFlexGroup>
@@ -123,6 +125,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
   
   return (
     <EuiAccordion
+      // ref={props.ref}
       id={`featureList.${props.index}`}
       key={props.index}
       buttonContent={featureButtonContent(props.feature)}
@@ -134,6 +137,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       extraAction={extraAction(props.onDelete)}
     >
       <Field
+        id={`featureList.${props.index}.featureName`}
         name={`featureList.${props.index}.featureName`}
         validate={validateFeatureName}
       >
@@ -146,7 +150,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
           >
             <EuiFieldText
               name={`featureList.${props.index}.featureName`}
-              id={`featureList.${props.index}.featureName`}
+              // id={`featureList.${props.index}.featureName`}
               placeholder="Enter feature name"
               value={field.value ? field.value : props.feature.featureName}
               {...field}
@@ -155,7 +159,10 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
         )}
       </Field>
 
-      <Field name={`featureList.${props.index}.featureEnabled`}>
+      <Field
+        id={`featureList.${props.index}.featureEnabled`}
+        name={`featureList.${props.index}.featureEnabled`}
+      >
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Feature state"
@@ -173,6 +180,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       </Field>
 
       <Field
+        id={`featureList.${props.index}.featureType`}
         name={`featureList.${props.index}.featureType`}
         validate={required}
       >

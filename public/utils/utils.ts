@@ -21,7 +21,9 @@ import { npStart } from 'ui/new_platform';
 import { ALERTING_PLUGIN_NAME } from './constants';
 import { MAX_FEATURE_NAME_SIZE } from './constants';
 
-export const validateFeatureName = (featureName: string): string | undefined => {
+export const validateFeatureName = (
+  featureName: string
+): string | undefined => {
   if (isEmpty(featureName)) {
     return 'Required';
   }
@@ -30,8 +32,9 @@ export const validateFeatureName = (featureName: string): string | undefined => 
   }
 };
 
-export const isInvalid = (name: string, form: any) =>
-  !!get(form.touched, name, false) && !!get(form.errors, name, false);
+export const isInvalid = (name: string, form: any, displayError?: boolean) =>
+  (!!get(form.touched, name, false) || displayError) &&
+  !!get(form.errors, name, false);
 
 export const getError = (name: string, form: any) => get(form.errors, name);
 

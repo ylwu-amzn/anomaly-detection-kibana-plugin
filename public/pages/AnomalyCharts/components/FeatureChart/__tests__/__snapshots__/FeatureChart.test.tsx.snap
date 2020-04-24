@@ -4,11 +4,11 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
 <div>
   <div
     class="euiPanel euiPanel--paddingMedium"
-    style="padding-left: 0px; padding-right: 0px;"
+    style="padding: 20px;"
   >
     <div
       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
-      style="padding: 0px 10px;"
+      style="padding: 0px;"
     >
       <div
         class="euiFlexItem"
@@ -62,7 +62,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
       class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
     />
     <div
-      style="padding: 0px 10px;"
+      style="padding: 10px 0px;"
     >
       <div
         style="height: 200px; width: 100%; opacity: 1;"
@@ -145,7 +145,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
               >
                 <defs>
                   <clippath
-                    id="echHighlighterClipPath__09793a9a-56c0-40cf-89f5-7b377f3e7451"
+                    id="echHighlighterClipPath__c86d9de0-a915-41a3-b511-acbc25be693c"
                   >
                     <rect
                       height="0"
@@ -172,11 +172,11 @@ exports[`<FeatureChart /> spec Feature Chart renders component with simple aggre
 <div>
   <div
     class="euiPanel euiPanel--paddingMedium"
-    style="padding-left: 0px; padding-right: 0px;"
+    style="padding: 20px;"
   >
     <div
       class="euiFlexGroup euiFlexGroup--gutterLarge euiFlexGroup--alignItemsCenter euiFlexGroup--justifyContentSpaceBetween euiFlexGroup--directionRow euiFlexGroup--responsive"
-      style="padding: 0px 10px;"
+      style="padding: 0px;"
     >
       <div
         class="euiFlexItem"
@@ -225,7 +225,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with simple aggre
       class="euiHorizontalRule euiHorizontalRule--full euiHorizontalRule--marginXSmall"
     />
     <div
-      style="padding: 0px 10px;"
+      style="padding: 10px 0px;"
     >
       <div
         style="height: 200px; width: 100%; opacity: 1;"
@@ -308,7 +308,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with simple aggre
               >
                 <defs>
                   <clippath
-                    id="echHighlighterClipPath__10684765-fe59-4f75-8541-d0983f69f2e2"
+                    id="echHighlighterClipPath__f067739c-07a4-4a5e-8bb0-58fab8613051"
                   >
                     <rect
                       height="0"

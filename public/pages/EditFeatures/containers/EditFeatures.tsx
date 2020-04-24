@@ -31,7 +31,12 @@ import {
 } from '@elastic/eui';
 import { FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik';
 import { get } from 'lodash';
-import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
@@ -73,7 +78,9 @@ export function EditFeatures(props: EditFeaturesProps) {
     SAVE_FEATURE_OPTIONS
   >(SAVE_FEATURE_OPTIONS.START_AD_JOB);
   const [firstLoad, setFirstLoad] = useState<boolean>(true);
+  // const [displayError, setDisplayError] = useState<boolean>(false);
   const [readyToStartAdJob, setReadyToStartAdJob] = useState<boolean>(true);
+  // const [featureRefs, setFeatureRefs] = useState<RefObject<EuiAccordion>[]>([]);
 
   useEffect(() => {
     chrome.breadcrumbs.set([
@@ -85,7 +92,15 @@ export function EditFeatures(props: EditFeaturesProps) {
       },
       BREADCRUMBS.EDIT_FEATURES,
     ]);
+    // if (detector && detector.featureAttributes) {
+    //   setFeatureRefs(detector.featureAttributes.map(f => React.createRef()));
+    // }
   }, [detector]);
+
+  // const ref = useRef(null);
+  // useEffect(() => {
+  //   console.log('featureRefs', featureRefs);
+  // }, [featureRefs]);
 
   useEffect(() => {
     if (hasError) {
@@ -116,6 +131,7 @@ export function EditFeatures(props: EditFeaturesProps) {
           // @ts-ignore
           if (firstLoad && values.featureList.length === 0) {
             push(initialize_feature());
+            // setFeatureRefs([...featureRefs, React.createRef()]);
           }
           setFirstLoad(false);
           return (
@@ -127,7 +143,9 @@ export function EditFeatures(props: EditFeaturesProps) {
                   }}
                   index={index}
                   feature={feature}
+                  // displayError={displayError}
                   handleChange={handleChange}
+                  // ref={null}
                 />
               ))}
 
@@ -139,7 +157,10 @@ export function EditFeatures(props: EditFeaturesProps) {
                   <EuiButton
                     data-test-subj="addFeature"
                     isDisabled={values.featureList.length >= MAX_FEATURE_NUM}
-                    onClick={() => push(initialize_feature())}
+                    onClick={() => {
+                      push(initialize_feature());
+                      // setFeatureRefs([...featureRefs, React.createRef()]);
+                    }}
                   >
                     Add another feature
                   </EuiButton>
@@ -267,7 +288,9 @@ export function EditFeatures(props: EditFeaturesProps) {
                   <EuiFlexItem grow={false}>
                     <EuiButtonEmpty
                       onClick={() =>
-                        props.history.push(`/detectors/${detectorId}`)
+                        props.history.push(
+                          `/detectors/${detectorId}/configurations`
+                        )
                       }
                     >
                       Cancel
@@ -287,6 +310,46 @@ export function EditFeatures(props: EditFeaturesProps) {
                         ).length
                       }
                       onClick={() => {
+                        // setDisplayError(true);
+                        // if (
+                        //   !!get(errors, 'featureList', []).filter(
+                        //     featureError => featureError
+                        //   ).length
+                        // ) {
+                        //   debugger;
+                        //   ref.current.focus();
+                          // featureRefs[0].current.focus();
+                          // const firstWrongFeature = get(
+                          //   errors,
+                          //   'featureList.0'
+                          // );
+
+                          // const filedName = FEATURE_FIELDS.find(
+                          //   field => !!get(firstWrongFeature, field)
+                          // );
+
+                          // if (filedName) {
+                          //   // const errorElement = document.querySelector(
+                          //   //   `[id="featureList.0.${filedName}"]`
+                          //   // );
+                          //   const errorElement = document.getElementById(
+                          //     `featureList.0.${filedName}`
+                          //   );
+                          //   // document.body.animate(
+                          //   //   { scrollTop: errorElement.offset().top },
+                          //   //   'slow'
+                          //   // );
+                          //   //@ts-ignore
+                          //   // errorElement.focus();
+                          //   errorElement.setAttribute('tabindex', '-1');
+                          //   //@ts-ignore
+                          //   errorElement.focus();
+                          // }
+
+                          // console.log('errors', errors);
+                        //   return;
+                        // }
+
                         if (values.featureList.length == 0) {
                           setSaveFeatureOption(
                             SAVE_FEATURE_OPTIONS.KEEP_AD_JOB_STOPPED

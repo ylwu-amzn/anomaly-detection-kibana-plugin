@@ -37,6 +37,7 @@ export const validateQuery = (value: string) => {
 export const CustomAggregation = (props: CustomAggregationProps) => {
   return (
     <Field
+      id={`featureList.${props.index}.aggregationQuery`}
       name={`featureList.${props.index}.aggregationQuery`}
       validate={validateQuery}
     >

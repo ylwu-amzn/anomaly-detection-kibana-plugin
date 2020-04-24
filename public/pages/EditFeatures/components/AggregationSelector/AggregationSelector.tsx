@@ -35,6 +35,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
   return (
     <Fragment>
       <Field
+        id={`featureList.${props.index}.aggregationOf`}
         name={`featureList.${props.index}.aggregationOf`}
         validate={requiredNonEmptyArray}
       >
@@ -68,6 +69,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
       </Field>
 
       <Field
+        id={`featureList.${props.index}.aggregationBy`}
         name={`featureList.${props.index}.aggregationBy`}
         validate={required}
       >
@@ -79,6 +81,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
             error={getError(field.name, form)}
           >
             <EuiSelect
+              id={`featureList.${props.index}.aggregationBy`}
               options={AGGREGATION_TYPES}
               {...field}
               data-test-subj="aggregationType"
