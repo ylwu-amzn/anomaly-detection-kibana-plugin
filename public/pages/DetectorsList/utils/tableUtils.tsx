@@ -45,133 +45,133 @@ const renderState = (state: DETECTOR_STATE) => {
 };
 
 export const staticColumn = [
-  {
-    field: 'name',
-    name: (
-      <EuiToolTip content="The name of the detector">
-        <span>
-          Detector{' '}
-          <EuiIcon
-            size="s"
-            color={hintColor}
-            type="questionInCircle"
-            className="eui-alignTop"
-          />
-        </span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    align: 'left',
-    render: (name: string, detector: Detector) => (
-      <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}`}>
-        {name}
-      </EuiLink>
-    ),
-  },
-  {
-    field: 'indices',
-    name: (
-      <EuiToolTip content="The index or index pattern the detector is detecting over">
-        <span>
-          Indices{' '}
-          <EuiIcon
-            size="s"
-            color={hintColor}
-            type="questionInCircle"
-            className="eui-alignTop"
-          />
-        </span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    truncateText: true,
-    textOnly: true,
-    align: 'left',
-    render: renderIndices,
-  },
-  {
-    field: 'curState',
-    name: (
-      <EuiToolTip content="The current state of the detector">
-        <span>
-          Detector state{' '}
-          <EuiIcon
-            size="s"
-            color={hintColor}
-            type="questionInCircle"
-            className="eui-alignTop"
-          />
-        </span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'string',
-    align: 'left',
-    truncateText: false,
-    render: renderState,
-  },
-  {
-    field: 'totalAnomalies',
-    name: (
-      <EuiToolTip content="Total anomalies with a grade > 0 in last 24 hours">
-        <span>
-          Anomalies last 24 hours{' '}
-          <EuiIcon
-            size="s"
-            color={hintColor}
-            type="questionInCircle"
-            className="eui-alignTop"
-          />
-        </span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'number',
-    align: 'right',
-    truncateText: false,
-  },
-  {
-    field: 'lastActiveAnomaly',
-    name: (
-      <EuiToolTip content="Time of the last active anomaly with a grade > 0">
-        <span>
-          Last anomaly occurrence{' '}
-          <EuiIcon
-            size="s"
-            color={hintColor}
-            type="questionInCircle"
-            className="eui-alignTop"
-          />
-        </span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'date',
-    truncateText: false,
-    align: 'left',
-    render: renderTime,
-  },
-  {
-    field: 'lastUpdateTime',
-    name: (
-      <EuiToolTip content="Time of the last detector update">
-        <span>
-          Last updated{' '}
-          <EuiIcon
-            size="s"
-            color={hintColor}
-            type="questionInCircle"
-            className="eui-alignTop"
-          />
-        </span>
-      </EuiToolTip>
-    ),
-    sortable: true,
-    dataType: 'date',
-    truncateText: false,
-    align: 'left',
-    render: renderTime,
-  },
-];
+         {
+           field: 'name',
+           name: (
+             <EuiToolTip content="The name of the detector">
+               <span>
+                 Detector{' '}
+                 <EuiIcon
+                   size="s"
+                   color={hintColor}
+                   type="questionInCircle"
+                   className="eui-alignTop"
+                 />
+               </span>
+             </EuiToolTip>
+           ),
+           sortable: true,
+           truncateText: true,
+           textOnly: true,
+           align: 'left',
+           render: (name: string, detector: Detector) => (
+             <EuiLink href={`${PLUGIN_NAME}#/detectors/${detector.id}`}>
+               {name}
+             </EuiLink>
+           ),
+         },
+         {
+           field: 'indices',
+           name: (
+             <EuiToolTip content="The index or index pattern used for the detector">
+               <span>
+                 Indices{' '}
+                 <EuiIcon
+                   size="s"
+                   color={hintColor}
+                   type="questionInCircle"
+                   className="eui-alignTop"
+                 />
+               </span>
+             </EuiToolTip>
+           ),
+           sortable: true,
+           truncateText: true,
+           textOnly: true,
+           align: 'left',
+           render: renderIndices,
+         },
+         {
+           field: 'curState',
+           name: (
+             <EuiToolTip content="The current state of the detector">
+               <span>
+                 Detector state{' '}
+                 <EuiIcon
+                   size="s"
+                   color={hintColor}
+                   type="questionInCircle"
+                   className="eui-alignTop"
+                 />
+               </span>
+             </EuiToolTip>
+           ),
+           sortable: true,
+           dataType: 'string',
+           align: 'left',
+           truncateText: false,
+           render: renderState,
+         },
+         {
+           field: 'totalAnomalies',
+           name: (
+             <EuiToolTip content="Total anomalies with a grade > 0 in last 24 hours">
+               <span>
+                 Anomalies last 24 hours{' '}
+                 <EuiIcon
+                   size="s"
+                   color={hintColor}
+                   type="questionInCircle"
+                   className="eui-alignTop"
+                 />
+               </span>
+             </EuiToolTip>
+           ),
+           sortable: true,
+           dataType: 'number',
+           align: 'right',
+           truncateText: false,
+         },
+         {
+           field: 'lastActiveAnomaly',
+           name: (
+             <EuiToolTip content="Time of the last active anomaly with a grade > 0">
+               <span>
+                 Last anomaly occurrence{' '}
+                 <EuiIcon
+                   size="s"
+                   color={hintColor}
+                   type="questionInCircle"
+                   className="eui-alignTop"
+                 />
+               </span>
+             </EuiToolTip>
+           ),
+           sortable: true,
+           dataType: 'date',
+           truncateText: false,
+           align: 'left',
+           render: renderTime,
+         },
+         {
+           field: 'lastUpdateTime',
+           name: (
+             <EuiToolTip content="The time the detector was last updated">
+               <span>
+                 Last updated{' '}
+                 <EuiIcon
+                   size="s"
+                   color={hintColor}
+                   type="questionInCircle"
+                   className="eui-alignTop"
+                 />
+               </span>
+             </EuiToolTip>
+           ),
+           sortable: true,
+           dataType: 'date',
+           truncateText: false,
+           align: 'left',
+           render: renderTime,
+         },
+       ];

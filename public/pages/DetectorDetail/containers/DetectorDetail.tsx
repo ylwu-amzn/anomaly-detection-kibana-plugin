@@ -322,7 +322,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
         <EuiOverlayMask>
           <ConfirmModal
             title="Delete detector?"
-            description="Detector and feature configuration will be removed and the deletion is irreversible and you can’t review anomaly result of this detector on Kibana. To confirm deletion, click the delete button."
+            description="Detector and feature configuration will be permanently removed. This action is irreversible. To confirm deletion, click the Delete button."
             callout={monitorCallout}
             confirmButtonText="Delete"
             confirmButtonColor="danger"
@@ -338,8 +338,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
           <ConfirmModal
             title="Stop detector to proceed?"
             description="Stop the detector before you can edit any detector
-                      configuration. Reconfiguration requires a restart and
-                      reinitialization."
+                      configuration. After you change the detector, make sure to restart and reinitialize the detector."
             callout={monitorCallout}
             confirmButtonText="Stop and proceed to edit"
             confirmButtonColor="primary"

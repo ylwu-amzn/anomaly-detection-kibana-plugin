@@ -36,6 +36,7 @@ import { displayText } from '../../createDetector/components/DataFilters/utils/h
 import { CodeModal } from '../components/CodeModal/CodeModal';
 import { RouteComponentProps } from 'react-router';
 import { DetectorControls } from '../../DetectorDetail/components/DetectorControls';
+import moment from 'moment';
 
 interface MetaDataProps extends RouteComponentProps {
   detectorId: string;
@@ -54,9 +55,10 @@ function toString(obj: any): string {
       return period.interval + ' ' + period.unit;
     } else if (typeof obj == 'number') {
       // epoch
-      let date = new Date(0);
-      date.setUTCMilliseconds(obj);
-      return date.toString();
+      // let date = new Date(0);
+      // date.setUTCMilliseconds(obj);
+      // return date.toString();
+      return moment(obj).format('MM/DD/YY hh:mm A');
     }
   }
   return '-';

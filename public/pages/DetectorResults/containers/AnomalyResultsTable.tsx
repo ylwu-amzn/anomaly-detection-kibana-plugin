@@ -45,7 +45,7 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
     page: 0,
     queryParams: {
       from: 0,
-      size: 30,
+      size: 10,
       sortDirection: SORT_DIRECTION.DESC,
       sortField: 'startTime',
     },

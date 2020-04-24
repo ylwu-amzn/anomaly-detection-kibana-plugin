@@ -52,7 +52,7 @@ interface AnomalyResultsLiveChartProps {
 export const AnomalyResultsLiveChart = (
   props: AnomalyResultsLiveChartProps
 ) => {
-  const UPDATE_INTERVAL = 5 * 1000; //poll anomaly result every 5 seconds
+  const UPDATE_INTERVAL = 30 * 1000; //poll anomaly result every 30 seconds
   const MONITORING_INTERVALS = 60;
   const dispatch = useDispatch();
 
@@ -110,7 +110,8 @@ export const AnomalyResultsLiveChart = (
 
   const liveAnomaliesDescription = () => (
     <EuiText size="s" style={{ color: '#879196' }}>
-      Live anomaly results during last {MONITORING_INTERVALS} intervals
+      Live anomaly results during last {MONITORING_INTERVALS * props.detector.detectionInterval.period.interval}{' '}
+      minutes
     </EuiText>
   );
 

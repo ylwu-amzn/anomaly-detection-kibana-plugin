@@ -140,7 +140,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Feature name"
-            helpText="Enter a descriptive name. The name must be unique within this detector"
+            helpText="Enter a descriptive name. The name must be unique within this detector."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >

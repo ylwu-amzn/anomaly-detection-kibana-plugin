@@ -178,7 +178,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                         class="euiStep__content"
                       >
                         <p>
-                          View anomaly detector alerts on the anomaly history graph. See details of all alerts over time from monitor.
+                          View anomaly detector alerts on the anomaly history graph. See details of all alerts over time from the monitor.
                         </p>
                       </div>
                     </div>
@@ -438,7 +438,7 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                         class="euiStep__content"
                       >
                         <p>
-                          View anomaly detector alerts on the anomaly history graph. See details of all alerts over time from monitor.
+                          View anomaly detector alerts on the anomaly history graph. See details of all alerts over time from the monitor.
                         </p>
                       </div>
                     </div>

@@ -97,13 +97,14 @@ export function EditFeatures(props: EditFeaturesProps) {
     <EuiText size="s">
       <p className="content-panel-subtitle">
         Specify an index field that you want to find anomalies for by defining
-        features. An detector can discover anomalies across up to 5 features.{' '}
+        features{' '}
         <EuiLink
           href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
           target="_blank"
         >
           Learn more <EuiIcon size="s" type="popout" />
         </EuiLink>
+        . You can add up to 5 features.
       </p>
     </EuiText>
   );
@@ -186,7 +187,7 @@ export function EditFeatures(props: EditFeaturesProps) {
         handleStartAdJob(detector.id);
       }
       setSubmitting(false);
-      props.history.push(`/detectors/${detectorId}`);
+      props.history.push(`/detectors/${detectorId}/configurations`);
     } catch (err) {
       toastNotifications.addDanger(
         getErrorMessage(err, 'There was a problem updating feature')
@@ -213,21 +214,26 @@ export function EditFeatures(props: EditFeaturesProps) {
           handleChange,
           errors,
         }) => (
-          <Form>
-            <EuiPage>
-              <EuiPageBody>
-                <EuiPageHeader>
-                  <EuiPageHeaderSection>
-                    <EuiTitle size="l">
-                      <h1>Edit features </h1>
-                    </EuiTitle>
-                  </EuiPageHeaderSection>
-                </EuiPageHeader>
-                <ContentPanel title="Features" subTitle={featureDescription()}>
-                  {renderFeatures(handleChange)}
-                </ContentPanel>
-              </EuiPageBody>
-            </EuiPage>
+          <Fragment>
+            <Form>
+              <EuiPage>
+                <EuiPageBody>
+                  <EuiPageHeader>
+                    <EuiPageHeaderSection>
+                      <EuiTitle size="l">
+                        <h1>Edit features </h1>
+                      </EuiTitle>
+                    </EuiPageHeaderSection>
+                  </EuiPageHeader>
+                  <ContentPanel
+                    title="Features"
+                    subTitle={featureDescription()}
+                  >
+                    {renderFeatures(handleChange)}
+                  </ContentPanel>
+                </EuiPageBody>
+              </EuiPage>
+            </Form>
 
             {detector && detector.id ? (
               <SampleAnomalies
@@ -270,7 +276,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                   <EuiFlexItem grow={false}>
                     <EuiButton
                       fill
-                      type="button"
+                      type="submit"
                       data-test-subj="updateAdjustModel"
                       isLoading={isSubmitting}
                       disabled={
@@ -322,7 +328,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                 />
               </EuiOverlayMask>
             ) : null}
-          </Form>
+          </Fragment>
         )}
       </Formik>
     </Fragment>

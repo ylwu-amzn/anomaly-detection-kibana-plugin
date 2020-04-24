@@ -21,11 +21,11 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and loadi
       </p>
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       <p
-        class="euiTitle euiTitle--medium euiStat__title"
+        class="euiTitle euiTitle--small euiStat__title"
         style="display: inline;"
       >
         -
@@ -35,7 +35,7 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and loadi
         class="euiLink euiLink--primary"
         href="/1d42b75b-3f59-550a-a"
         rel="noopener noreferrer"
-        style="font-size: 15px;"
+        style="font-size: 14px;"
         target="_blank"
       >
         View monitor 
@@ -74,11 +74,11 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and not l
       </p>
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       <p
-        class="euiTitle euiTitle--medium euiStat__title"
+        class="euiTitle euiTitle--small euiStat__title"
         style="display: inline;"
       >
         9
@@ -88,7 +88,7 @@ exports[`<AlertsStat /> spec Alert Stat renders component with monitor and not l
         class="euiLink euiLink--primary"
         href="/899c56c6-99d0-539b-8"
         rel="noopener noreferrer"
-        style="font-size: 15px;"
+        style="font-size: 14px;"
         target="_blank"
       >
         View monitor 
@@ -127,11 +127,11 @@ exports[`<AlertsStat /> spec Alert Stat renders component with undefined monitor
       </p>
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       <p
-        class="euiTitle euiTitle--medium euiStat__title"
+        class="euiTitle euiTitle--small euiStat__title"
         style="display: inline;"
       >
         -
@@ -163,11 +163,11 @@ exports[`<AlertsStat /> spec Alert Stat renders component with undefined monitor
       </p>
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       <p
-        class="euiTitle euiTitle--medium euiStat__title"
+        class="euiTitle euiTitle--small euiStat__title"
         style="display: inline;"
       >
         9
@@ -189,7 +189,7 @@ exports[`<AnomalyStat /> spec Anomaly Stat renders component without tooltip 1`]
       test description
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       test title
@@ -224,7 +224,7 @@ exports[`<AnomalyStatWithTooltip /> spec Anomaly Stat with tooltip renders compo
       </p>
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       -
@@ -259,7 +259,7 @@ exports[`<AnomalyStatWithTooltip /> spec Anomaly Stat with tooltip renders compo
       </p>
     </div>
     <div
-      class="euiTitle euiTitle--medium euiStat__title"
+      class="euiTitle euiTitle--small euiStat__title"
       style="display: inline;"
     >
       0.50-0.90

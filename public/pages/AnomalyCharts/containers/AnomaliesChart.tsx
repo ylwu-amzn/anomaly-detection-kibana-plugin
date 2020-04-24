@@ -23,6 +23,7 @@ import {
   EuiLoadingChart,
   EuiStat,
   EuiButton,
+  EuiSuperDatePicker,
 } from '@elastic/eui';
 import moment from 'moment';
 import {
@@ -36,6 +37,7 @@ import {
   AnnotationDomainTypes,
   RectAnnotation,
 } from '@elastic/charts';
+import dateMath from '@elastic/datemath';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
 import {
   AnomalySummary,
@@ -70,6 +72,7 @@ import {
 } from '../utils/anomalyChartUtils';
 import { searchES } from '../../../redux/reducers/elasticsearch';
 import { useDispatch } from 'react-redux';
+import { DurationInputArg2 } from 'moment';
 
 interface AnomaliesChartProps {
   onDateRangeChange(
@@ -104,17 +107,23 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   const [showAlertsFlyout, setShowAlertsFlyout] = useState<boolean>(false);
   const [alertAnnotations, setAlertAnnotations] = useState<any[]>([]);
   const [isLoadingAlerts, setIsLoadingAlerts] = useState<boolean>(false);
-  const [dateRangeOption, setDateRangeOption] = useState<AD_RESULT_DATE_RANGES>(
-    props.initialDateRangeOption
-      ? props.initialDateRangeOption
-      : AD_RESULT_DATE_RANGES.LAST_1_HOUR
-  );
+  // const [dateRangeOption, setDateRangeOption] = useState<AD_RESULT_DATE_RANGES>(
+  //   props.initialDateRangeOption
+  //     ? props.initialDateRangeOption
+  //     : AD_RESULT_DATE_RANGES.LAST_1_HOUR
+  // );
   const [totalAlerts, setTotalAlerts] = useState<number | undefined>(undefined);
   const [alerts, setAlerts] = useState<MonitorAlert[]>([]);
   const [zoomRange, setZoomRange] = useState<DateRange>({
     ...props.dateRange,
   });
   const [zoomedAnomalies, setZoomedAnomalies] = useState<any[]>([]);
+
+  const [datePickerRange, setDatePickerRange] = useState({
+    start: 'now-7d',
+    end: 'now',
+  });
+  // const [datePickerEnd, setDatePickerEnd] = useState<string>('now');
 
   useEffect(() => {
     const anomalies = prepareDataForChart(props.anomalies, zoomRange);
@@ -172,37 +181,141 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
 
   const showLoader = useDelayedLoader(props.isLoading || isLoadingAlerts);
 
-  const datePicker = () => (
-    <EuiSelect
-      id="anomalyHistoryDatePicker"
-      options={
-        props.dateRangeOptions
-          ? props.dateRangeOptions
-          : ANOMALY_DATE_RANGE_OPTIONS
+  // const datePicker = () => (
+  //   <EuiSelect
+  //     id="anomalyHistoryDatePicker"
+  //     options={
+  //       props.dateRangeOptions
+  //         ? props.dateRangeOptions
+  //         : ANOMALY_DATE_RANGE_OPTIONS
+  //     }
+  //     value={dateRangeOption}
+  //     onChange={(e: any) => {
+  //       setDateRangeOption(e.target.value);
+  //       let startDate: number | undefined = undefined;
+  //       const endDate = moment().valueOf();
+  //       if (e.target.value === AD_RESULT_DATE_RANGES.LAST_1_HOUR) {
+  //         startDate = moment()
+  //           .subtract(1, 'hours')
+  //           .valueOf();
+  //       } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_24_HOURS) {
+  //         startDate = moment()
+  //           .subtract(24, 'hours')
+  //           .valueOf();
+  //       } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_7_DAYS) {
+  //         startDate = moment()
+  //           .subtract(7, 'days')
+  //           .valueOf();
+  //       }
+  //       if (startDate) {
+  //         handleDateRangeChange(startDate, endDate);
+  //       }
+  //     }}
+  //     style={{ width: '145px' }}
+  //   />
+  // );
+  //  const onRefresh = ({ start, end, refreshInterval }) => {
+  //    return new Promise(resolve => {
+  //      setTimeout(resolve, 100);
+  //    }).then(() => {
+  //      console.log(start, end, refreshInterval);
+  //    });
+  //  };
+
+  // const parseDate = (value: string) => {
+  //   if (value === 'now') {
+  //     return moment();
+  //   }
+  //   if (value.startsWith('now')) {
+  //     if (value.slice(3, 4) === '-') {
+  //       const unit = value.slice(value.length - 1, value.length);
+  //       const amount = parseInt(value.slice(4, value.length - 1));
+  //       //@ts-ignore
+  //       return moment().subtract(amount, unit);
+  //     } else if (value.slice(3, 4) === '+') {
+  //       const unit = value.slice(value.length - 1, value.length);
+  //       const amount = parseInt(value.slice(4, value.length - 1));
+  //       //@ts-ignore
+  //       return moment().add(amount, unit);
+  //     }
+  //   }
+  //   return moment(value);
+  // };
+
+  // const getQuickDateRange = (value: string) => {
+  //   //@ts-ignore
+  //   const startTime = dateMath.parse(value);
+  //   const endTime = startTime.add(1, value.slice(value.length-1, value.length)).subtract(1, 'milliseconds')
+  //   return {
+  //     startTime: startTime,
+  //     endTime: endTime,
+  //   }
+  // };
+
+  const handleDatePickerDateRangeChange = (start: string, end: string, refresh?: boolean) => {
+    if (start && end) {
+      const startTime: moment.Moment | undefined = dateMath.parse(start);
+      if (startTime) {
+        const endTime: moment.Moment | undefined =
+          start === end && start.startsWith('now/')
+            ? moment(startTime)
+                .add(1, start.slice(start.length - 1) as DurationInputArg2)
+                .subtract(1, 'milliseconds')
+            : dateMath.parse(end);
+        console.log(
+          `datepicker - start: ${start}   ${startTime.format(
+            'MM/DD/YY hh:mm A'
+          )}`
+        );
+        console.log(
+          `datepicker - end: ${end}   ${endTime.format('MM/DD/YY hh:mm A')}`
+        );
+        if (!endTime) {
+          return;
+        }
+
+        if (
+          !refresh && startTime.valueOf() >= props.dateRange.startDate &&
+          endTime.valueOf() <= props.dateRange.endDate
+        ) {
+          handleZoomRangeChange(startTime.valueOf(), endTime.valueOf());
+        } else {
+          handleDateRangeChange(startTime.valueOf(), endTime.valueOf());
+        }
       }
-      value={dateRangeOption}
-      onChange={(e: any) => {
-        setDateRangeOption(e.target.value);
-        let startDate: number | undefined = undefined;
-        const endDate = moment().valueOf();
-        if (e.target.value === AD_RESULT_DATE_RANGES.LAST_1_HOUR) {
-          startDate = moment()
-            .subtract(1, 'hours')
-            .valueOf();
-        } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_24_HOURS) {
-          startDate = moment()
-            .subtract(24, 'hours')
-            .valueOf();
-        } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_7_DAYS) {
-          startDate = moment()
-            .subtract(7, 'days')
-            .valueOf();
-        }
-        if (startDate) {
-          handleDateRangeChange(startDate, endDate);
-        }
+    }
+  };
+
+  const datePicker = () => (
+    <EuiSuperDatePicker
+      isLoading={props.isLoading || isLoadingAlerts}
+      start={datePickerRange.start}
+      end={datePickerRange.end}
+      // showUpdateButton={!props.title.startsWith('Sample ')}
+      onTimeChange={({ start, end, isInvalid, isQuickSelection }) => {
+        setDatePickerRange({ start: start, end: end });
+        handleDatePickerDateRangeChange(start, end);
       }}
-      style={{ width: '145px' }}
+      onRefresh={({ start, end, refreshInterval }) => {
+        handleDatePickerDateRangeChange(start, end, true);
+      }}
+      isPaused={true}
+      commonlyUsedRanges={[
+        {start: 'now-24h', end: 'now', label: 'last 24 hours'},
+        {start: 'now-7d', end: 'now', label: 'last 7 days'},
+        {start: 'now-30d', end: 'now', label: 'last 30 days'},
+        {start: 'now-90d', end: 'now', label: 'last 90 days'},
+
+        {start: 'now/d', end: 'now', label: 'Today'},
+        {start: 'now/w', end: 'now', label: 'Week to date'},
+        {start: 'now/M', end: 'now', label: 'Month to date'},
+        {start: 'now/y', end: 'now', label: 'Year to date'},
+      ]}
+      // onClick={() => console.log('clicked')}
+      // type='button'
+      // refreshInterval={1000}
+      // onRefreshChange={onRefreshChange}
+      // recentlyUsedRanges={recentlyUsedRanges}
     />
   );
 
@@ -240,7 +353,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                     ? 'Anomaly occurrences'
                     : 'Sample anomaly occurrences'
                 }
-                titleSize="m"
+                titleSize="s"
               />
             </EuiFlexItem>
             <EuiFlexItem>
@@ -279,7 +392,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                     ? 'Last anomaly occurrence'
                     : 'Last sample anomaly occurrence'
                 }
-                titleSize="m"
+                titleSize="s"
               />
             </EuiFlexItem>
             {props.showAlerts ? (
@@ -292,7 +405,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                 />
               </EuiFlexItem>
             ) : null}
-            <EuiFlexItem grow={false}>
+            {/* <EuiFlexItem grow={false}>
               <EuiButton
                 onClick={() => {
                   handleZoomRangeChange(
@@ -303,7 +416,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
               >
                 Reset zoom
               </EuiButton>
-            </EuiFlexItem>
+            </EuiFlexItem> */}
           </EuiFlexGroup>
           <EuiFlexGroup>
             <EuiFlexItem grow={true}>
@@ -330,6 +443,10 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                       legendPosition={Position.Right}
                       onBrushEnd={(start: number, end: number) => {
                         handleZoomRangeChange(start, end);
+                        setDatePickerRange({
+                          start: moment(start).format(),
+                          end: moment(end).format(),
+                        });
                       }}
                     />
                     <RectAnnotation

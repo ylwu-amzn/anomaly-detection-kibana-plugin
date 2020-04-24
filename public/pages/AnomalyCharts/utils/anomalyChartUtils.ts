@@ -107,7 +107,6 @@ export const generateAlertAnnotations = (alerts: MonitorAlert[]): any[] => {
 };
 
 const findLatestAnomaly = (anomalies: any[]) => {
-  debugger
   let latestAnomaly = anomalies[0];
   for (let i = 1, len = anomalies.length; i < len; i++) {
     let item = anomalies[i];

@@ -124,7 +124,7 @@ export const AnomaliesDistributionChart = (
           <EuiText className={'anomaly-distribution-subtitle'}>
             <p>
               {
-                'The inner circle shows the anomaly distribution by your indices. The outer circle shows the anomaly distribution by your detector'
+                'The inner circle shows the anomaly distribution by your indices. The outer circle shows the anomaly distribution by your detectors.'
               }
             </p>
           </EuiText>

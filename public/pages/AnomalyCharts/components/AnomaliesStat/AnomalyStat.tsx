@@ -14,7 +14,7 @@
  */
 
 import React, { Fragment } from 'react';
-import { EuiIcon, EuiLink, EuiToolTip } from '@elastic/eui';
+import { EuiIcon, EuiLink, EuiToolTip, EuiTitle } from '@elastic/eui';
 import { Monitor } from '../../../../models/interfaces';
 import { getAlertingMonitorListLink } from '../../../../utils/utils';
 import { formatNumber } from '../../../utils/helpers';
@@ -31,7 +31,7 @@ export const AnomalyStat = (props: AnomalyStatProps) => {
         {props.description}
       </div>
       <div
-        className="euiTitle euiTitle--medium euiStat__title"
+        className="euiTitle euiTitle--small euiStat__title"
         style={{ display: 'inline' }}
       >
         {props.title}
@@ -79,7 +79,7 @@ export const AlertsStat = (props: {
     return (
       <Fragment>
         <p
-          className="euiTitle euiTitle--medium euiStat__title"
+          className="euiTitle euiTitle--small euiStat__title"
           style={{ display: 'inline' }}
         >
           {props.totalAlerts === undefined || props.isLoading
@@ -93,7 +93,7 @@ export const AlertsStat = (props: {
               props.monitor.id
             }`}
             target="_blank"
-            style={{ fontSize: '15px' }}
+            style={{ fontSize: '14px' }}
           >
             View monitor <EuiIcon type="popout"></EuiIcon>
           </EuiLink>

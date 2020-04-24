@@ -65,7 +65,7 @@ const alertSteps = [
     children: (
       <p>
         View anomaly detector alerts on the anomaly history graph. See details
-        of all alerts over time from monitor.
+        of all alerts over time from the monitor.
       </p>
     ),
   },

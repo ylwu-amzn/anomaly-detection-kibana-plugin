@@ -54,7 +54,7 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const isLoading = useSelector(
     (state: AppState) => state.anomalyResults.requesting
   );
-  const initialStartDate = moment().subtract(1, 'hours');
+  const initialStartDate = moment().subtract(7, 'days');
   const initialEndDate = moment();
   const [dateRange, setDateRange] = useState<DateRange>({
     startDate: initialStartDate.valueOf(),

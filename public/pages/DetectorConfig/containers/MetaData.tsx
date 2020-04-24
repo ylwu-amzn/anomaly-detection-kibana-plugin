@@ -35,6 +35,7 @@ import {
 import React, { Component, FunctionComponent } from 'react';
 import { displayText } from '../../createDetector/components/DataFilters/utils/helpers';
 import { CodeModal } from '../components/CodeModal/CodeModal';
+import moment from 'moment';
 
 interface MetaDataProps {
   detectorId: string;
@@ -75,9 +76,10 @@ export function toString(obj: any): string {
       return period.interval + ' ' + period.unit;
     } else if (typeof obj == 'number') {
       // epoch
-      let date = new Date(0);
-      date.setUTCMilliseconds(obj);
-      return date.toString();
+      // let date = new Date(0);
+      // date.setUTCMilliseconds(obj);
+      // return date.toString();
+      return moment(obj).format('MM/DD/YY hh:mm A');
     }
   }
   return '-';

@@ -175,7 +175,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
 
     const getCellProps = () => {
       return {
-        className: 'featureText',
+        // className: 'featureText',
         textOnly: true,
       };
     };
@@ -187,10 +187,10 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
         title={`Features (${featureNum})`}
         titleSize="s"
         subTitle={
-          <EuiText style={{ padding: '0px 10px' }} className="fieldsSubtitle">
+          <EuiText className="fieldsSubtitle">
             <p>
               Specify index fields that you want to find anomalies for by
-              defining features. A detector can discover anomalies across up to
+              defining features. A detector can discover anomalies for up to
               5 features. Once you define the features, you can preview your
               anomalies from a sample feature output.{' '}
               <EuiLink
