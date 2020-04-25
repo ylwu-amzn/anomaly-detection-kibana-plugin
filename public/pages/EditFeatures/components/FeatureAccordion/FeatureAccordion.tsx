@@ -100,9 +100,9 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
     </EuiFlexGroup>
   );
 
-  const featureButtonContent = (feature: any) => {
+  const featureButtonContent = (feature: any, index: number) => {
     return (
-      <div>
+      <div id={`featureAccordionHeaders.${index}`}>
         <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
           <EuiFlexItem>
             <EuiTitle size="xs" className="euiAccordionForm__title">
@@ -128,7 +128,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       // ref={props.ref}
       id={`featureList.${props.index}`}
       key={props.index}
-      buttonContent={featureButtonContent(props.feature)}
+      buttonContent={featureButtonContent(props.feature, props.index)}
       //@ts-ignore
       buttonClassName="euiAccordionForm__button"
       className="euiAccordionForm"
