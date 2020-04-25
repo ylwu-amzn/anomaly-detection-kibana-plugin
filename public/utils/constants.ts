@@ -52,7 +52,7 @@ export const MAX_FEATURE_NUM = 5;
 export const MAX_FEATURE_NAME_SIZE = 256;
 
 export enum DETECTOR_STATE {
-  DISABLED = 'Disabled',
+  DISABLED = 'Stopped',
   INIT = 'Initializing',
   RUNNING = 'Running',
   INIT_FAILURE = 'Initialization failure',
