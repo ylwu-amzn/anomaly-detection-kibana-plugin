@@ -22,34 +22,28 @@ import { EmptyDashboard } from '../Components/EmptyDashboard/EmptyDashboard';
 import { EuiLoadingSpinner } from '@elastic/eui';
 import { DashboardHeader } from '../Components/utils/DashboardHeader';
 import { DashboardOverview } from './DashboardOverview';
-//@ts-ignore
-import chrome from 'ui/chrome';
-import { BREADCRUMBS } from '../../../utils/constants';
 
 export const Dashboard = () => {
-  // Set breadcrumbs on page initialization
-  useEffect(() => {
-    chrome.breadcrumbs.set([
-      BREADCRUMBS.ANOMALY_DETECTOR,
-      BREADCRUMBS.DASHBOARD,
-    ]);
-  }, []);
-
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(true);
 
   const onRefreshPage = async () => {
-    await dispatch(
-      getDetectorList({
-        from: 0,
-        size: 1,
-        search: '',
-        sortDirection: SORT_DIRECTION.DESC,
-        sortField: 'name',
-      })
-    );
-    setIsLoading(false);
+    try {
+      await dispatch(
+        getDetectorList({
+          from: 0,
+          size: 1,
+          search: '',
+          sortDirection: SORT_DIRECTION.DESC,
+          sortField: 'name',
+        })
+      );
+    } catch (error) {
+      console.log('Error is found during getting detector list', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const totalDetectors = useSelector(
