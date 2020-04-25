@@ -104,7 +104,8 @@ const previewDetector = async (
     };
   } catch (err) {
     console.log('Anomaly detector - previewDetector', err);
-    return { ok: false, error: err.message };
+    // return { ok: false, error: err.msg || err.response || err.message };
+    return { ok: false, error: err };
   }
 };
 
@@ -610,11 +611,11 @@ const getAnomalyResults = async (
           startTime: result._source.data_start_time,
           endTime: result._source.data_end_time,
           plotTime: result._source.data_end_time,
-            // result._source.data_start_time +
-            // Math.floor(
-            //   (result._source.data_end_time - result._source.data_start_time) /
-            //     2
-            // ),
+          // result._source.data_start_time +
+          // Math.floor(
+          //   (result._source.data_end_time - result._source.data_start_time) /
+          //     2
+          // ),
           data:
             featureData.data != null && featureData.data !== 'NaN'
               ? toFixedNumber(Number.parseFloat(featureData.data), 3)

@@ -26,7 +26,7 @@ import {
   EuiLoadingSpinner,
   EuiIcon,
 } from '@elastic/eui';
-import moment, { Moment } from 'moment';
+import moment from 'moment';
 import { get } from 'lodash';
 import React, { Fragment, useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -43,9 +43,9 @@ import {
 import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
 import { FeatureBreakDown } from '../../AnomalyCharts/containers/FeatureBreakDown';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
-import { AD_RESULT_DATE_RANGES } from '../../utils/constants';
 import { generateAnomalyAnnotations } from '../../utils/anomalyResultUtils';
 import { SAMPLE_ANOMALY_DATE_RANGE_OPTIONS } from '../../AnomalyCharts/utils/anomalyChartUtils';
+import { focusOnFirstWrongFeature } from '../utils/helpers';
 
 interface SampleAnomaliesProps {
   detector: Detector;
@@ -61,9 +61,6 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
   const [previewDone, setPreviewDone] = useState<boolean>(false);
   const [firstPreview, setFirstPreview] = useState<boolean>(true);
   const [newDetector, setNewDetector] = useState<Detector>(props.detector);
-  // const [previewDateRangeOption, setPreviewDateRangeOption] = useState<
-  //   AD_RESULT_DATE_RANGES
-  // >(AD_RESULT_DATE_RANGES.LAST_7_DAYS);
   const initialStartDate = moment().subtract(7, 'days');
   const initialEndDate = moment();
   const [dateRange, setDateRange] = useState<DateRange>({
@@ -88,13 +85,11 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
         startDate: startDate,
         endDate: endDate,
       });
-      // setPreviewDateRangeOption(dateRangeOption as AD_RESULT_DATE_RANGES);
     },
     []
   );
 
   const handleZoomChange = useCallback((startDate: number, endDate: number) => {
-    // debugger;
     setZoomRange({
       startDate: startDate,
       endDate: endDate,
@@ -104,6 +99,17 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
   const anomaliesResult = useSelector(
     (state: AppState) => state.anomalies.anomaliesResult
   );
+
+  const getPreviewErrorMessage = (err: any, defaultMessage: string) => {
+    if (typeof err === 'string') return err;
+    if (err) {
+      if (err.msg === 'Bad Request') {
+        return err.response || defaultMessage;
+      }
+      if (err.msg) return err.msg;
+    }
+    return defaultMessage;
+  };
 
   async function getSampleAdResult(detector: Detector) {
     try {
@@ -121,6 +127,9 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
     } catch (err) {
       console.error(`Fail to preivew detector ${detector.id}`, err);
       setIsLoading(false);
+      toastNotifications.addDanger(
+        getPreviewErrorMessage(err, 'There was a problem previewing detector')
+      );
     }
   }
 
@@ -146,24 +155,7 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
   return (
     <EuiPage>
       <EuiPageBody>
-        <ContentPanel
-          title="Sample anomalies"
-          // subTitle={
-          //   <EuiText size="s">
-          //     <p className="content-panel-subtitle">
-          //       Preview how your anomalies may look like from sample feature
-          //       output and adjust the feature settings as needed.{' '}
-          //       <EuiLink
-          //         href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-          //         target="_blank"
-          //       >
-          //         Learn more
-          //         <EuiIcon size="s" type="popout" />
-          //       </EuiLink>
-          //     </p>
-          //   </EuiText>
-          // }
-        >
+        <ContentPanel title="Sample anomalies">
           <EuiCallOut
             title={'You can preview anomalies based on sample feature input'}
             iconType="eye"
@@ -190,78 +182,18 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                   type="button"
                   data-test-subj="previewDetector"
                   onClick={() => {
-                    getSampleAnomalies();
+                    if (!focusOnFirstWrongFeature(props.errors)) {
+                      getSampleAnomalies();
+                    }
                   }}
-                  disabled={
-                    !!get(props.errors, 'featureList', []).find(
-                      // @ts-ignore
-                      featureError => !!featureError
-                    ) || props.featureList.length === 0
-                  }
                   fill={!firstPreview}
                   isLoading={isLoading}
                 >
-                  {/* Preview anomalies */}
                   {firstPreview ? 'Preview anomalies' : 'Refresh preview'}
                 </EuiButton>
               </EuiFlexItem>
-              {/* {firstPreview ? (
-                <EuiFlexItem grow={false}>
-                  <EuiButton
-                    type="submit"
-                    data-test-subj="previewDetector"
-                    onClick={() => getSampleAnomalies()}
-                    disabled={
-                      !!get(props.errors, 'featureList', []).find(
-                        // @ts-ignore
-                        featureError => !!featureError
-                      ) || props.featureList.length === 0
-                    }
-                    fill={!firstPreview}
-                    isLoading={isLoading}
-                  >
-                    Preview anomalies
-                  </EuiButton>
-                </EuiFlexItem>
-              ) : null} */}
             </EuiFlexGroup>
           </EuiCallOut>
-          {/* {isLoading ? (
-            <EuiLoadingSpinner size="l" />
-          ) : (
-            <EuiCallOut
-              title={'You can preview anomalies based on sample feature input'}
-              iconType="eye"
-            >
-              <EuiFlexGroup>
-                <EuiFlexItem>
-                  <EuiText>
-                    {firstPreview
-                      ? 'You can preview how your anomalies may look like from sample feature output and adjust the feature settings as needed.'
-                      : 'Use sample data as a reference to fine tune settings. Click "Refresh" if you make any adjustment to see latest preview. Once you are done with editing, save changes and run detector to see real time and accurate anomalies based on your full data set'}
-                  </EuiText>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-              <EuiFlexGroup>
-                <EuiFlexItem grow={false}>
-                  <EuiButton
-                    type="submit"
-                    data-test-subj="previewDetector"
-                    onClick={() => getSampleAnomalies()}
-                    disabled={
-                      !!get(props.errors, 'featureList', []).find(
-                        // @ts-ignore
-                        featureError => !!featureError
-                      ) || props.featureList.length === 0
-                    }
-                    fill={!firstPreview}
-                  >
-                    {firstPreview ? 'Preview anomalies' : 'Refresh'}
-                  </EuiButton>
-                </EuiFlexItem>
-              </EuiFlexGroup>
-            </EuiCallOut>
-          )} */}
           <EuiSpacer />
           {previewDone && !anomaliesResult.anomalies.length ? (
             <EuiCallOut
@@ -283,7 +215,6 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                 dateRange={dateRange}
                 anomalyGradeSeriesName="Sample anomaly grade"
                 confidenceSeriesName="Sample confidence"
-                // initialDateRangeOption={previewDateRangeOption}
                 dateRangeOptions={SAMPLE_ANOMALY_DATE_RANGE_OPTIONS}
                 detectorId={props.detector.id}
                 detectorName={props.detector.name}
@@ -306,43 +237,13 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                   annotations={generateAnomalyAnnotations(
                     get(anomaliesResult, 'anomalies', [])
                   )}
-                  isLoading={isLoading} //TODO: add loading state
+                  isLoading={isLoading}
                   dateRange={zoomRange}
                   featureDataSeriesName="Sample feature output"
                 />
               )}
             </Fragment>
           ) : null}
-          {/* {previewDone ? (
-            <Fragment>
-              <AnomaliesChart
-                title="Sample anomaly history"
-                onDateRangeChange={handleDateRangeChange}
-                onZoomRangeChange={handleZoomChange}
-                anomalies={anomaliesResult.anomalies}
-                isLoading={previewDone}
-                dateRange={dateRange}
-                anomalyGradeSeriesName="Sample anomaly grade"
-                confidenceSeriesName="Sample confidence"
-                // initialDateRangeOption={previewDateRangeOption}
-                dateRangeOptions={SAMPLE_ANOMALY_DATE_RANGE_OPTIONS}
-                detectorId={props.detector.id}
-                detectorName={props.detector.name}
-              />
-              <EuiSpacer />
-              <FeatureBreakDown
-                title="Sample feature breakdown"
-                detector={newDetector}
-                anomaliesResult={anomaliesResult}
-                annotations={generateAnomalyAnnotations(
-                  get(anomaliesResult, 'anomalies', [])
-                )}
-                isLoading={previewDone} //TODO: add loading state
-                dateRange={zoomRange}
-                featureDataSeriesName="Sample feature output"
-              />
-            </Fragment>
-          ) : null} */}
         </ContentPanel>
       </EuiPageBody>
     </EuiPage>

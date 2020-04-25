@@ -14,7 +14,11 @@
  */
 
 import { DATA_TYPES } from '../../../utils/constants';
-import { FEATURE_TYPE, FeatureAttributes, Detector } from '../../../models/interfaces';
+import {
+  FEATURE_TYPE,
+  FeatureAttributes,
+  Detector,
+} from '../../../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
 import { get } from 'lodash';
 import { FeaturesFormikValues } from '../containers/utils/formikToFeatures';
@@ -90,7 +94,9 @@ export const validateFeatures = (values: any) => {
   return hasError ? { featureList: featureErrors } : undefined;
 };
 
-export const generateInitialFeatures = (detector: Detector): FeaturesFormikValues[] => {
+export const generateInitialFeatures = (
+  detector: Detector
+): FeaturesFormikValues[] => {
   const featureUiMetaData = get(detector, 'uiMetadata.features', []);
   const features = get(detector, 'featureAttributes', []);
   // @ts-ignore
@@ -104,20 +110,52 @@ export const generateInitialFeatures = (detector: Detector): FeaturesFormikValue
         `${feature.featureName}.aggregationOf`
       )
         ? [
-          {
-            label: get(
-              featureUiMetaData,
-              `${feature.featureName}.aggregationOf`
-            ),
-          },
-        ]
+            {
+              label: get(
+                featureUiMetaData,
+                `${feature.featureName}.aggregationOf`
+              ),
+            },
+          ]
         : [],
-      featureType: get(
-        featureUiMetaData,
-        `${feature.featureName}.featureType`
-      )
+      featureType: get(featureUiMetaData, `${feature.featureName}.featureType`)
         ? get(featureUiMetaData, `${feature.featureName}.featureType`)
         : FEATURE_TYPE.CUSTOM,
     };
   });
+};
+
+export const focusOnFirstWrongFeature = (errors: any) => {
+  if (
+    //@ts-ignore
+    !!get(errors, 'featureList', []).filter(featureError => featureError).length
+  ) {
+    const featureList = get(errors, 'featureList', []);
+    let firstWrongFeatureIndex = -1;
+    for (let i = 0; i < featureList.length; i++) {
+      if (featureList[i]) {
+        firstWrongFeatureIndex = i;
+        break;
+      }
+    }
+    const errorElement = document.getElementById(
+      `featureAccordionHeaders.${firstWrongFeatureIndex}`
+    );
+    //@ts-ignore
+    errorElement.setAttribute('tabindex', '-1');
+    //@ts-ignore
+    errorElement.focus();
+    debugger;
+    const header =
+      //@ts-ignore
+      errorElement.parentElement.parentElement.parentElement.parentElement;
+    //@ts-ignore
+    if (!header.className.includes('euiAccordion-isOpen')) {
+      //@ts-ignore
+      errorElement.click();
+    }
+
+    return true;
+  }
+  return false;
 };

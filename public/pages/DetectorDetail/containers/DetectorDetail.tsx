@@ -371,7 +371,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             callout={
               <Fragment>
                 {deleteDetectorCallout}
-                {deleteDetectorCallout ? <EuiSpacer size="s" /> : null}
+                {monitorCallout ? <EuiSpacer size="s" /> : null}
                 {monitorCallout}
               </Fragment>
             }
