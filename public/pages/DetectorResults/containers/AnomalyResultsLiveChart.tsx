@@ -21,6 +21,8 @@ import {
   EuiBadge,
   EuiButton,
   EuiTitle,
+  EuiCallOut,
+  EuiStat,
 } from '@elastic/eui';
 import moment from 'moment';
 import {
@@ -52,7 +54,7 @@ interface AnomalyResultsLiveChartProps {
 export const AnomalyResultsLiveChart = (
   props: AnomalyResultsLiveChartProps
 ) => {
-  const UPDATE_INTERVAL = 30 * 1000; //poll anomaly result every 30 seconds
+  const UPDATE_INTERVAL = 3 * 1000; //poll anomaly result every 30 seconds
   const MONITORING_INTERVALS = 60;
   const dispatch = useDispatch();
 
@@ -110,8 +112,9 @@ export const AnomalyResultsLiveChart = (
 
   const liveAnomaliesDescription = () => (
     <EuiText size="s" style={{ color: '#879196' }}>
-      Live anomaly results during last {MONITORING_INTERVALS * props.detector.detectionInterval.period.interval}{' '}
-      minutes
+      Live anomaly results during the last {MONITORING_INTERVALS} intervals (
+      {MONITORING_INTERVALS * props.detector.detectionInterval.period.interval}{' '}
+      minutes)
     </EuiText>
   );
 
@@ -172,6 +175,18 @@ export const AnomalyResultsLiveChart = (
             }}
           >
             <EuiFlexItem grow={true}>
+              {get(liveAnomalyResults, 'liveAnomalies', []).length === 0 ||
+              !latestAnomalyGrade ? (
+                <EuiCallOut
+                  color="success"
+                  size="s"
+                  title={`No anomalies found during the last ${MONITORING_INTERVALS} intervals (${MONITORING_INTERVALS *
+                    props.detector.detectionInterval.period.interval} minutes)`}
+                  style={{
+                    width: '97%', // ensure width reaches NOW line
+                  }}
+                />
+              ) : null}
               <Chart>
                 <Settings />
                 <LineAnnotation
@@ -207,7 +222,32 @@ export const AnomalyResultsLiveChart = (
               </Chart>
             </EuiFlexItem>
             <EuiFlexItem grow={false}>
-              <EuiText>
+              <EuiStat
+                title={`${get(
+                  props.detector,
+                  'detectionInterval.period.interval',
+                  ''
+                )} ${get(
+                  props.detector,
+                  'detectionInterval.period.unit',
+                  ''
+                ).toLowerCase()}`}
+                description="Detector interval"
+                titleSize="s"
+              />
+              <EuiStat
+                title={
+                  latestAnomalyGrade ? latestAnomalyGrade.anomalyGrade : '-'
+                }
+                description="Latest anomaly grade"
+                titleSize="s"
+              />
+              <EuiStat
+                title={latestAnomalyGrade ? latestAnomalyGrade.confidence : '-'}
+                description="Latest confidence"
+                titleSize="s"
+              />
+              {/* <EuiText>
                 <h5>Detector Interval</h5>
                 <p style={{ color: '#454545', fontSize: '15px' }}>
                   {get(props.detector, 'detectionInterval.period.interval', '')}{' '}
@@ -225,7 +265,7 @@ export const AnomalyResultsLiveChart = (
                   Confidence:{' '}
                   {latestAnomalyGrade ? latestAnomalyGrade.confidence : '-'}
                 </p>
-              </EuiText>
+              </EuiText> */}
             </EuiFlexItem>
           </EuiFlexGroup>
         ) : (
