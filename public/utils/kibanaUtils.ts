@@ -19,3 +19,5 @@ import chrome from 'ui/chrome';
 export const darkModeEnabled = (): boolean => {
   return chrome.getUiSettingsClient().get('theme:darkMode') || false;
 };
+
+export const countFontColor = darkModeEnabled() ? '#98A2B3' : '#535966';
