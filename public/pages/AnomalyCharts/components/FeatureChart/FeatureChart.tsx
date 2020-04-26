@@ -22,8 +22,8 @@ import {
   Position,
   Settings,
 } from '@elastic/charts';
-import { EuiEmptyPrompt, EuiText, EuiLink } from '@elastic/eui';
-import React, { useState } from 'react';
+import { EuiEmptyPrompt, EuiText, EuiLink, EuiButton } from '@elastic/eui';
+import React, { useState, Fragment } from 'react';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 import { useDelayedLoader } from '../../../../hooks/useDelayedLoader';
 import {
@@ -47,6 +47,8 @@ interface FeatureChartProps {
   aggregationMethod?: string;
   aggregationQuery?: string;
   featureDataSeriesName: string;
+  edit?: boolean;
+  onEdit?(): void;
 }
 const getDisabledChartBackground = () =>
   darkModeEnabled() ? '#25262E' : '#F0F0F0';
@@ -63,19 +65,39 @@ export const FeatureChart = (props: FeatureChartProps) => {
 
   const featureDescription = () => (
     <EuiText size="s">
-      {props.featureType === 'simple_aggs' ? (
-        <p style={{ fontSize: '12px', color: 'grey' }}>
-          Field: {props.field}; Aggregation method: {props.aggregationMethod};
-          State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}
-        </p>
+      {props.featureType === FEATURE_TYPE.SIMPLE ? (
+        <Fragment>
+          <span
+            className="content-panel-subTitle"
+            style={{ paddingRight: '20px' }}
+          >
+            Field: {props.field}
+          </span>
+          <span
+            className="content-panel-subTitle"
+            style={{ paddingRight: '20px' }}
+          >
+            Aggregation method: {props.aggregationMethod}
+          </span>
+          <span className="content-panel-subTitle">
+            State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}
+          </span>
+        </Fragment>
       ) : (
-        <p style={{ fontSize: '12px', color: 'grey' }}>
-          Custom expression:{' '}
-          <EuiLink onClick={() => setShowCustomExpression(true)}>
-            View code
-          </EuiLink>
-          ; State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}{' '}
-        </p>
+        <Fragment>
+          <span
+            className="content-panel-subTitle"
+            style={{ paddingRight: '20px' }}
+          >
+            Custom expression:{' '}
+            <EuiLink onClick={() => setShowCustomExpression(true)}>
+              View code
+            </EuiLink>
+          </span>
+          <span className="content-panel-subTitle">
+            State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}{' '}
+          </span>
+        </Fragment>
       )}
     </EuiText>
   );
@@ -93,10 +115,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
     },
   };
 
-  const featureData = prepareDataForChart(
-    props.featureData,
-    props.dateRange
-  );
+  const featureData = prepareDataForChart(props.featureData, props.dateRange);
   return (
     <ContentPanel
       title={
@@ -110,6 +129,9 @@ export const FeatureChart = (props: FeatureChartProps) => {
           : {}
       }
       subTitle={featureDescription()}
+      actions={
+        props.edit ? <EuiButton onClick={props.onEdit}>Edit</EuiButton> : null
+      }
     >
       {props.featureData.length > 0 ? (
         <div

@@ -77,7 +77,7 @@ function DataSource(props: DataFilterProps) {
   const visibleAliases = get(elasticsearchState, 'aliases', []) as IndexAlias[];
 
   return (
-    <ContentPanel title="Data Source" titleSize="s">
+    <ContentPanel title="Data Source">
       <Field name="index" validate={validateIndex}>
         {({ field, form }: FieldProps) => {
           return (

@@ -27,8 +27,9 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
             <div
               class="euiText euiText--small"
             >
-              <p
-                style="font-size: 12px;"
+              <span
+                class="content-panel-subTitle"
+                style="padding-right: 20px;"
               >
                 Custom expression:
                  
@@ -38,10 +39,14 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
                 >
                   View code
                 </button>
-                ; State: 
+              </span>
+              <span
+                class="content-panel-subTitle"
+              >
+                State: 
                 Enabled
                  
-              </p>
+              </span>
             </div>
           </div>
         </div>
@@ -145,7 +150,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with custom expre
               >
                 <defs>
                   <clippath
-                    id="echHighlighterClipPath__b9b39c8b-b31d-41c1-81be-18771f676999"
+                    id="echHighlighterClipPath__1d470095-3511-4663-92a0-a277e9124d8d"
                   >
                     <rect
                       height="0"
@@ -195,16 +200,26 @@ exports[`<FeatureChart /> spec Feature Chart renders component with simple aggre
             <div
               class="euiText euiText--small"
             >
-              <p
-                style="font-size: 12px;"
+              <span
+                class="content-panel-subTitle"
+                style="padding-right: 20px;"
               >
                 Field: 
                 value
-                ; Aggregation method: 
+              </span>
+              <span
+                class="content-panel-subTitle"
+                style="padding-right: 20px;"
+              >
+                Aggregation method: 
                 sum
-                ; State: 
+              </span>
+              <span
+                class="content-panel-subTitle"
+              >
+                State: 
                 Enabled
-              </p>
+              </span>
             </div>
           </div>
         </div>
@@ -308,7 +323,7 @@ exports[`<FeatureChart /> spec Feature Chart renders component with simple aggre
               >
                 <defs>
                   <clippath
-                    id="echHighlighterClipPath__92268526-fdde-44c6-b963-5aec218c46ad"
+                    id="echHighlighterClipPath__7e564d5b-8285-4a16-9462-69ff954581c6"
                   >
                     <rect
                       height="0"

@@ -26,7 +26,7 @@ interface DetectorInfoProps {
 }
 function DetectorInfo(props: DetectorInfoProps) {
   return (
-    <ContentPanel title="Name and description" titleSize="s">
+    <ContentPanel title="Name and description">
       <Field name="detectorName" validate={props.onValidateDetectorName}>
         {({ field, form }: FieldProps) => (
           <FormattedFormRow

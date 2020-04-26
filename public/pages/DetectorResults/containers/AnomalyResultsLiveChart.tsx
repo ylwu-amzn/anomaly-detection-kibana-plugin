@@ -23,6 +23,7 @@ import {
   EuiTitle,
   EuiCallOut,
   EuiStat,
+  ConfigCell,
 } from '@elastic/eui';
 import moment from 'moment';
 import {
@@ -111,7 +112,7 @@ export const AnomalyResultsLiveChart = (
   const showLoader = useDelayedLoader(isLoading);
 
   const liveAnomaliesDescription = () => (
-    <EuiText size="s" style={{ color: '#879196' }}>
+    <EuiText className={'anomaly-distribution-subtitle'}>
       Live anomaly results during the last {MONITORING_INTERVALS} intervals (
       {MONITORING_INTERVALS * props.detector.detectionInterval.period.interval}{' '}
       minutes)
@@ -227,11 +228,18 @@ export const AnomalyResultsLiveChart = (
                   props.detector,
                   'detectionInterval.period.interval',
                   ''
-                )} ${get(
-                  props.detector,
-                  'detectionInterval.period.unit',
-                  ''
-                ).toLowerCase()}`}
+                )} ${
+                  get(props.detector, 'detectionInterval.period.interval', 0) >
+                  1
+                    ? get(
+                        props.detector,
+                        'detectionInterval.period.unit',
+                        ''
+                      ).toLowerCase()
+                    : get(props.detector, 'detectionInterval.period.unit', '')
+                        .toLowerCase()
+                        .slice(0, -1)
+                }`}
                 description="Detector interval"
                 titleSize="s"
               />

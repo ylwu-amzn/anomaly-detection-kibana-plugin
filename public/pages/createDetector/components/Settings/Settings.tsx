@@ -32,7 +32,7 @@ import { FormattedFormRow } from '../FormattedFormRow/FormattedFormRow';
 
 export const Settings = () => {
     return (
-        <ContentPanel title="Detector operation settings" titleSize="s">
+        <ContentPanel title="Detector operation settings">
             <Field name="detectionInterval" validate={validatePositiveInteger}>
                 {({ field, form }: FieldProps) => (
                     <EuiFlexGroup>

@@ -138,24 +138,27 @@ export const focusOnFirstWrongFeature = (errors: any) => {
         break;
       }
     }
-    const errorElement = document.getElementById(
-      `featureAccordionHeaders.${firstWrongFeatureIndex}`
-    );
-    //@ts-ignore
-    errorElement.setAttribute('tabindex', '-1');
-    //@ts-ignore
-    errorElement.focus();
-    debugger;
-    const header =
-      //@ts-ignore
-      errorElement.parentElement.parentElement.parentElement.parentElement;
-    //@ts-ignore
-    if (!header.className.includes('euiAccordion-isOpen')) {
-      //@ts-ignore
-      errorElement.click();
-    }
+    focusOnFeatureAccordion(firstWrongFeatureIndex);
 
     return true;
   }
   return false;
+};
+
+export const focusOnFeatureAccordion = (index: number) => {
+  const featureAccordion = document.getElementById(
+    `featureAccordionHeaders.${index}`
+  );
+  //@ts-ignore
+  featureAccordion.setAttribute('tabindex', '-1');
+  //@ts-ignore
+  featureAccordion.focus();
+  const header =
+    //@ts-ignore
+    featureAccordion.parentElement.parentElement.parentElement.parentElement;
+  //@ts-ignore
+  if (!header.className.includes('euiAccordion-isOpen')) {
+    //@ts-ignore
+    featureAccordion.click();
+  }
 };

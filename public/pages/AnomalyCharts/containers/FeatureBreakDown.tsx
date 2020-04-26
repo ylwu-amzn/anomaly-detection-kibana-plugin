@@ -28,6 +28,7 @@ import {
   // ZoomRange,
 } from '../../../models/interfaces';
 import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
+import { focusOnFeatureAccordion } from '../../EditFeatures/utils/helpers';
 
 interface FeatureBreakDownProps {
   title?: string;
@@ -66,15 +67,17 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
               annotations={props.annotations}
               isLoading={props.isLoading}
               dateRange={props.dateRange}
-              featureType={get(
-                props,
-                `detector.uiMetadata.features.${feature.featureName}.featureType`
-              ) as FEATURE_TYPE}
+              featureType={
+                get(
+                  props,
+                  `detector.uiMetadata.features.${feature.featureName}.featureType`
+                ) as FEATURE_TYPE
+              }
               field={
                 get(
                   props,
                   `detector.uiMetadata.features.${feature.featureName}.featureType`
-                ) === 'simple_aggs'
+                ) === FEATURE_TYPE.SIMPLE
                   ? get(
                       props,
                       `detector.uiMetadata.features.${feature.featureName}.aggregationOf`
@@ -85,7 +88,7 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
                 get(
                   props,
                   `detector.uiMetadata.features.${feature.featureName}.featureType`
-                ) === 'simple_aggs'
+                ) === FEATURE_TYPE.SIMPLE
                   ? get(
                       props,
                       `detector.uiMetadata.features.${feature.featureName}.aggregationBy`
@@ -93,6 +96,8 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
                   : undefined
               }
               featureDataSeriesName={props.featureDataSeriesName}
+              edit={props.title === 'Sample feature breakdown'}
+              onEdit={() => {focusOnFeatureAccordion(index)}}
             />
             <EuiSpacer />
           </React.Fragment>

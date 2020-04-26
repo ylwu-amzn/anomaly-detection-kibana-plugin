@@ -51,7 +51,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
         () => false
       ),
       sortField: 'name',
-      sortDirection: 'desc',
+      sortDirection: 'asc',
     };
   }
 
@@ -185,13 +185,12 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
     return (
       <ContentPanel
         title={`Features (${featureNum})`}
-        titleSize="s"
         subTitle={
-          <EuiText className="fieldsSubtitle">
+          <EuiText className="anomaly-distribution-subtitle">
             <p>
               Specify index fields that you want to find anomalies for by
-              defining features. A detector can discover anomalies for up to
-              5 features. Once you define the features, you can preview your
+              defining features. A detector can discover anomalies for up to 5
+              features. Once you define the features, you can preview your
               anomalies from a sample feature output.{' '}
               <EuiLink
                 href="https://github.com/opendistro-for-elasticsearch/anomaly-detection"

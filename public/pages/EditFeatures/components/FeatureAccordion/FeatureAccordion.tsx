@@ -48,56 +48,28 @@ interface FeatureAccordionProps {
 
 export const FeatureAccordion = (props: FeatureAccordionProps) => {
   const simpleAggDescription = (feature: any) => (
-    <EuiFlexGroup>
-      <EuiFlexItem grow={false}>
-        <EuiText size="s">
-          <p>
-            <EuiTextColor color="subdued">
-              Field: {get(feature, 'aggregationOf.0.label')}
-            </EuiTextColor>
-          </p>
-        </EuiText>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiText size="s">
-          <p>
-            <EuiTextColor color="subdued">
-              Aggregation method: {feature.aggregationBy}
-            </EuiTextColor>
-          </p>
-        </EuiText>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiText size="s">
-          <p>
-            <EuiTextColor color="subdued">
-              State: {feature.featureEnabled ? 'Enabled' : 'Disabled'}
-            </EuiTextColor>
-          </p>
-        </EuiText>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+    <Fragment>
+      <span className="content-panel-subTitle" style={{ paddingRight: '20px' }}>
+        Field: {get(feature, 'aggregationOf.0.label')}
+      </span>
+      <span className="content-panel-subTitle" style={{ paddingRight: '20px' }}>
+        Aggregation method: {feature.aggregationBy}
+      </span>
+      <span className="content-panel-subTitle">
+        State: {feature.featureEnabled ? 'Enabled' : 'Disabled'}
+      </span>
+    </Fragment>
   );
 
   const customAggDescription = (feature: any) => (
-    <EuiFlexGroup>
-      <EuiFlexItem grow={false}>
-        <EuiText size="s">
-          <p>
-            <EuiTextColor color="subdued">Custom expression</EuiTextColor>
-          </p>
-        </EuiText>
-      </EuiFlexItem>
-      <EuiFlexItem grow={false}>
-        <EuiText size="s">
-          <p>
-            <EuiTextColor color="subdued">
-              State: {feature.featureEnabled ? 'Enabled' : 'Disabled'}
-            </EuiTextColor>
-          </p>
-        </EuiText>
-      </EuiFlexItem>
-    </EuiFlexGroup>
+    <Fragment>
+      <span className="content-panel-subTitle" style={{ paddingRight: '20px' }}>
+        Custom expression
+      </span>
+      <span className="content-panel-subTitle">
+        State: {feature.featureEnabled ? 'Enabled' : 'Disabled'}{' '}
+      </span>
+    </Fragment>
   );
 
   const featureButtonContent = (feature: any, index: number) => {
@@ -106,11 +78,13 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
         <EuiFlexGroup gutterSize="s" alignItems="center" responsive={false}>
           <EuiFlexItem>
             <EuiTitle size="xs" className="euiAccordionForm__title">
-              <h5>{feature.featureName ? feature.featureName : 'Add feature'}</h5>
+              <h5>
+                {feature.featureName ? feature.featureName : 'Add feature'}
+              </h5>
             </EuiTitle>
           </EuiFlexItem>
         </EuiFlexGroup>
-        {feature && feature.featureType === 'simple_aggs'
+        {feature && feature.featureType === FEATURE_TYPE.SIMPLE
           ? simpleAggDescription(feature)
           : customAggDescription(feature)}
       </div>
@@ -122,7 +96,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       Delete
     </EuiButton>
   );
-  
+
   return (
     <EuiAccordion
       // ref={props.ref}
@@ -195,14 +169,14 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
                 {...field}
                 options={FEATURE_TYPE_OPTIONS}
                 value={
-                  props.feature.featureType === 'simple_aggs'
+                  props.feature.featureType === FEATURE_TYPE.SIMPLE
                     ? FEATURE_TYPE.SIMPLE
                     : FEATURE_TYPE.CUSTOM
                 }
                 onChange={e => {
                   props.handleChange(e);
                   if (
-                    e.currentTarget.value === 'custom_aggs' &&
+                    e.currentTarget.value === FEATURE_TYPE.CUSTOM &&
                     !get(form.errors, `featureList.${props.index}`)
                   ) {
                     const aggregationQuery = formikToSimpleAggregation(

@@ -93,19 +93,17 @@ export function EditFeatures(props: EditFeaturesProps) {
     }
   }, [hasError]);
 
-  const featureDescription = () => (
-    <EuiText size="s">
-      <p className="content-panel-subtitle">
-        Specify an index field that you want to find anomalies for by defining
-        features{' '}
-        <EuiLink
-          href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
-          target="_blank"
-        >
-          Learn more <EuiIcon size="s" type="popout" />
-        </EuiLink>
-        . You can add up to 5 features.
-      </p>
+  const featureDescription = (
+    <EuiText className="content-panel-subTitle">
+      Specify an index field that you want to find anomalies for by defining
+      features{' '}
+      <EuiLink
+        href="https://opendistro.github.io/for-elasticsearch-docs/docs/ad/"
+        target="_blank"
+      >
+        Learn more <EuiIcon size="s" type="popout" />
+      </EuiLink>
+      . You can add up to 5 features.
     </EuiText>
   );
 
@@ -145,10 +143,12 @@ export function EditFeatures(props: EditFeaturesProps) {
                   >
                     Add another feature
                   </EuiButton>
-                  <EuiText size="s">
-                    You can add{' '}
-                    {Math.max(MAX_FEATURE_NUM - values.featureList.length, 0)}{' '}
-                    more features
+                  <EuiText className="content-panel-subTitle">
+                    <p>
+                      You can add{' '}
+                      {Math.max(MAX_FEATURE_NUM - values.featureList.length, 0)}{' '}
+                      more features
+                    </p>
                   </EuiText>
                 </EuiFlexItem>
               </EuiFlexGroup>
@@ -227,10 +227,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                       </EuiTitle>
                     </EuiPageHeaderSection>
                   </EuiPageHeader>
-                  <ContentPanel
-                    title="Features"
-                    subTitle={featureDescription()}
-                  >
+                  <ContentPanel title="Features" subTitle={featureDescription}>
                     {renderFeatures(handleChange)}
                   </ContentPanel>
                 </EuiPageBody>

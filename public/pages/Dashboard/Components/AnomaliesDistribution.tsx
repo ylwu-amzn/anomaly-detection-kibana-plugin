@@ -124,7 +124,6 @@ export const AnomaliesDistributionChart = (
   return (
     <ContentPanel
       title="Anomalies by index and detector"
-      titleSize="s"
       subTitle={
         <EuiFlexItem>
           <EuiText className={'anomaly-distribution-subtitle'}>
