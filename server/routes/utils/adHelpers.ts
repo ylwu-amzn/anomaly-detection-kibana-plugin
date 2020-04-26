@@ -13,10 +13,11 @@
  * permissions and limitations under the License.
  */
 
-import { get, omit } from 'lodash';
+import { get, omit, cloneDeep } from 'lodash';
 import { AnomalyResults } from 'server/models/interfaces';
 import { GetDetectorsQueryParams } from '../../models/types';
 import { mapKeysDeep, toCamel, toSnake } from '../../utils/helpers';
+import { DETECTOR_STATE } from '../../../public/utils/constants';
 
 export const convertDetectorKeysToSnakeCase = (payload: any) => {
   return {
@@ -137,19 +138,42 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
       startTime: rest.dataStartTime,
       endTime: rest.dataEndTime,
       plotTime: rest.dataEndTime,
-        // rest.dataStartTime +
-        // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
+      // rest.dataStartTime +
+      // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
     });
     featureData.forEach((feature: any) => {
       resultData.featureData[feature.featureId].push({
         startTime: rest.dataStartTime,
         endTime: rest.dataEndTime,
         plotTime: rest.dataEndTime,
-          // rest.dataStartTime +
-          // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
+        // rest.dataStartTime +
+        // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
         data: feature.data,
       });
     });
   });
   return resultData;
+};
+
+export const normalizeDetectorState = (detectorState: {
+  state: string;
+  error: string;
+}) => {
+  //@ts-ignore
+  detectorState.state = DETECTOR_STATE[detectorState.state];
+  /*
+        If the error starts with 'Stopped detector', then an EndRunException was thrown.
+        All EndRunExceptions are related to initialization failures except for the
+        unknown prediction error which contains the message "We might have bugs".
+      */
+  if (
+    detectorState.state === DETECTOR_STATE.DISABLED &&
+    detectorState.error !== undefined &&
+    detectorState.error.includes('Stopped detector')
+  ) {
+    detectorState.state = detectorState.error.includes('We might have bugs')
+      ? DETECTOR_STATE.UNEXPECTED_FAILURE
+      : DETECTOR_STATE.INIT_FAILURE;
+  }
+  return cloneDeep(detectorState);
 };

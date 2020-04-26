@@ -43,7 +43,7 @@ import { getErrorMessage, Listener } from '../../../utils/utils';
 //@ts-ignore
 import chrome from 'ui/chrome';
 import { darkModeEnabled } from '../../../utils/kibanaUtils';
-import { BREADCRUMBS } from '../../../utils/constants';
+import { BREADCRUMBS, DETECTOR_STATE } from '../../../utils/constants';
 import { DetectorControls } from '../components/DetectorControls';
 import moment from 'moment';
 import { ConfirmModal } from '../components/ConfirmModal/ConfirmModal';
@@ -91,6 +91,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
   const detectorId = get(props, 'match.params.detectorId', '') as string;
   const { monitor, fetchMonitorError } = useFetchMonitorInfo(detectorId);
   const { detector, hasError } = useFetchDetectorInfo(detectorId);
+
   //TODO: test dark mode once detector configuration and AD result page merged
   const isDark = darkModeEnabled();
 
@@ -267,13 +268,21 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <EuiTitle size="l">
               <h1>
                 {detector && detector.name}{' '}
-                {detector && detector.enabled ? (
+                {detector &&
+                detector.enabled &&
+                detector.curState === DETECTOR_STATE.RUNNING ? (
                   <EuiHealth color="success">
                     Running since{' '}
                     {detector.enabledTime
                       ? moment(detector.enabledTime).format('MM/DD/YY h:mm A')
                       : '?'}
                   </EuiHealth>
+                ) : detector.enabled &&
+                  detector.curState === DETECTOR_STATE.INIT ? (
+                  <EuiHealth color="primary">Initializing</EuiHealth>
+                ) : detector.curState === DETECTOR_STATE.INIT_FAILURE ||
+                  detector.curState === DETECTOR_STATE.UNEXPECTED_FAILURE ? (
+                  <EuiHealth color="danger">Initialization failure</EuiHealth>
                 ) : (
                   <EuiHealth color="subdued">
                     {detector.featureAttributes &&
@@ -439,6 +448,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
             <AnomalyResults
               {...props}
               detectorId={detectorId}
+              onStartDetector={() => handleStartAdJob(detectorId)}
               onSwitchToConfiguration={handleSwitchToConfigurationTab}
             />
           )}

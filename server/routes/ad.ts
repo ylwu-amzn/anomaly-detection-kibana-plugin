@@ -38,8 +38,8 @@ import {
   convertDetectorKeysToCamelCase,
   convertDetectorKeysToSnakeCase,
   getResultAggregationQuery,
+  normalizeDetectorState,
 } from './utils/adHelpers';
-import { DETECTOR_STATE } from '../../public/utils/constants';
 import { set } from 'lodash';
 
 type PutDetectorParams = {
@@ -167,12 +167,29 @@ const getDetector = async (
     const response = await callWithRequest(req, 'ad.getDetector', {
       detectorId,
     });
+    let detectorState;
+    try {
+      const detectorStateResp = await callWithRequest(
+        req,
+        'ad.detectorProfile',
+        {
+          detectorId: detectorId,
+        }
+      );
+      detectorState = normalizeDetectorState(detectorStateResp);
+    } catch (err) {
+      console.log('Anomaly detector - Unable to retrieve detector state', err);
+    }
     const resp = {
       ...response.anomaly_detector,
       id: response._id,
       primaryTerm: response._primary_term,
       seqNo: response._seq_no,
       adJob: { ...response.anomaly_detector_job },
+      ...(detectorState !== undefined ? { curState: detectorState.state } : {}),
+      ...(detectorState !== undefined
+        ? { initializationError: detectorState.error }
+        : {}),
     };
     return {
       ok: true,
@@ -443,29 +460,9 @@ const getDetectors = async (
         );
       }
     });
-    const detectorStates = await Promise.all(detectorStatePromises);
-    detectorStates.forEach(detectorState => {
-      //@ts-ignore
-      detectorState.state = DETECTOR_STATE[detectorState.state];
-    });
+    const rawDetectorStates = await Promise.all(detectorStatePromises);
 
-    // check if there was any failures
-    detectorStates.forEach(detectorState => {
-      /*
-        If the error starts with 'Stopped detector', then an EndRunException was thrown.
-        All EndRunExceptions are related to initialization failures except for the
-        unknown prediction error which contains the message "We might have bugs".
-      */
-      if (
-        detectorState.state === DETECTOR_STATE.DISABLED &&
-        detectorState.error !== undefined &&
-        detectorState.error.includes('Stopped detector')
-      ) {
-        detectorState.state = detectorState.error.includes('We might have bugs')
-          ? DETECTOR_STATE.UNEXPECTED_FAILURE
-          : DETECTOR_STATE.INIT_FAILURE;
-      }
-    });
+    const detectorStates = rawDetectorStates.flatMap(normalizeDetectorState);
 
     // update the final detectors to include the detector state
     finalDetectors.forEach((detector, i) => {
