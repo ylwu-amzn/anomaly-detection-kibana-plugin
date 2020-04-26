@@ -103,6 +103,8 @@ export type Detector = {
   enabled?: boolean;
   enabledTime?: number;
   disabledTime?: number;
+  curState: DETECTOR_STATE;
+  initializationError: string;
 };
 
 export type DetectorListItem = {
