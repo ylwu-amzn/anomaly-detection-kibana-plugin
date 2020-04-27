@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import {
   EuiFormRow,
   EuiSelect,
@@ -47,6 +47,9 @@ interface FeatureAccordionProps {
 }
 
 export const FeatureAccordion = (props: FeatureAccordionProps) => {
+  const initialIsOpen = get(props.feature, 'newFeature');
+  const [showSubtitle, setShowSubtitle] = useState<boolean>(!initialIsOpen);
+
   const simpleAggDescription = (feature: any) => (
     <Fragment>
       <span className="content-panel-subTitle" style={{ paddingRight: '20px' }}>
@@ -72,6 +75,12 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
     </Fragment>
   );
 
+  const showFeatureDescription = (feature: any) => {
+    return feature && feature.featureType === FEATURE_TYPE.SIMPLE
+      ? simpleAggDescription(feature)
+      : customAggDescription(feature);
+  };
+
   const featureButtonContent = (feature: any, index: number) => {
     return (
       <div id={`featureAccordionHeaders.${index}`}>
@@ -84,9 +93,7 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
             </EuiTitle>
           </EuiFlexItem>
         </EuiFlexGroup>
-        {feature && feature.featureType === FEATURE_TYPE.SIMPLE
-          ? simpleAggDescription(feature)
-          : customAggDescription(feature)}
+        {showSubtitle ? showFeatureDescription(feature) : null}
       </div>
     );
   };
@@ -107,8 +114,11 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       buttonClassName="euiAccordionForm__button"
       className="euiAccordionForm"
       paddingSize="l"
-      initialIsOpen={!!get(props.feature, 'newFeature')}
+      initialIsOpen={initialIsOpen}
       extraAction={extraAction(props.onDelete)}
+      onToggle={(isOpen: boolean) => {
+        isOpen ? setShowSubtitle(false) : setShowSubtitle(true);
+      }}
     >
       <Field
         id={`featureList.${props.index}.featureName`}

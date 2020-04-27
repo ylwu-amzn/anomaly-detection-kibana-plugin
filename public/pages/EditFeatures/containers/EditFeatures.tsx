@@ -29,7 +29,7 @@ import {
   EuiIcon,
 } from '@elastic/eui';
 import { FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik';
-import { get } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -112,7 +112,10 @@ export function EditFeatures(props: EditFeaturesProps) {
       <FieldArray name="featureList" validateOnChange={true}>
         {({ push, remove, form: { values } }: FieldArrayRenderProps) => {
           // @ts-ignore
-          if (firstLoad && values.featureList.length === 0) {
+          if (
+            firstLoad &&
+            get(detector, 'featureAttributes', []).length === 0
+          ) {
             push(initialize_feature());
           }
           setFirstLoad(false);
@@ -228,7 +231,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                     </EuiPageHeaderSection>
                   </EuiPageHeader>
                   <ContentPanel title="Features" subTitle={featureDescription}>
-                    {renderFeatures(handleChange)}
+                    {!isEmpty(detector) ? renderFeatures(handleChange) : null}
                   </ContentPanel>
                 </EuiPageBody>
               </EuiPage>

@@ -206,7 +206,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
             <p>
               {'Live anomaly results across detectors for the last 30 minutes. ' +
                 'The results refresh every 1 minute. ' +
-                'For each detector, if an anomaly occurence is detected at the end of the detector interval, ' +
+                'For each detector, if an anomaly occurrence is detected at the end of the detector interval, ' +
                 'you will see a bar representing its anomaly grade.'}
             </p>
           </EuiText>

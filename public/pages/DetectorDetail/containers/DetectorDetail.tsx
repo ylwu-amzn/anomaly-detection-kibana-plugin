@@ -195,7 +195,7 @@ export const DetectorDetail = (props: DetectorDetailProps) => {
     try {
       await dispatch(stopDetector(detectorId));
       toastNotifications.addSuccess(
-        'Detector job has been stoped successfully'
+        'Detector job has been stopped successfully'
       );
       if (listener) listener.onSuccess();
     } catch (err) {
