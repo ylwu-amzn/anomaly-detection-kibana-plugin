@@ -110,10 +110,11 @@ const findLatestAnomaly = (anomalies: any[]) => {
   let latestAnomaly = anomalies[0];
   for (let i = 1, len = anomalies.length; i < len; i++) {
     let item = anomalies[i];
-    latestAnomaly = item.startTime > latestAnomaly.startTime ? item : latestAnomaly;
+    latestAnomaly =
+      item.startTime > latestAnomaly.startTime ? item : latestAnomaly;
   }
   return latestAnomaly;
-}
+};
 
 export const getAnomalySummary = (anomalies: any[]): AnomalySummary => {
   let minConfidence = 1.0,
@@ -203,12 +204,51 @@ export const SAMPLE_ANOMALY_DATE_RANGE_OPTIONS = [
   { value: AD_RESULT_DATE_RANGES.LAST_7_DAYS, text: 'Last 7 days' },
 ];
 
-export const ANOMALY_DATE_RANGE_OPTIONS = [
-  { value: AD_RESULT_DATE_RANGES.LAST_1_HOUR, text: 'Last 1 hour' },
-  ...SAMPLE_ANOMALY_DATE_RANGE_OPTIONS,
+export enum ANOMALY_CHART_TITLE {
+  SAMPLE_ANOMALY_HISTORY = 'Sample anomaly history',
+  ANOMALY_HISTORY = 'Sample anomaly history',
+}
+
+export enum CHART_FIELDS {
+  PLOT_TIME = 'plotTime',
+  ANOMALY_GRADE = 'anomalyGrade',
+  CONFIDENCE = 'confidence',
+  DATA = 'data',
+}
+
+export enum CHART_COLORS {
+  ANOMALY_GRADE_COLOR = '#D13212',
+  FEATURE_DATA_COLOR = '#16191F',
+  CONFIDENCE_COLOR = '#017F75',
+}
+
+export const FEATURE_CHART_THEME = {
+  lineSeriesStyle: {
+    line: {
+      strokeWidth: 2,
+      visible: true,
+      opacity: 0.5,
+    },
+    point: {
+      visible: true,
+      stroke: CHART_COLORS.FEATURE_DATA_COLOR,
+    },
+  },
+};
+
+export const DATE_PICKER_QUICK_OPTIONS = [
+  { start: 'now-24h', end: 'now', label: 'last 24 hours' },
+  { start: 'now-7d', end: 'now', label: 'last 7 days' },
+  { start: 'now-30d', end: 'now', label: 'last 30 days' },
+  { start: 'now-90d', end: 'now', label: 'last 90 days' },
+
+  { start: 'now/d', end: 'now', label: 'Today' },
+  { start: 'now/w', end: 'now', label: 'Week to date' },
+  { start: 'now/M', end: 'now', label: 'Month to date' },
+  { start: 'now/y', end: 'now', label: 'Year to date' },
 ];
 
-export enum ANOMALY_CHART_TITLE {
-  SAMPLE_ANOMALY_HISTORY="Sample anomaly history",
-  ANOMALY_HISTORY="Sample anomaly history",
-}
+export enum LIVE_CHART_CONFIG {
+  REFRESH_INTERVAL_IN_SECONDS = 5 * 1000, //poll anomaly result every 5 seconds
+  MONITORING_INTERVALS = 60,
+};

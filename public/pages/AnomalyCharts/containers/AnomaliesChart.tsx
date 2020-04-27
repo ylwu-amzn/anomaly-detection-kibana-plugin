@@ -18,11 +18,9 @@ import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
   EuiFlexItem,
   EuiFlexGroup,
-  EuiSelect,
   EuiIcon,
   EuiLoadingChart,
   EuiStat,
-  EuiButton,
   EuiSuperDatePicker,
 } from '@elastic/eui';
 import moment from 'moment';
@@ -36,6 +34,7 @@ import {
   LineAnnotation,
   AnnotationDomainTypes,
   RectAnnotation,
+  ScaleType,
 } from '@elastic/charts';
 import dateMath from '@elastic/datemath';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
@@ -45,7 +44,6 @@ import {
   Detector,
   DateRange,
   MonitorAlert,
-  // ZoomRange,
 } from '../../../models/interfaces';
 import { get } from 'lodash';
 import {
@@ -67,8 +65,10 @@ import {
   getAnomalySummary,
   disabledHistoryAnnotations,
   INITIAL_ANOMALY_SUMMARY,
-  ANOMALY_DATE_RANGE_OPTIONS,
   getAlertsQuery,
+  CHART_FIELDS,
+  CHART_COLORS,
+  DATE_PICKER_QUICK_OPTIONS,
 } from '../utils/anomalyChartUtils';
 import { searchES } from '../../../redux/reducers/elasticsearch';
 import { useDispatch } from 'react-redux';
@@ -107,11 +107,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   const [showAlertsFlyout, setShowAlertsFlyout] = useState<boolean>(false);
   const [alertAnnotations, setAlertAnnotations] = useState<any[]>([]);
   const [isLoadingAlerts, setIsLoadingAlerts] = useState<boolean>(false);
-  // const [dateRangeOption, setDateRangeOption] = useState<AD_RESULT_DATE_RANGES>(
-  //   props.initialDateRangeOption
-  //     ? props.initialDateRangeOption
-  //     : AD_RESULT_DATE_RANGES.LAST_1_HOUR
-  // );
   const [totalAlerts, setTotalAlerts] = useState<number | undefined>(undefined);
   const [alerts, setAlerts] = useState<MonitorAlert[]>([]);
   const [zoomRange, setZoomRange] = useState<DateRange>({
@@ -123,7 +118,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
     start: 'now-7d',
     end: 'now',
   });
-  // const [datePickerEnd, setDatePickerEnd] = useState<string>('now');
 
   useEffect(() => {
     const anomalies = prepareDataForChart(props.anomalies, zoomRange);
@@ -181,78 +175,11 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
 
   const showLoader = useDelayedLoader(props.isLoading || isLoadingAlerts);
 
-  // const datePicker = () => (
-  //   <EuiSelect
-  //     id="anomalyHistoryDatePicker"
-  //     options={
-  //       props.dateRangeOptions
-  //         ? props.dateRangeOptions
-  //         : ANOMALY_DATE_RANGE_OPTIONS
-  //     }
-  //     value={dateRangeOption}
-  //     onChange={(e: any) => {
-  //       setDateRangeOption(e.target.value);
-  //       let startDate: number | undefined = undefined;
-  //       const endDate = moment().valueOf();
-  //       if (e.target.value === AD_RESULT_DATE_RANGES.LAST_1_HOUR) {
-  //         startDate = moment()
-  //           .subtract(1, 'hours')
-  //           .valueOf();
-  //       } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_24_HOURS) {
-  //         startDate = moment()
-  //           .subtract(24, 'hours')
-  //           .valueOf();
-  //       } else if (e.target.value === AD_RESULT_DATE_RANGES.LAST_7_DAYS) {
-  //         startDate = moment()
-  //           .subtract(7, 'days')
-  //           .valueOf();
-  //       }
-  //       if (startDate) {
-  //         handleDateRangeChange(startDate, endDate);
-  //       }
-  //     }}
-  //     style={{ width: '145px' }}
-  //   />
-  // );
-  //  const onRefresh = ({ start, end, refreshInterval }) => {
-  //    return new Promise(resolve => {
-  //      setTimeout(resolve, 100);
-  //    }).then(() => {
-  //      console.log(start, end, refreshInterval);
-  //    });
-  //  };
-
-  // const parseDate = (value: string) => {
-  //   if (value === 'now') {
-  //     return moment();
-  //   }
-  //   if (value.startsWith('now')) {
-  //     if (value.slice(3, 4) === '-') {
-  //       const unit = value.slice(value.length - 1, value.length);
-  //       const amount = parseInt(value.slice(4, value.length - 1));
-  //       //@ts-ignore
-  //       return moment().subtract(amount, unit);
-  //     } else if (value.slice(3, 4) === '+') {
-  //       const unit = value.slice(value.length - 1, value.length);
-  //       const amount = parseInt(value.slice(4, value.length - 1));
-  //       //@ts-ignore
-  //       return moment().add(amount, unit);
-  //     }
-  //   }
-  //   return moment(value);
-  // };
-
-  // const getQuickDateRange = (value: string) => {
-  //   //@ts-ignore
-  //   const startTime = dateMath.parse(value);
-  //   const endTime = startTime.add(1, value.slice(value.length-1, value.length)).subtract(1, 'milliseconds')
-  //   return {
-  //     startTime: startTime,
-  //     endTime: endTime,
-  //   }
-  // };
-
-  const handleDatePickerDateRangeChange = (start: string, end: string, refresh?: boolean) => {
+  const handleDatePickerDateRangeChange = (
+    start: string,
+    end: string,
+    refresh?: boolean
+  ) => {
     if (start && end) {
       const startTime: moment.Moment | undefined = dateMath.parse(start);
       if (startTime) {
@@ -275,7 +202,8 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
         }
 
         if (
-          !refresh && startTime.valueOf() >= props.dateRange.startDate &&
+          !refresh &&
+          startTime.valueOf() >= props.dateRange.startDate &&
           endTime.valueOf() <= props.dateRange.endDate
         ) {
           handleZoomRangeChange(startTime.valueOf(), endTime.valueOf());
@@ -291,7 +219,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
       isLoading={props.isLoading || isLoadingAlerts}
       start={datePickerRange.start}
       end={datePickerRange.end}
-      // showUpdateButton={!props.title.startsWith('Sample ')}
       onTimeChange={({ start, end, isInvalid, isQuickSelection }) => {
         setDatePickerRange({ start: start, end: end });
         handleDatePickerDateRangeChange(start, end);
@@ -300,22 +227,7 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
         handleDatePickerDateRangeChange(start, end, true);
       }}
       isPaused={true}
-      commonlyUsedRanges={[
-        {start: 'now-24h', end: 'now', label: 'last 24 hours'},
-        {start: 'now-7d', end: 'now', label: 'last 7 days'},
-        {start: 'now-30d', end: 'now', label: 'last 30 days'},
-        {start: 'now-90d', end: 'now', label: 'last 90 days'},
-
-        {start: 'now/d', end: 'now', label: 'Today'},
-        {start: 'now/w', end: 'now', label: 'Week to date'},
-        {start: 'now/M', end: 'now', label: 'Month to date'},
-        {start: 'now/y', end: 'now', label: 'Year to date'},
-      ]}
-      // onClick={() => console.log('clicked')}
-      // type='button'
-      // refreshInterval={1000}
-      // onRefreshChange={onRefreshChange}
-      // recentlyUsedRanges={recentlyUsedRanges}
+      commonlyUsedRanges={DATE_PICKER_QUICK_OPTIONS}
     />
   );
 
@@ -359,7 +271,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
             <EuiFlexItem>
               <AnomalyStatWithTooltip
                 isLoading={props.isLoading || isLoadingAlerts}
-                // isLoadingAlerts={isLoadingAlerts}
                 minValue={anomalySummary.minAnomalyGrade}
                 maxValue={anomalySummary.maxAnomalyGrade}
                 description={
@@ -371,7 +282,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
             <EuiFlexItem>
               <AnomalyStatWithTooltip
                 isLoading={props.isLoading || isLoadingAlerts}
-                // isLoadingAlerts={isLoadingAlerts}
                 minValue={anomalySummary.minConfidence}
                 maxValue={anomalySummary.maxConfidence}
                 description={
@@ -405,18 +315,6 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                 />
               </EuiFlexItem>
             ) : null}
-            {/* <EuiFlexItem grow={false}>
-              <EuiButton
-                onClick={() => {
-                  handleZoomRangeChange(
-                    props.dateRange.startDate,
-                    props.dateRange.endDate
-                  );
-                }}
-              >
-                Reset zoom
-              </EuiButton>
-            </EuiFlexItem> */}
           </EuiFlexGroup>
           <EuiFlexGroup>
             <EuiFlexItem grow={true}>
@@ -485,22 +383,22 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                     <LineSeries
                       id="confidence"
                       name={props.confidenceSeriesName}
-                      xScaleType="time"
-                      yScaleType="linear"
-                      xAccessor={'plotTime'}
-                      yAccessors={['confidence']}
-                      color={['#017F75']}
+                      xScaleType={ScaleType.Time}
+                      yScaleType={ScaleType.Linear}
+                      xAccessor={CHART_FIELDS.PLOT_TIME}
+                      yAccessors={[CHART_FIELDS.CONFIDENCE]}
+                      color={[CHART_COLORS.CONFIDENCE_COLOR]}
                       data={zoomedAnomalies}
                     />
                     <LineSeries
                       id="anomalyGrade"
                       name={props.anomalyGradeSeriesName}
                       data={zoomedAnomalies}
-                      xScaleType="time"
-                      yScaleType="linear"
-                      xAccessor={'plotTime'}
-                      yAccessors={['anomalyGrade']}
-                      color={['#D13212']}
+                      xScaleType={ScaleType.Time}
+                      yScaleType={ScaleType.Linear}
+                      xAccessor={CHART_FIELDS.PLOT_TIME}
+                      yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
+                      color={[CHART_COLORS.ANOMALY_GRADE_COLOR]}
                     />
                   </Chart>
                 )}

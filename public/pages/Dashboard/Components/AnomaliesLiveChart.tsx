@@ -346,7 +346,7 @@ export const AnomaliesLiveChart = (props: AnomaliesLiveChartProps) => {
                     id={!isEmpty(liveAnomalyData) ? '' : ' '}
                     xScaleType={ScaleType.Time}
                     timeZone="local"
-                    yScaleType="linear"
+                    yScaleType={ScaleType.Linear}
                     xAccessor={AD_DOC_FIELDS.PLOT_TIME}
                     yAccessors={[AD_DOC_FIELDS.ANOMALY_GRADE]}
                     splitSeriesAccessors={[AD_DOC_FIELDS.DETECTOR_NAME]}

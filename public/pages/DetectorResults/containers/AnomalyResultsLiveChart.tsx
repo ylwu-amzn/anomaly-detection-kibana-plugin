@@ -23,7 +23,6 @@ import {
   EuiTitle,
   EuiCallOut,
   EuiStat,
-  ConfigCell,
 } from '@elastic/eui';
 import moment from 'moment';
 import {
@@ -35,17 +34,23 @@ import {
   LineAnnotation,
   AnnotationDomainTypes,
   LineAnnotationDatum,
+  ScaleType,
 } from '@elastic/charts';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
 import { useSelector, useDispatch } from 'react-redux';
-import { AppState } from 'public/redux/reducers';
-import { Detector } from 'public/models/interfaces';
+import { AppState } from '../../../redux/reducers';
+import { Detector } from '../../../models/interfaces';
 import {
   getLiveAnomalyResults,
   prepareDataForChart,
 } from '../../utils/anomalyResultUtils';
 import { get } from 'lodash';
+import {
+  CHART_COLORS,
+  CHART_FIELDS,
+  LIVE_CHART_CONFIG,
+} from '../../AnomalyCharts/utils/anomalyChartUtils';
 
 interface AnomalyResultsLiveChartProps {
   detectorId: string;
@@ -55,8 +60,6 @@ interface AnomalyResultsLiveChartProps {
 export const AnomalyResultsLiveChart = (
   props: AnomalyResultsLiveChartProps
 ) => {
-  const UPDATE_INTERVAL = 3 * 1000; //poll anomaly result every 30 seconds
-  const MONITORING_INTERVALS = 60;
   const dispatch = useDispatch();
 
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
@@ -72,7 +75,7 @@ export const AnomalyResultsLiveChart = (
     1
   );
   const startDateTime = moment().subtract(
-    detectionInterval * MONITORING_INTERVALS,
+    detectionInterval * LIVE_CHART_CONFIG.MONITORING_INTERVALS,
     'minutes'
   );
   const endDateTime = moment();
@@ -91,7 +94,7 @@ export const AnomalyResultsLiveChart = (
         dispatch,
         props.detectorId,
         detectionInterval,
-        MONITORING_INTERVALS
+        LIVE_CHART_CONFIG.MONITORING_INTERVALS
       );
       const intervalId = setInterval(
         () =>
@@ -99,9 +102,9 @@ export const AnomalyResultsLiveChart = (
             dispatch,
             props.detectorId,
             detectionInterval,
-            MONITORING_INTERVALS
+            LIVE_CHART_CONFIG.MONITORING_INTERVALS
           ),
-        UPDATE_INTERVAL
+        LIVE_CHART_CONFIG.REFRESH_INTERVAL_IN_SECONDS
       );
       return () => {
         clearInterval(intervalId);
@@ -113,8 +116,10 @@ export const AnomalyResultsLiveChart = (
 
   const liveAnomaliesDescription = () => (
     <EuiText className={'anomaly-distribution-subtitle'}>
-      Live anomaly results during the last {MONITORING_INTERVALS} intervals (
-      {MONITORING_INTERVALS * props.detector.detectionInterval.period.interval}{' '}
+      Live anomaly results during the last{' '}
+      {LIVE_CHART_CONFIG.REFRESH_INTERVAL_IN_SECONDS} intervals (
+      {LIVE_CHART_CONFIG.MONITORING_INTERVALS *
+        props.detector.detectionInterval.period.interval}{' '}
       minutes)
     </EuiText>
   );
@@ -181,7 +186,9 @@ export const AnomalyResultsLiveChart = (
                 <EuiCallOut
                   color="success"
                   size="s"
-                  title={`No anomalies found during the last ${MONITORING_INTERVALS} intervals (${MONITORING_INTERVALS *
+                  title={`No anomalies found during the last ${
+                    LIVE_CHART_CONFIG.MONITORING_INTERVALS
+                  } intervals (${LIVE_CHART_CONFIG.MONITORING_INTERVALS *
                     props.detector.detectionInterval.period.interval} minutes)`}
                   style={{
                     width: '97%', // ensure width reaches NOW line
@@ -208,17 +215,16 @@ export const AnomalyResultsLiveChart = (
                   title={'Anomaly grade'}
                   position="left"
                   domain={{ min: 0, max: 1 }}
-                  // showGridLines
                 />
                 <BarSeries
                   id="Anomaly grade"
                   name="Anomaly grade"
                   data={anomalies}
-                  xScaleType="time"
-                  yScaleType="linear"
-                  xAccessor={'plotTime'}
-                  yAccessors={['anomalyGrade']}
-                  color={['#D13212']}
+                  xScaleType={ScaleType.Time}
+                  yScaleType={ScaleType.Linear}
+                  xAccessor={CHART_FIELDS.PLOT_TIME}
+                  yAccessors={[CHART_FIELDS.ANOMALY_GRADE]}
+                  color={[CHART_COLORS.ANOMALY_GRADE_COLOR]}
                 />
               </Chart>
             </EuiFlexItem>
@@ -255,25 +261,6 @@ export const AnomalyResultsLiveChart = (
                 description="Latest confidence"
                 titleSize="s"
               />
-              {/* <EuiText>
-                <h5>Detector Interval</h5>
-                <p style={{ color: '#454545', fontSize: '15px' }}>
-                  {get(props.detector, 'detectionInterval.period.interval', '')}{' '}
-                  {get(
-                    props.detector,
-                    'detectionInterval.period.unit',
-                    ''
-                  ).toLowerCase()}
-                </p>
-                <h5>Latest anomlay</h5>
-                <p style={{ color: '#454545', fontSize: '15px' }}>
-                  Anomaly grade:{' '}
-                  {latestAnomalyGrade ? latestAnomalyGrade.anomalyGrade : '-'}
-                  <br />
-                  Confidence:{' '}
-                  {latestAnomalyGrade ? latestAnomalyGrade.confidence : '-'}
-                </p>
-              </EuiText> */}
             </EuiFlexItem>
           </EuiFlexGroup>
         ) : (

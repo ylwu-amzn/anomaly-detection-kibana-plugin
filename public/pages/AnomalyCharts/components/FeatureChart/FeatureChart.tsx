@@ -21,6 +21,7 @@ import {
   niceTimeFormatter,
   Position,
   Settings,
+  ScaleType,
 } from '@elastic/charts';
 import { EuiEmptyPrompt, EuiText, EuiLink, EuiButton } from '@elastic/eui';
 import React, { useState, Fragment } from 'react';
@@ -35,6 +36,7 @@ import {
 import { darkModeEnabled } from '../../../../utils/kibanaUtils';
 import { prepareDataForChart } from '../../../utils/anomalyResultUtils';
 import { CodeModal } from '../../../DetectorConfig/components/CodeModal/CodeModal';
+import { CHART_FIELDS, CHART_COLORS, FEATURE_CHART_THEME } from '../../utils/anomalyChartUtils';
 
 interface FeatureChartProps {
   feature: FeatureAttributes;
@@ -101,19 +103,6 @@ export const FeatureChart = (props: FeatureChartProps) => {
       )}
     </EuiText>
   );
-  const customTheme = {
-    lineSeriesStyle: {
-      line: {
-        strokeWidth: 2,
-        visible: true,
-        opacity: 0.5,
-      },
-      point: {
-        visible: true,
-        stroke: '#16191F',
-      },
-    },
-  };
 
   const featureData = prepareDataForChart(props.featureData, props.dateRange);
   return (
@@ -145,7 +134,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
             <Settings
               showLegend
               legendPosition={Position.Right}
-              theme={[customTheme]}
+              theme={[FEATURE_CHART_THEME]}
             />
             {props.feature.featureEnabled ? (
               <RectAnnotation
@@ -169,11 +158,11 @@ export const FeatureChart = (props: FeatureChartProps) => {
             <LineSeries
               id="featureData"
               name={props.featureDataSeriesName}
-              xScaleType="time"
-              yScaleType="linear"
-              xAccessor={'plotTime'}
-              yAccessors={['data']}
-              color={['#16191F']}
+              xScaleType={ScaleType.Time}
+              yScaleType={ScaleType.Linear}
+              xAccessor={CHART_FIELDS.PLOT_TIME}
+              yAccessors={[CHART_FIELDS.DATA]}
+              color={[CHART_COLORS.FEATURE_DATA_COLOR]}
               data={featureData}
             />
           </Chart>

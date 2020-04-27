@@ -28,7 +28,7 @@ exports[`<DetectorDetail /> spec detector detail renders detector detail compone
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
                 <svg
-                  class="euiIcon euiIcon--medium euiIcon--success euiIcon-isLoading"
+                  class="euiIcon euiIcon--medium euiIcon--subdued euiIcon-isLoading"
                   focusable="false"
                   height="16"
                   viewBox="0 0 16 16"
@@ -39,9 +39,7 @@ exports[`<DetectorDetail /> spec detector detail renders detector detail compone
               <div
                 class="euiFlexItem euiFlexItem--flexGrowZero"
               >
-                Running since
-                 
-                04/13/20 5:13 PM
+                Stopped at 04/12/20 5:13 PM
               </div>
             </div>
           </div>
