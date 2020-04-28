@@ -201,6 +201,35 @@ export function EditFeatures(props: EditFeaturesProps) {
     }
   };
 
+  const handleSaveChanges = (
+    values: any,
+    errors: any,
+    setFieldTouched: any,
+    setSubmitting: any
+  ) => {
+    if (detector.enabled) {
+      toastNotifications.addDanger(
+        "Can't edit feature as the detector is running"
+      );
+      return;
+    }
+
+    if (!focusOnFirstWrongFeature(errors, setFieldTouched)) {
+      if (values.featureList.length == 0) {
+        setSaveFeatureOption(SAVE_FEATURE_OPTIONS.KEEP_AD_JOB_STOPPED);
+      } else {
+        setSaveFeatureOption(SAVE_FEATURE_OPTIONS.START_AD_JOB);
+      }
+      setReadyToStartAdJob(values.featureList.length > 0);
+      if (values.featureList.length > 0) {
+        setShowSaveConfirmation(true);
+      } else {
+        setSaveFeatureOption(SAVE_FEATURE_OPTIONS.KEEP_AD_JOB_STOPPED);
+        handleSubmit(values, setSubmitting);
+      }
+    }
+  };
+
   return (
     <Fragment>
       <Formik
@@ -267,37 +296,14 @@ export function EditFeatures(props: EditFeaturesProps) {
                       type="submit"
                       data-test-subj="updateAdjustModel"
                       isLoading={isSubmitting}
-                      onClick={() => {
-                        if (detector.enabled) {
-                          toastNotifications.addDanger(
-                            "Can't edit feature as the detector is running"
-                          );
-                          return;
-                        }
-
-                        if (
-                          !focusOnFirstWrongFeature(errors, setFieldTouched)
-                        ) {
-                          if (values.featureList.length == 0) {
-                            setSaveFeatureOption(
-                              SAVE_FEATURE_OPTIONS.KEEP_AD_JOB_STOPPED
-                            );
-                          } else {
-                            setSaveFeatureOption(
-                              SAVE_FEATURE_OPTIONS.START_AD_JOB
-                            );
-                          }
-                          setReadyToStartAdJob(values.featureList.length > 0);
-                          if (values.featureList.length > 0) {
-                            setShowSaveConfirmation(true);
-                          } else {
-                            setSaveFeatureOption(
-                              SAVE_FEATURE_OPTIONS.KEEP_AD_JOB_STOPPED
-                            );
-                            handleSubmit(values, setSubmitting);
-                          }
-                        }
-                      }}
+                      onClick={() =>
+                        handleSaveChanges(
+                          values,
+                          errors,
+                          setFieldTouched,
+                          setSubmitting
+                        )
+                      }
                     >
                       Save changes
                     </EuiButton>

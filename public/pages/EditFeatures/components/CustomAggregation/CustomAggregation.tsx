@@ -67,7 +67,6 @@ export const CustomAggregation = (props: CustomAggregationProps) => {
               showPrintMargin: false,
             }}
             onChange={(query: string) => {
-              //Reset operator and values
               form.setFieldValue(
                 `featureList.${props.index}.aggregationQuery`,
                 query

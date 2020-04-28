@@ -20,6 +20,11 @@ export const FEATURE_TYPES = [
   { text: 'Defined Aggregation', value: FEATURE_TYPE.SIMPLE },
 ];
 
+export const FEATURE_TYPE_OPTIONS = [
+  { text: 'Field value', value: FEATURE_TYPE.SIMPLE },
+  { text: 'Custom expression', value: FEATURE_TYPE.CUSTOM },
+];
+
 export enum SAVE_FEATURE_OPTIONS {
   START_AD_JOB = 'start_ad_job',
   KEEP_AD_JOB_STOPPED = 'keep_ad_job_stopped',

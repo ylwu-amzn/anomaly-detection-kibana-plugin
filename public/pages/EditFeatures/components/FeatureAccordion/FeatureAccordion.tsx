@@ -21,8 +21,6 @@ import {
   EuiFlexGroup,
   EuiFlexItem,
   EuiTitle,
-  EuiText,
-  EuiTextColor,
   EuiButton,
   EuiFieldText,
   EuiCheckbox,
@@ -31,7 +29,7 @@ import { validateName } from '../../../../utils/utils';
 import { Field, FieldProps } from 'formik';
 import { required, isInvalid, getError } from '../../../../utils/utils';
 import { get } from 'lodash';
-import { FEATURE_TYPE_OPTIONS } from '../../containers/utils/constants';
+import { FEATURE_TYPE_OPTIONS } from '../../utils/constants';
 import { FEATURE_TYPE } from '../../../../models/interfaces';
 import { formikToSimpleAggregation } from '../../containers/utils/formikToFeatures';
 import { AggregationSelector } from '../AggregationSelector';

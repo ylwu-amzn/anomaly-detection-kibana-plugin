@@ -87,7 +87,6 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
               options={AGGREGATION_TYPES}
               {...field}
               data-test-subj="aggregationType"
-              // onChange={e => console.log('66666', e)}
             />
           </EuiFormRow>
         )}
