@@ -53,6 +53,7 @@ exports[`<DetectorDetail /> spec detector detail renders detector detail compone
         >
           <div
             class="euiFlexItem euiFlexItem--flexGrowZero"
+            style="margin-right: 16px;"
           >
             <div
               class="euiPopover euiPopover--anchorDownLeft"
@@ -90,6 +91,7 @@ exports[`<DetectorDetail /> spec detector detail renders detector detail compone
           </div>
           <div
             class="euiFlexItem euiFlexItem--flexGrowZero"
+            style="margin-left: 0px;"
           >
             <button
               class="euiButton euiButton--primary"

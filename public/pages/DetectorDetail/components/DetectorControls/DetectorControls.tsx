@@ -36,7 +36,7 @@ export const DetectorControls = (props: DetectorControls) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <EuiFlexGroup justifyContent="spaceBetween" alignItems="center">
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={false} style={{ marginRight: '16px' }}>
         <EuiPopover
           id="actionsPopover"
           button={
@@ -81,7 +81,7 @@ export const DetectorControls = (props: DetectorControls) => {
           </EuiContextMenuPanel>
         </EuiPopover>
       </EuiFlexItem>
-      <EuiFlexItem grow={false}>
+      <EuiFlexItem grow={false} style={{ marginLeft: '0px' }}>
         <EuiButton
           data-test-subj="stopDetectorButton"
           onClick={

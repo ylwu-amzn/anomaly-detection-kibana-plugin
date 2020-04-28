@@ -42,7 +42,7 @@ import {
   updateDetector,
 } from '../../../redux/reducers/ad';
 import { BREADCRUMBS } from '../../../utils/constants';
-import { getErrorMessage } from '../../../utils/utils';
+import { getErrorMessage, validateName } from '../../../utils/utils';
 import { DetectorInfo } from '../components/DetectorInfo';
 import { useFetchDetectorInfo } from '../hooks/useFetchDetectorInfo';
 import { DataSource } from './DataSource/index';
@@ -150,9 +150,14 @@ export function CreateDetector(props: CreateADProps) {
         params: { detectorId },
       },
     } = props;
+    debugger
     if (isEmpty(detectorName)) {
       throw 'Detector name can not be empty';
     } else {
+      const error = validateName(detectorName);
+      if (error) {
+        throw error;
+      }
       //TODO::Avoid making call if value is same
       const resp = await dispatch(
         searchDetector({ query: { term: { 'name.keyword': detectorName } } })

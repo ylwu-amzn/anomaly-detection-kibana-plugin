@@ -20,7 +20,7 @@ import {
   Detector,
 } from '../../../models/interfaces';
 import { v4 as uuidv4 } from 'uuid';
-import { get } from 'lodash';
+import { get, forOwn } from 'lodash';
 import { FeaturesFormikValues } from '../containers/utils/formikToFeatures';
 
 export const getNumberFields = (allFields: { [key: string]: string[] }) =>
@@ -38,12 +38,13 @@ export const getNumberFields = (allFields: { [key: string]: string[] }) =>
     )
     .filter(Boolean);
 
-export const initialize_feature = () => ({
+export const initialFeatureValue = () => ({
   featureId: uuidv4(),
   featureName: undefined,
   featureType: FEATURE_TYPE.SIMPLE,
   featureEnabled: true,
   importance: 1,
+  aggregationBy: 'sum',
   aggregationQuery: JSON.stringify(
     {
       aggregation_name: { sum: { field: 'field_name' } },
@@ -125,21 +126,22 @@ export const generateInitialFeatures = (
   });
 };
 
-export const focusOnFirstWrongFeature = (errors: any) => {
+export const focusOnFirstWrongFeature = (errors: any, setFieldTouched: any) => {
   if (
     //@ts-ignore
     !!get(errors, 'featureList', []).filter(featureError => featureError).length
   ) {
     const featureList = get(errors, 'featureList', []);
-    let firstWrongFeatureIndex = -1;
-    for (let i = 0; i < featureList.length; i++) {
+    for (let i = featureList.length - 1; i >= 0; i--) {
       if (featureList[i]) {
-        firstWrongFeatureIndex = i;
-        break;
+        forOwn(featureList[i], function(value, key) {
+          debugger;
+          console.log(value, key);
+          setFieldTouched(`featureList.${i}.${key}`, true);
+        });
+        focusOnFeatureAccordion(i);
       }
     }
-    focusOnFeatureAccordion(firstWrongFeatureIndex);
-
     return true;
   }
   return false;

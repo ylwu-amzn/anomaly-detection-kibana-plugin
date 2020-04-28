@@ -249,6 +249,6 @@ export const DATE_PICKER_QUICK_OPTIONS = [
 ];
 
 export enum LIVE_CHART_CONFIG {
-  REFRESH_INTERVAL_IN_SECONDS = 5 * 1000, //poll anomaly result every 5 seconds
+  REFRESH_INTERVAL_IN_SECONDS = 30 * 1000, //poll anomaly result every 30 seconds
   MONITORING_INTERVALS = 60,
 };

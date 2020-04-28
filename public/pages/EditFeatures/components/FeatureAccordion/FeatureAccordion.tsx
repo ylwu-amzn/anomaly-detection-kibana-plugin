@@ -27,7 +27,7 @@ import {
   EuiFieldText,
   EuiCheckbox,
 } from '@elastic/eui';
-import { validateFeatureName } from '../../../../utils/utils';
+import { validateName } from '../../../../utils/utils';
 import { Field, FieldProps } from 'formik';
 import { required, isInvalid, getError } from '../../../../utils/utils';
 import { get } from 'lodash';
@@ -41,7 +41,6 @@ interface FeatureAccordionProps {
   onDelete(): void;
   index: number;
   feature: any;
-  // displayError: boolean;
   handleChange(event: React.ChangeEvent<HTMLSelectElement>): void;
   // ref: any;
 }
@@ -123,12 +122,12 @@ export const FeatureAccordion = (props: FeatureAccordionProps) => {
       <Field
         id={`featureList.${props.index}.featureName`}
         name={`featureList.${props.index}.featureName`}
-        validate={validateFeatureName}
+        validate={validateName}
       >
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Feature name"
-            helpText="Enter a descriptive name. The name must be unique within this detector."
+            helpText="Enter a descriptive name. The name must be unique within this detector. Feature name must contain 1-64 characters. Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >

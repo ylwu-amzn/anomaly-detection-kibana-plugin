@@ -65,7 +65,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                   <div
                     class="euiText euiText--medium"
                   >
-                    <p>
+                    <p
+                      class="alerts_flyout_p"
+                    >
                       Anomaly detector alerts are powered by the
                       <a
                         class="euiLink euiLink--primary"
@@ -125,7 +127,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                       <div
                         class="euiStep__content"
                       >
-                        <p>
+                        <p
+                          class="alerts_flyout_p"
+                        >
                           A monitor queries a detector on a specific schedule. In Alerting, choose "Define using anomaly detector".
                         </p>
                       </div>
@@ -151,7 +155,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                       <div
                         class="euiStep__content"
                       >
-                        <p>
+                        <p
+                          class="alerts_flyout_p"
+                        >
                           Triggers specify the thresholds for anomalies to generate alerts. Actions specify the alert message and destination.
                         </p>
                       </div>
@@ -177,7 +183,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with monitor 1`] 
                       <div
                         class="euiStep__content"
                       >
-                        <p>
+                        <p
+                          class="alerts_flyout_p"
+                        >
                           View anomaly detector alerts on the anomaly history graph. See details of all alerts over time from the monitor.
                         </p>
                       </div>
@@ -325,7 +333,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                   <div
                     class="euiText euiText--medium"
                   >
-                    <p>
+                    <p
+                      class="alerts_flyout_p"
+                    >
                       Anomaly detector alerts are powered by the
                       <a
                         class="euiLink euiLink--primary"
@@ -385,7 +395,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                       <div
                         class="euiStep__content"
                       >
-                        <p>
+                        <p
+                          class="alerts_flyout_p"
+                        >
                           A monitor queries a detector on a specific schedule. In Alerting, choose "Define using anomaly detector".
                         </p>
                       </div>
@@ -411,7 +423,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                       <div
                         class="euiStep__content"
                       >
-                        <p>
+                        <p
+                          class="alerts_flyout_p"
+                        >
                           Triggers specify the thresholds for anomalies to generate alerts. Actions specify the alert message and destination.
                         </p>
                       </div>
@@ -437,7 +451,9 @@ exports[`<AlertsFlyout /> spec Alerts Flyout renders component with undefined mo
                       <div
                         class="euiStep__content"
                       >
-                        <p>
+                        <p
+                          class="alerts_flyout_p"
+                        >
                           View anomaly detector alerts on the anomaly history graph. See details of all alerts over time from the monitor.
                         </p>
                       </div>

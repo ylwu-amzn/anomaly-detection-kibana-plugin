@@ -65,12 +65,13 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
       >
         <div
           class="euiFormRow"
-          hint="Specify a unique and descriptive name that is easy to recognize."
+          hint="Specify a unique and descriptive name that is easy to recognize. Detector name must contain 1-64 characters.  Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)"
           id="random_id-row"
           title="Name"
         >
           <div>
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="random_id"
             >
@@ -84,7 +85,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
                 <p
                   class="sublabel"
                 >
-                  Specify a unique and descriptive name that is easy to recognize.
+                  Specify a unique and descriptive name that is easy to recognize. Detector name must contain 1-64 characters.  Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)
                 </p>
               </div>
             </label>
@@ -114,6 +115,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
         >
           <div>
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="random_id"
             >
@@ -200,6 +202,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
         >
           <div>
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="random_id"
             >
@@ -295,6 +298,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
         >
           <div>
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="random_id"
             >
@@ -357,6 +361,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
         >
           <div>
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="random_id"
             >
@@ -565,6 +570,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
             >
               <div>
                 <label
+                  aria-invalid="false"
                   class="euiFormLabel"
                   for="random_id"
                 >
@@ -634,6 +640,7 @@ exports[`<CreateDetector /> spec create detector renders the component 1`] = `
         >
           <div>
             <label
+              aria-invalid="false"
               class="euiFormLabel"
               for="random_id"
             >

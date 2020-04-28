@@ -21,11 +21,11 @@ export enum DATA_TYPES {
 }
 
 export const BREADCRUMBS = Object.freeze({
-  ANOMALY_DETECTOR: { text: 'Anomaly detection', href: '#/' },
+  ANOMALY_DETECTOR: { text: 'Anomaly detection', href: '#/dashboard' },
   DETECTORS: { text: 'Detectors', href: '#/detectors' },
   CREATE_DETECTOR: { text: 'Create detector' },
   EDIT_DETECTOR: { text: 'Edit detector' },
-  DASHBOARD: { text: 'Dashboard', href: '#/' },
+  DASHBOARD: { text: 'Dashboard', href: '#/dashboard' },
   EDIT_FEATURES: { text: 'Edit features' },
 });
 
@@ -49,7 +49,9 @@ export const MAX_ANOMALIES = 10000;
 
 export const MAX_FEATURE_NUM = 5;
 
-export const MAX_FEATURE_NAME_SIZE = 256;
+export const MAX_FEATURE_NAME_SIZE = 64;
+
+export const NAME_REGEX = RegExp('^[a-zA-Z0-9._-]+$');
 
 export enum DETECTOR_STATE {
   DISABLED = 'Stopped',

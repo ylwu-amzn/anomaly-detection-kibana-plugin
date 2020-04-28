@@ -18,23 +18,26 @@ import { get, isEmpty } from 'lodash';
 import { isAngularHttpError } from 'ui/notify/lib/format_angular_http_error';
 //@ts-ignore
 import { npStart } from 'ui/new_platform';
-import { ALERTING_PLUGIN_NAME } from './constants';
+import { ALERTING_PLUGIN_NAME, NAME_REGEX } from './constants';
 import { MAX_FEATURE_NAME_SIZE } from './constants';
 
-export const validateFeatureName = (
+export const validateName = (
   featureName: string
 ): string | undefined => {
+  debugger
   if (isEmpty(featureName)) {
     return 'Required';
   }
   if (featureName.length > MAX_FEATURE_NAME_SIZE) {
     return `Name is too big maximum limit is ${MAX_FEATURE_NAME_SIZE}`;
   }
+  if (!NAME_REGEX.test(featureName)) {
+    return 'Valid characters are a-z, A-Z, 0-9, -(hyphen) and _(underscore)';
+  }
 };
 
-export const isInvalid = (name: string, form: any, displayError?: boolean) =>
-  (!!get(form.touched, name, false) || displayError) &&
-  !!get(form.errors, name, false);
+export const isInvalid = (name: string, form: any) =>
+  !!get(form.touched, name, false) && !!get(form.errors, name, false);
 
 export const getError = (name: string, form: any) => get(form.errors, name);
 

@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
   EuiFlexItem,
@@ -241,14 +241,23 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
     />
   );
 
+  const alertsActionsWithDatePicker = () => {
+    return (
+      <EuiFlexGroup>
+        <EuiFlexItem style={{ marginRight: '8px' }}>{datePicker()}</EuiFlexItem>
+        <EuiFlexItem style={{ marginLeft: '0px' }}>
+          {setUpAlertsButton()}
+        </EuiFlexItem>
+      </EuiFlexGroup>
+    );
+  };
+
   return (
     <React.Fragment>
       <ContentPanel
         title={props.title}
         actions={
-          props.showAlerts
-            ? [datePicker(), setUpAlertsButton()]
-            : [datePicker()]
+          props.showAlerts ? alertsActionsWithDatePicker() : datePicker()
         }
       >
         <EuiFlexGroup direction="column">

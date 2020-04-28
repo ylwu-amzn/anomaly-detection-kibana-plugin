@@ -29,7 +29,7 @@ import {
   EuiIcon,
 } from '@elastic/eui';
 import { FieldArray, FieldArrayRenderProps, Form, Formik } from 'formik';
-import { get, isEmpty } from 'lodash';
+import { get, isEmpty, forOwn } from 'lodash';
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { RouteComponentProps } from 'react-router-dom';
@@ -48,7 +48,7 @@ import { FeatureAccordion } from '../components/FeatureAccordion/FeatureAccordio
 import { SaveFeaturesConfirmModal } from '../components/ConfirmModal/SaveFeaturesConfirmModal';
 import { SAVE_FEATURE_OPTIONS } from '../utils/constants';
 import {
-  initialize_feature,
+  initialFeatureValue,
   generateInitialFeatures,
   validateFeatures,
   focusOnFirstWrongFeature,
@@ -116,7 +116,7 @@ export function EditFeatures(props: EditFeaturesProps) {
             firstLoad &&
             get(detector, 'featureAttributes', []).length === 0
           ) {
-            push(initialize_feature());
+            push(initialFeatureValue());
           }
           setFirstLoad(false);
           return (
@@ -141,7 +141,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                     data-test-subj="addFeature"
                     isDisabled={values.featureList.length >= MAX_FEATURE_NUM}
                     onClick={() => {
-                      push(initialize_feature());
+                      push(initialFeatureValue());
                     }}
                   >
                     Add another feature
@@ -150,7 +150,7 @@ export function EditFeatures(props: EditFeaturesProps) {
                     <p>
                       You can add{' '}
                       {Math.max(MAX_FEATURE_NUM - values.featureList.length, 0)}{' '}
-                      more features
+                      more features.
                     </p>
                   </EuiText>
                 </EuiFlexItem>
@@ -218,6 +218,7 @@ export function EditFeatures(props: EditFeaturesProps) {
           setSubmitting,
           handleChange,
           errors,
+          setFieldTouched,
         }) => (
           <Fragment>
             <Form>
@@ -237,11 +238,12 @@ export function EditFeatures(props: EditFeaturesProps) {
               </EuiPage>
             </Form>
 
-            {detector && detector.id ? (
+            {!isEmpty(detector) ? (
               <SampleAnomalies
                 detector={detector}
                 featureList={values.featureList}
                 errors={errors}
+                setFieldTouched={setFieldTouched}
               />
             ) : null}
 
@@ -272,7 +274,10 @@ export function EditFeatures(props: EditFeaturesProps) {
                           );
                           return;
                         }
-                        if (!focusOnFirstWrongFeature(errors)) {
+
+                        if (
+                          !focusOnFirstWrongFeature(errors, setFieldTouched)
+                        ) {
                           if (values.featureList.length == 0) {
                             setSaveFeatureOption(
                               SAVE_FEATURE_OPTIONS.KEEP_AD_JOB_STOPPED

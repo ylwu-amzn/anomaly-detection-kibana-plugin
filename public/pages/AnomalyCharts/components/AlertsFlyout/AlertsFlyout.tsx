@@ -45,7 +45,7 @@ const alertSteps = [
   {
     title: 'Create a monitor',
     children: (
-      <p>
+      <p className="alerts_flyout_p">
         A monitor queries a detector on a specific schedule. In Alerting, choose
         "Define using anomaly detector".
       </p>
@@ -54,7 +54,7 @@ const alertSteps = [
   {
     title: 'Define triggers and actions',
     children: (
-      <p>
+      <p className="alerts_flyout_p">
         Triggers specify the thresholds for anomalies to generate alerts.
         Actions specify the alert message and destination.
       </p>
@@ -63,7 +63,7 @@ const alertSteps = [
   {
     title: 'View alerts from detector and monitor',
     children: (
-      <p>
+      <p className="alerts_flyout_p">
         View anomaly detector alerts on the anomaly history graph. See details
         of all alerts over time from the monitor.
       </p>
@@ -87,7 +87,7 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
         <EuiFlexGroup direction="column">
           <EuiFlexItem>
             <EuiText>
-              <p>
+              <p className="alerts_flyout_p">
                 Anomaly detector alerts are powered by the
                 <EuiLink href="https://opendistro.github.io/for-elasticsearch-docs/docs/alerting">
                   {' '}

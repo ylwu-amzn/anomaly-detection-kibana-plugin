@@ -51,6 +51,7 @@ interface SampleAnomaliesProps {
   detector: Detector;
   featureList: FeaturesFormikValues[];
   errors: any;
+  setFieldTouched: any;
 }
 
 export function SampleAnomalies(props: SampleAnomaliesProps) {
@@ -182,7 +183,12 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                   type="button"
                   data-test-subj="previewDetector"
                   onClick={() => {
-                    if (!focusOnFirstWrongFeature(props.errors)) {
+                    if (
+                      !focusOnFirstWrongFeature(
+                        props.errors,
+                        props.setFieldTouched
+                      )
+                    ) {
                       getSampleAnomalies();
                     }
                   }}

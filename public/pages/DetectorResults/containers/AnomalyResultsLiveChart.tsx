@@ -116,11 +116,11 @@ export const AnomalyResultsLiveChart = (
 
   const liveAnomaliesDescription = () => (
     <EuiText className={'anomaly-distribution-subtitle'}>
-      Live anomaly results during the last{' '}
-      {LIVE_CHART_CONFIG.REFRESH_INTERVAL_IN_SECONDS} intervals (
+      Live anomaly shows anomaly results during the last{' '}
+      {LIVE_CHART_CONFIG.MONITORING_INTERVALS} intervals (
       {LIVE_CHART_CONFIG.MONITORING_INTERVALS *
         props.detector.detectionInterval.period.interval}{' '}
-      minutes)
+      minutes).
     </EuiText>
   );
 
@@ -180,7 +180,7 @@ export const AnomalyResultsLiveChart = (
               opacity: showLoader ? 0.2 : 1,
             }}
           >
-            <EuiFlexItem grow={true}>
+            <EuiFlexItem grow={true} style={{marginRight: '0px'}}>
               {get(liveAnomalyResults, 'liveAnomalies', []).length === 0 ||
               !latestAnomalyGrade ? (
                 <EuiCallOut
@@ -189,7 +189,7 @@ export const AnomalyResultsLiveChart = (
                   title={`No anomalies found during the last ${
                     LIVE_CHART_CONFIG.MONITORING_INTERVALS
                   } intervals (${LIVE_CHART_CONFIG.MONITORING_INTERVALS *
-                    props.detector.detectionInterval.period.interval} minutes)`}
+                    props.detector.detectionInterval.period.interval} minutes).`}
                   style={{
                     width: '97%', // ensure width reaches NOW line
                   }}
@@ -228,7 +228,7 @@ export const AnomalyResultsLiveChart = (
                 />
               </Chart>
             </EuiFlexItem>
-            <EuiFlexItem grow={false}>
+            <EuiFlexItem grow={false} style={{marginLeft: '0px'}}>
               <EuiStat
                 title={`${get(
                   props.detector,

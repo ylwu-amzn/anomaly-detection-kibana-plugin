@@ -46,6 +46,7 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
             error={getError(field.name, form)}
           >
             <EuiComboBox
+              placeholder="Select field"
               singleSelection
               selectedOptions={field.value}
               //@ts-ignore
@@ -76,15 +77,17 @@ export const AggregationSelector = (props: AggregationSelectorProps) => {
         {({ field, form }: FieldProps) => (
           <EuiFormRow
             label="Aggregation method"
-            helpText="The aggregation method determins what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
+            helpText="The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature."
             isInvalid={isInvalid(field.name, form)}
             error={getError(field.name, form)}
           >
             <EuiSelect
               id={`featureList.${props.index}.aggregationBy`}
+              name={`featureList.${props.index}.aggregationBy`}
               options={AGGREGATION_TYPES}
               {...field}
               data-test-subj="aggregationType"
+              // onChange={e => console.log('66666', e)}
             />
           </EuiFormRow>
         )}

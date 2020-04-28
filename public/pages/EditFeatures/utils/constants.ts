@@ -26,7 +26,6 @@ export enum SAVE_FEATURE_OPTIONS {
 };
 
 export const AGGREGATION_TYPES = [
-  { text: '' },
   { value: 'avg', text: 'average()' },
   { value: 'sum', text: 'sum()' },
   { value: 'min', text: 'min()' },

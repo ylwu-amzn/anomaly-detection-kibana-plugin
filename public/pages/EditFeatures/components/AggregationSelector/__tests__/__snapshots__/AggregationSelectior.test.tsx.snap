@@ -8,6 +8,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
   >
     <div>
       <label
+        aria-invalid="false"
         class="euiFormLabel"
         for="random_id"
       >
@@ -32,6 +33,11 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
             data-test-subj="comboBoxInput"
             tabindex="-1"
           >
+            <p
+              class="euiComboBoxPlaceholder"
+            >
+              Select field
+            </p>
             <div
               class="euiComboBox__input"
               style="font-size: 14px; display: inline-block;"
@@ -78,6 +84,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
   >
     <div>
       <label
+        aria-invalid="false"
         class="euiFormLabel"
         for="random_id"
       >
@@ -97,9 +104,6 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
           id="random_id"
           name="featureList.undefined.aggregationBy"
         >
-          <option
-            selected=""
-          />
           <option
             value="avg"
           >
@@ -144,7 +148,7 @@ exports[`<AggregationSelector /> spec Empty results renders component with aggre
       class="euiFormHelpText euiFormRow__text"
       id="random_id-help"
     >
-      The aggregation method determins what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
+      The aggregation method determines what constitutes an anomaly. For example, if you choose min(), the detector focuses on finding anomalies based on the minimum values of your feature.
     </div>
   </div>
 </div>
