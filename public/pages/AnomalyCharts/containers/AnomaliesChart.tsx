@@ -13,8 +13,12 @@
  * permissions and limitations under the License.
  */
 
-import React, { useState, useEffect, Fragment } from 'react';
-import ContentPanel from '../../../components/ContentPanel/ContentPanel';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { DurationInputArg2 } from 'moment';
+import moment from 'moment';
+import { get } from 'lodash';
+import dateMath from '@elastic/datemath';
 import {
   EuiFlexItem,
   EuiFlexGroup,
@@ -23,7 +27,6 @@ import {
   EuiStat,
   EuiSuperDatePicker,
 } from '@elastic/eui';
-import moment from 'moment';
 import {
   Chart,
   Axis,
@@ -36,8 +39,8 @@ import {
   RectAnnotation,
   ScaleType,
 } from '@elastic/charts';
-import dateMath from '@elastic/datemath';
 import { useDelayedLoader } from '../../../hooks/useDelayedLoader';
+import ContentPanel from '../../../components/ContentPanel/ContentPanel';
 import {
   AnomalySummary,
   Monitor,
@@ -45,7 +48,6 @@ import {
   DateRange,
   MonitorAlert,
 } from '../../../models/interfaces';
-import { get } from 'lodash';
 import {
   prepareDataForChart,
   filterWithDateRange,
@@ -58,21 +60,20 @@ import {
   AlertsStat,
   AnomalyStatWithTooltip,
 } from '../components/AnomaliesStat/AnomalyStat';
-import { AD_RESULT_DATE_RANGES } from '../../utils/constants';
+import {
+  INITIAL_ANOMALY_SUMMARY,
+  CHART_FIELDS,
+  CHART_COLORS,
+  DATE_PICKER_QUICK_OPTIONS,
+} from '../utils/constants';
 import {
   convertAlerts,
   generateAlertAnnotations,
   getAnomalySummary,
   disabledHistoryAnnotations,
-  INITIAL_ANOMALY_SUMMARY,
   getAlertsQuery,
-  CHART_FIELDS,
-  CHART_COLORS,
-  DATE_PICKER_QUICK_OPTIONS,
 } from '../utils/anomalyChartUtils';
 import { searchES } from '../../../redux/reducers/elasticsearch';
-import { useDispatch } from 'react-redux';
-import { DurationInputArg2 } from 'moment';
 
 interface AnomaliesChartProps {
   onDateRangeChange(
@@ -89,15 +90,12 @@ interface AnomaliesChartProps {
   showAlerts?: boolean;
   anomalyGradeSeriesName: string;
   confidenceSeriesName: string;
-  dateRangeOptions?: any[];
   detectorId: string;
   detectorName: string;
   detector?: Detector;
   detectorInterval?: number;
   unit?: string;
-  noFeature?: boolean;
   monitor?: Monitor;
-  initialDateRangeOption?: AD_RESULT_DATE_RANGES;
 }
 export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
   const dispatch = useDispatch();
@@ -189,26 +187,16 @@ export const AnomaliesChart = React.memo((props: AnomaliesChartProps) => {
                 .add(1, start.slice(start.length - 1) as DurationInputArg2)
                 .subtract(1, 'milliseconds')
             : dateMath.parse(end);
-        console.log(
-          `datepicker - start: ${start}   ${startTime.format(
-            'MM/DD/YY hh:mm A'
-          )}`
-        );
-        console.log(
-          `datepicker - end: ${end}   ${endTime.format('MM/DD/YY hh:mm A')}`
-        );
-        if (!endTime) {
-          return;
-        }
-
-        if (
-          !refresh &&
-          startTime.valueOf() >= props.dateRange.startDate &&
-          endTime.valueOf() <= props.dateRange.endDate
-        ) {
-          handleZoomRangeChange(startTime.valueOf(), endTime.valueOf());
-        } else {
-          handleDateRangeChange(startTime.valueOf(), endTime.valueOf());
+        if (endTime) {
+          if (
+            !refresh &&
+            startTime.valueOf() >= props.dateRange.startDate &&
+            endTime.valueOf() <= props.dateRange.endDate
+          ) {
+            handleZoomRangeChange(startTime.valueOf(), endTime.valueOf());
+          } else {
+            handleDateRangeChange(startTime.valueOf(), endTime.valueOf());
+          }
         }
       }
     }

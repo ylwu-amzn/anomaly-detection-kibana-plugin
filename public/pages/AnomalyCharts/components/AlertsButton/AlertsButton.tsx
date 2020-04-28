@@ -46,7 +46,6 @@ export const AlertsButton = (props: AlertsButtonProps) => (
           props.detectorId,
           props.detectorName,
           props.detectorInterval,
-        //   props.unit,
           props.unit.toUpperCase(),
         )}`}
         {...props}

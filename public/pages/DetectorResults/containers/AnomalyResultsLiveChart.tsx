@@ -50,7 +50,7 @@ import {
   CHART_COLORS,
   CHART_FIELDS,
   LIVE_CHART_CONFIG,
-} from '../../AnomalyCharts/utils/anomalyChartUtils';
+} from '../../AnomalyCharts/utils/constants';
 
 interface AnomalyResultsLiveChartProps {
   detectorId: string;
@@ -180,7 +180,7 @@ export const AnomalyResultsLiveChart = (
               opacity: showLoader ? 0.2 : 1,
             }}
           >
-            <EuiFlexItem grow={true} style={{marginRight: '0px'}}>
+            <EuiFlexItem grow={true} style={{ marginRight: '0px' }}>
               {get(liveAnomalyResults, 'liveAnomalies', []).length === 0 ||
               !latestAnomalyGrade ? (
                 <EuiCallOut
@@ -189,7 +189,8 @@ export const AnomalyResultsLiveChart = (
                   title={`No anomalies found during the last ${
                     LIVE_CHART_CONFIG.MONITORING_INTERVALS
                   } intervals (${LIVE_CHART_CONFIG.MONITORING_INTERVALS *
-                    props.detector.detectionInterval.period.interval} minutes).`}
+                    props.detector.detectionInterval.period
+                      .interval} minutes).`}
                   style={{
                     width: '97%', // ensure width reaches NOW line
                   }}
@@ -228,7 +229,7 @@ export const AnomalyResultsLiveChart = (
                 />
               </Chart>
             </EuiFlexItem>
-            <EuiFlexItem grow={false} style={{marginLeft: '0px'}}>
+            <EuiFlexItem grow={false} style={{ marginLeft: '0px' }}>
               <EuiStat
                 title={`${get(
                   props.detector,

@@ -36,7 +36,7 @@ import {
 import { darkModeEnabled } from '../../../../utils/kibanaUtils';
 import { prepareDataForChart } from '../../../utils/anomalyResultUtils';
 import { CodeModal } from '../../../DetectorConfig/components/CodeModal/CodeModal';
-import { CHART_FIELDS, CHART_COLORS, FEATURE_CHART_THEME } from '../../utils/anomalyChartUtils';
+import { CHART_FIELDS, CHART_COLORS, FEATURE_CHART_THEME } from '../../utils/constants';
 
 interface FeatureChartProps {
   feature: FeatureAttributes;
@@ -97,7 +97,7 @@ export const FeatureChart = (props: FeatureChartProps) => {
             </EuiLink>
           </span>
           <span className="content-panel-subTitle">
-            State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}{' '}
+            State: {props.feature.featureEnabled ? 'Enabled' : 'Disabled'}
           </span>
         </Fragment>
       )}

@@ -44,7 +44,6 @@ import { AnomaliesChart } from '../../AnomalyCharts/containers/AnomaliesChart';
 import { FeatureBreakDown } from '../../AnomalyCharts/containers/FeatureBreakDown';
 import { useHideSideNavBar } from '../../main/hooks/useHideSideNavBar';
 import { generateAnomalyAnnotations } from '../../utils/anomalyResultUtils';
-import { SAMPLE_ANOMALY_DATE_RANGE_OPTIONS } from '../../AnomalyCharts/utils/anomalyChartUtils';
 import { focusOnFirstWrongFeature } from '../utils/helpers';
 
 interface SampleAnomaliesProps {
@@ -221,7 +220,6 @@ export function SampleAnomalies(props: SampleAnomaliesProps) {
                 dateRange={dateRange}
                 anomalyGradeSeriesName="Sample anomaly grade"
                 confidenceSeriesName="Sample confidence"
-                dateRangeOptions={SAMPLE_ANOMALY_DATE_RANGE_OPTIONS}
                 detectorId={props.detector.id}
                 detectorName={props.detector.name}
               />

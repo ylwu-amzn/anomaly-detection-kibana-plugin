@@ -82,7 +82,6 @@ export const AlertsFlyout = (props: AlertsFlyoutProps) => {
       <EuiFlyoutBody
         // @ts-ignore
         style={{ overflowY: 'auto' }}
-        // className="flyout"
       >
         <EuiFlexGroup direction="column">
           <EuiFlexItem>

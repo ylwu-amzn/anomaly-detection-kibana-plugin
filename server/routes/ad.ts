@@ -583,21 +583,17 @@ const getAnomalyResults = async (
         startTime: result._source.data_start_time,
         endTime: result._source.data_end_time,
         plotTime: result._source.data_end_time,
-        //   result._source.data_start_time +
-        //   Math.floor(
-        //     (result._source.data_end_time - result._source.data_start_time) / 2
-        //   ),
         confidence:
           result._source.confidence != null &&
           result._source.confidence !== 'NaN' &&
           result._source.confidence > 0
-            ? toFixedNumber(Number.parseFloat(result._source.confidence), 3)
+            ? toFixedNumber(Number.parseFloat(result._source.confidence))
             : 0,
         anomalyGrade:
           result._source.anomaly_grade != null &&
           result._source.anomaly_grade !== 'NaN' &&
           result._source.anomaly_grade > 0
-            ? toFixedNumber(Number.parseFloat(result._source.anomaly_grade), 3)
+            ? toFixedNumber(Number.parseFloat(result._source.anomaly_grade))
             : 0,
       });
       result._source.feature_data.forEach((featureData: any) => {
@@ -608,14 +604,9 @@ const getAnomalyResults = async (
           startTime: result._source.data_start_time,
           endTime: result._source.data_end_time,
           plotTime: result._source.data_end_time,
-          // result._source.data_start_time +
-          // Math.floor(
-          //   (result._source.data_end_time - result._source.data_start_time) /
-          //     2
-          // ),
           data:
             featureData.data != null && featureData.data !== 'NaN'
-              ? toFixedNumber(Number.parseFloat(featureData.data), 3)
+              ? toFixedNumber(Number.parseFloat(featureData.data))
               : 0,
         });
       });

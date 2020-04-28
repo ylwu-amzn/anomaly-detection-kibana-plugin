@@ -13,16 +13,13 @@
  * permissions and limitations under the License.
  */
 
+import { get } from 'lodash';
 import {
   DateRange,
   Detector,
   MonitorAlert,
   AnomalySummary,
 } from '../../../models/interfaces';
-import { get } from 'lodash';
-import { useDispatch } from 'react-redux';
-import { AD_RESULT_DATE_RANGES } from '../../utils/constants';
-import { searchES } from '../../../redux/reducers/elasticsearch';
 import { dateFormatter, minuteDateFormatter } from '../../utils/helpers';
 
 export const getAlertsQuery = (monitorId: string, startTime: number) => {
@@ -60,14 +57,6 @@ export const getAlertsQuery = (monitorId: string, startTime: number) => {
     },
   };
 };
-
-// export const getAlerts = async (monitorId: string, startTime: number) => {
-//   const dispatch = useDispatch();
-//   const searchResponse = await dispatch(
-//     searchES(getAlertsQuery(monitorId, startTime))
-//   );
-//   return searchResponse;
-// };
 
 export const convertAlerts = (response: any): MonitorAlert[] => {
   const hits = get(response, 'data.response.hits.hits', []);
@@ -158,7 +147,7 @@ export const disabledHistoryAnnotations = (
   dateRange: DateRange,
   detector?: Detector
 ) => {
-  if (!detector) {
+  if (!detector || detector.disabledTime) {
     return [];
   }
   const startTime = detector.disabledTime;
@@ -187,68 +176,4 @@ export const disabledHistoryAnnotations = (
       },
     ];
   }
-  return [];
-};
-
-export const INITIAL_ANOMALY_SUMMARY = {
-  anomalyOccurrence: 0,
-  minAnomalyGrade: 0.0,
-  maxAnomalyGrade: 0.0,
-  minConfidence: 0.0,
-  maxConfidence: 0.0,
-  lastAnomalyOccurrence: '',
-};
-
-export const SAMPLE_ANOMALY_DATE_RANGE_OPTIONS = [
-  { value: AD_RESULT_DATE_RANGES.LAST_24_HOURS, text: 'Last 24 hours' },
-  { value: AD_RESULT_DATE_RANGES.LAST_7_DAYS, text: 'Last 7 days' },
-];
-
-export enum ANOMALY_CHART_TITLE {
-  SAMPLE_ANOMALY_HISTORY = 'Sample anomaly history',
-  ANOMALY_HISTORY = 'Sample anomaly history',
-}
-
-export enum CHART_FIELDS {
-  PLOT_TIME = 'plotTime',
-  ANOMALY_GRADE = 'anomalyGrade',
-  CONFIDENCE = 'confidence',
-  DATA = 'data',
-}
-
-export enum CHART_COLORS {
-  ANOMALY_GRADE_COLOR = '#D13212',
-  FEATURE_DATA_COLOR = '#16191F',
-  CONFIDENCE_COLOR = '#017F75',
-}
-
-export const FEATURE_CHART_THEME = {
-  lineSeriesStyle: {
-    line: {
-      strokeWidth: 2,
-      visible: true,
-      opacity: 0.5,
-    },
-    point: {
-      visible: true,
-      stroke: CHART_COLORS.FEATURE_DATA_COLOR,
-    },
-  },
-};
-
-export const DATE_PICKER_QUICK_OPTIONS = [
-  { start: 'now-24h', end: 'now', label: 'last 24 hours' },
-  { start: 'now-7d', end: 'now', label: 'last 7 days' },
-  { start: 'now-30d', end: 'now', label: 'last 30 days' },
-  { start: 'now-90d', end: 'now', label: 'last 90 days' },
-
-  { start: 'now/d', end: 'now', label: 'Today' },
-  { start: 'now/w', end: 'now', label: 'Week to date' },
-  { start: 'now/M', end: 'now', label: 'Month to date' },
-  { start: 'now/y', end: 'now', label: 'Year to date' },
-];
-
-export enum LIVE_CHART_CONFIG {
-  REFRESH_INTERVAL_IN_SECONDS = 30 * 1000, //poll anomaly result every 30 seconds
-  MONITORING_INTERVALS = 60,
 };

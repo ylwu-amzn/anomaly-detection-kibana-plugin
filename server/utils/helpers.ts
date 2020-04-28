@@ -43,7 +43,7 @@ export const getFloorPlotTime = (plotTime: number): number => {
   return Math.floor(plotTime / MIN_IN_MILLI_SECS) * MIN_IN_MILLI_SECS;
 };
 
-export const toFixedNumber = (num: number, digits: number, base?: number) => {
-  var pow = Math.pow(base || 10, digits);
+export const toFixedNumber = (num: number, digits?: number, base?: number) => {
+  var pow = Math.pow(base || 10, digits || 2);
   return Math.round(num * pow) / pow;
 };

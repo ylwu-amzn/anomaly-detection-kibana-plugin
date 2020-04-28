@@ -129,25 +129,21 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
       ...others,
       anomalyGrade:
         rest.anomalyGrade != null && rest.anomalyGrade > 0
-          ? Number.parseFloat(rest.anomalyGrade).toFixed(3)
+          ? Number.parseFloat(rest.anomalyGrade).toFixed(2)
           : 0,
       confidence:
         rest.anomalyGrade != null && rest.anomalyGrade > 0
-          ? Number.parseFloat(rest.confidence).toFixed(3)
+          ? Number.parseFloat(rest.confidence).toFixed(2)
           : 0,
       startTime: rest.dataStartTime,
       endTime: rest.dataEndTime,
       plotTime: rest.dataEndTime,
-      // rest.dataStartTime +
-      // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
     });
     featureData.forEach((feature: any) => {
       resultData.featureData[feature.featureId].push({
         startTime: rest.dataStartTime,
         endTime: rest.dataEndTime,
         plotTime: rest.dataEndTime,
-        // rest.dataStartTime +
-        // Math.floor((rest.dataEndTime - rest.dataStartTime) / 2),
         data: feature.data,
       });
     });

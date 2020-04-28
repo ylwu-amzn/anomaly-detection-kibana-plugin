@@ -14,10 +14,8 @@
  */
 
 import React from 'react';
-
-import { EuiFlexItem, EuiFlexGroup, EuiTitle, EuiSpacer } from '@elastic/eui';
-
 import { get } from 'lodash';
+import { EuiFlexItem, EuiFlexGroup, EuiTitle, EuiSpacer } from '@elastic/eui';
 import { FeatureChart } from '../components/FeatureChart/FeatureChart';
 import {
   Detector,
@@ -25,7 +23,6 @@ import {
   AnomalyPreview,
   DateRange,
   FEATURE_TYPE,
-  // ZoomRange,
 } from '../../../models/interfaces';
 import { NoFeaturePrompt } from '../components/FeatureChart/NoFeaturePrompt';
 import { focusOnFeatureAccordion } from '../../EditFeatures/utils/helpers';
@@ -97,7 +94,9 @@ export const FeatureBreakDown = React.memo((props: FeatureBreakDownProps) => {
               }
               featureDataSeriesName={props.featureDataSeriesName}
               edit={props.title === 'Sample feature breakdown'}
-              onEdit={() => {focusOnFeatureAccordion(index)}}
+              onEdit={() => {
+                focusOnFeatureAccordion(index);
+              }}
             />
             <EuiSpacer />
           </React.Fragment>
