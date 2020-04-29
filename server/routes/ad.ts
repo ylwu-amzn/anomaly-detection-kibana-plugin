@@ -38,6 +38,7 @@ import {
   convertDetectorKeysToCamelCase,
   convertDetectorKeysToSnakeCase,
   getResultAggregationQuery,
+  normalizeDetectorState,
   getFinalDetectorStates,
 } from './utils/adHelpers';
 import { set } from 'lodash';
@@ -166,12 +167,29 @@ const getDetector = async (
     const response = await callWithRequest(req, 'ad.getDetector', {
       detectorId,
     });
+    let detectorState;
+    try {
+      const detectorStateResp = await callWithRequest(
+        req,
+        'ad.detectorProfile',
+        {
+          detectorId: detectorId,
+        }
+      );
+      detectorState = normalizeDetectorState(detectorStateResp);
+    } catch (err) {
+      console.log('Anomaly detector - Unable to retrieve detector state', err);
+    }
     const resp = {
       ...response.anomaly_detector,
       id: response._id,
       primaryTerm: response._primary_term,
       seqNo: response._seq_no,
       adJob: { ...response.anomaly_detector_job },
+      ...(detectorState !== undefined ? { curState: detectorState.state } : {}),
+      ...(detectorState !== undefined
+        ? { initializationError: detectorState.error }
+        : {}),
     };
     return {
       ok: true,
