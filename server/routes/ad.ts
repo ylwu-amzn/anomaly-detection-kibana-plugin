@@ -38,7 +38,7 @@ import {
   convertDetectorKeysToCamelCase,
   convertDetectorKeysToSnakeCase,
   getResultAggregationQuery,
-  normalizeDetectorState,
+  getFinalDetectorStates,
 } from './utils/adHelpers';
 import { set } from 'lodash';
 
@@ -104,8 +104,7 @@ const previewDetector = async (
     };
   } catch (err) {
     console.log('Anomaly detector - previewDetector', err);
-    // return { ok: false, error: err.msg || err.response || err.message };
-    return { ok: false, error: err };
+    return { ok: false, error: err.message };
   }
 };
 
@@ -167,29 +166,12 @@ const getDetector = async (
     const response = await callWithRequest(req, 'ad.getDetector', {
       detectorId,
     });
-    let detectorState;
-    try {
-      const detectorStateResp = await callWithRequest(
-        req,
-        'ad.detectorProfile',
-        {
-          detectorId: detectorId,
-        }
-      );
-      detectorState = normalizeDetectorState(detectorStateResp);
-    } catch (err) {
-      console.log('Anomaly detector - Unable to retrieve detector state', err);
-    }
     const resp = {
       ...response.anomaly_detector,
       id: response._id,
       primaryTerm: response._primary_term,
       seqNo: response._seq_no,
       adJob: { ...response.anomaly_detector_job },
-      ...(detectorState !== undefined ? { curState: detectorState.state } : {}),
-      ...(detectorState !== undefined
-        ? { initializationError: detectorState.error }
-        : {}),
     };
     return {
       ok: true,
@@ -377,7 +359,6 @@ const getDetectors = async (
           description: get(detector, '_source.description', ''),
           indices: get(detector, '_source.indices', []),
           lastUpdateTime: get(detector, '_source.last_update_time', 0),
-          // TODO: get the state of the detector once possible (enabled/disabled for now)
           ...convertDetectorKeysToCamelCase(get(detector, '_source', {})),
         },
       }),
@@ -460,13 +441,14 @@ const getDetectors = async (
         );
       }
     });
-    const rawDetectorStates = await Promise.all(detectorStatePromises);
-
-    const detectorStates = rawDetectorStates.flatMap(normalizeDetectorState);
-
+    const detectorStateResponses = await Promise.all(detectorStatePromises);
+    const finalDetectorStates = getFinalDetectorStates(
+      detectorStateResponses,
+      finalDetectors
+    );
     // update the final detectors to include the detector state
     finalDetectors.forEach((detector, i) => {
-      detector.curState = detectorStates[i].state;
+      detector.curState = finalDetectorStates[i].state;
     });
 
     return {

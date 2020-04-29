@@ -151,25 +151,44 @@ export const anomalyResultMapper = (anomalyResults: any[]): AnomalyResults => {
   return resultData;
 };
 
-export const normalizeDetectorState = (detectorState: {
-  state: string;
-  error: string;
-}) => {
-  //@ts-ignore
-  detectorState.state = DETECTOR_STATE[detectorState.state];
-  /*
-        If the error starts with 'Stopped detector', then an EndRunException was thrown.
-        All EndRunExceptions are related to initialization failures except for the
-        unknown prediction error which contains the message "We might have bugs".
-      */
-  if (
-    detectorState.state === DETECTOR_STATE.DISABLED &&
-    detectorState.error !== undefined &&
-    detectorState.error.includes('Stopped detector')
-  ) {
-    detectorState.state = detectorState.error.includes('We might have bugs')
-      ? DETECTOR_STATE.UNEXPECTED_FAILURE
-      : DETECTOR_STATE.INIT_FAILURE;
-  }
-  return cloneDeep(detectorState);
+export const getFinalDetectorStates = (
+  detectorStateResponses: any[],
+  finalDetectors: any[]
+) => {
+  let finalDetectorStates = cloneDeep(detectorStateResponses);
+  finalDetectorStates.forEach(detectorState => {
+    //@ts-ignore
+    detectorState.state = DETECTOR_STATE[detectorState.state];
+  });
+
+  // check if there was any failures / detectors that are unable to start
+  finalDetectorStates.forEach((detectorState, i) => {
+    /*
+      If the error starts with 'Stopped detector', then an EndRunException was thrown.
+      All EndRunExceptions are related to initialization failures except for the
+      unknown prediction error which contains the message "We might have bugs".
+    */
+    if (
+      detectorState.state === DETECTOR_STATE.DISABLED &&
+      detectorState.error !== undefined &&
+      detectorState.error.includes('Stopped detector')
+    ) {
+      detectorState.state = detectorState.error.includes('We might have bugs')
+        ? DETECTOR_STATE.UNEXPECTED_FAILURE
+        : DETECTOR_STATE.INIT_FAILURE;
+    }
+
+    /*
+      If a detector is disabled and has no features, set to
+      a feature required state
+    */
+    if (
+      detectorState.state === DETECTOR_STATE.DISABLED &&
+      finalDetectors[i].featureAttributes.length === 0
+    ) {
+      detectorState.state = DETECTOR_STATE.FEATURE_REQUIRED;
+    }
+  });
+
+  return finalDetectorStates;
 };

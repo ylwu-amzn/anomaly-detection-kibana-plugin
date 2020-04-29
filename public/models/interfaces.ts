@@ -14,7 +14,6 @@
  */
 
 import { DATA_TYPES, DETECTOR_STATE } from '../utils/constants';
-import { Moment } from 'moment';
 
 export type FieldInfo = {
   label: string;
@@ -173,8 +172,3 @@ export type DateRange = {
   startDate: number;
   endDate: number;
 };
-
-// export type ZoomRange = {
-//   start: number;
-//   end: number;
-// };
