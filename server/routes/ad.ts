@@ -49,7 +49,7 @@ type PutDetectorParams = {
   body: string;
 };
 
-export default function (apiRouter: Router) {
+export default function(apiRouter: Router) {
   apiRouter.post('/detectors', putDetector);
   apiRouter.put('/detectors/{detectorId}', putDetector);
   apiRouter.post('/detectors/_search', searchDetector);
@@ -327,7 +327,10 @@ const getDetectors = async (
         query_string: {
           fields: ['name', 'description'],
           default_operator: 'AND',
-          query: `*${search.trim().split(' ').join('* *')}*`,
+          query: `*${search
+            .trim()
+            .split(' ')
+            .join('* *')}*`,
         },
       });
     }
@@ -336,7 +339,10 @@ const getDetectors = async (
         query_string: {
           fields: ['indices'],
           default_operator: 'OR',
-          query: `*${indices.trim().split(' ').join('* *')}*`,
+          query: `*${indices
+            .trim()
+            .split(' ')
+            .join('* *')}*`,
         },
       });
     }
@@ -440,7 +446,7 @@ const getDetectors = async (
     }
 
     // Get detector state as well: loop through the ids to get each detector's state using profile api
-    const allIds = finalDetectors.map((detector) => detector.id);
+    const allIds = finalDetectors.map(detector => detector.id);
 
     const detectorStatePromises = allIds.map(async (id: string) => {
       try {

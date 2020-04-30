@@ -175,7 +175,6 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
 
     const getCellProps = () => {
       return {
-        // className: 'featureText',
         textOnly: true,
       };
     };
@@ -185,6 +184,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
     return (
       <ContentPanel
         title={`Features (${featureNum})`}
+        titleSize="s"
         subTitle={
           <EuiText className="anomaly-distribution-subtitle">
             <p>

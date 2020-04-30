@@ -195,7 +195,7 @@ export function CreateDetector(props: CreateADProps) {
           initialValues={detectorToFormik(detector)}
           onSubmit={handleSubmit}
         >
-          {formikProps => (
+          {(formikProps) => (
             <Fragment>
               <DetectorInfo onValidateDetectorName={handleValidateName} />
               <EuiSpacer />

@@ -13,15 +13,24 @@
  * permissions and limitations under the License.
  */
 
-import { DETECTOR_INIT_FAILURES } from './constants';
+import React from 'react';
+import { render } from '@testing-library/react';
+import { CodeModal } from '../CodeModal';
 
-export const getInitFailureMessageAndActionItem = (error: string): object => {
-  const failureDetails = Object.values(DETECTOR_INIT_FAILURES);
-  const failureDetail = failureDetails.find(failure =>
-    error.includes(failure.keyword)
-  );
-  if (!failureDetail) {
-    return DETECTOR_INIT_FAILURES.UNKNOWN_EXCEPTION;
-  }
-  return failureDetail;
-};
+describe('CodeMOdal spec', () => {
+  const onVisibilityChange = jest.fn(() => true);
+  const onCloseModal = jest.fn();
+
+  test('renders the component', () => {
+    const { container } = render(
+      <CodeModal
+        code="xyz"
+        title="123"
+        subtitle="abc"
+        getModalVisibilityChange={onVisibilityChange}
+        closeModal={onCloseModal}
+      />
+    );
+    expect(container).toMatchSnapshot();
+  });
+});
