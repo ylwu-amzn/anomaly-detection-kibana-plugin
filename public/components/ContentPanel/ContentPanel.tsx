@@ -55,7 +55,7 @@ const ContentPanel = (props: ContentPanelProps) => (
         {typeof props.title === 'string' ? (
           <EuiTitle
             size={props.titleSize || 's'}
-            className={props.titleClassName || 'content-panel-title'}
+            className={props.titleClassName}
           >
             <h3>{props.title}</h3>
           </EuiTitle>
