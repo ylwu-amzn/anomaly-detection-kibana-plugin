@@ -75,7 +75,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
     return this.state.showCodeModel[index];
   };
 
-  private onTableChange = (props: any) => {
+  private handleTableChange = (props: any) => {
     this.setState({
       sortField: props.sort.field,
       sortDirection: props.sort.direction,
@@ -202,14 +202,9 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
             </p>
           </EuiText>
         }
-        // subTitleClassName="fieldsSubtitle"
         actions={[
           <EuiButton onClick={this.props.onEditFeatures}>Edit</EuiButton>,
         ]}
-        // panelStyles={{
-        //   left: '10px',
-        //   width: '1120px',
-        // }}
       >
         {featureNum == 0 ? (
           <EuiEmptyPrompt
@@ -241,7 +236,7 @@ export class Features extends Component<FeaturesProps, FeaturesState> {
             columns={columns}
             cellProps={getCellProps}
             sorting={sorting}
-            onChange={this.onTableChange}
+            onChange={this.handleTableChange}
           />
         )}
       </ContentPanel>

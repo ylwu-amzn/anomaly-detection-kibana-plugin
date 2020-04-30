@@ -29,23 +29,21 @@ interface DetectorConfigProps extends RouteComponentProps {
 
 export const DetectorConfig = (props: DetectorConfigProps) => {
   return (
-    <React.Fragment>
-      <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
-        <EuiPageBody>
-          <EuiSpacer size="l" />
-          <MetaData
-            detectorId={props.detectorId}
-            detector={props.detector}
-            onEditDetector={props.onEditDetector}
-          />
-          <EuiSpacer />
-          <Features
-            detectorId={props.detectorId}
-            detector={props.detector}
-            onEditFeatures={props.onEditFeatures}
-          />
-        </EuiPageBody>
-      </EuiPage>
-    </React.Fragment>
+    <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
+      <EuiPageBody>
+        <EuiSpacer size="l" />
+        <MetaData
+          detectorId={props.detectorId}
+          detector={props.detector}
+          onEditDetector={props.onEditDetector}
+        />
+        <EuiSpacer />
+        <Features
+          detectorId={props.detectorId}
+          detector={props.detector}
+          onEditFeatures={props.onEditFeatures}
+        />
+      </EuiPageBody>
+    </EuiPage>
   );
 };

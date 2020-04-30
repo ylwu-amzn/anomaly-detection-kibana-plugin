@@ -64,10 +64,6 @@ const ConfigCell: FunctionComponent<ConfigCellProps> = (
   );
 };
 
-function toString(obj: { period: Schedule }): string;
-function toString(utcEpochSeconds: number): string;
-function toString(filter: UiMetaData): string;
-
 export function toString(obj: any): string {
   // render calls this method.  During different lifecylces, obj can be undefined
   if (typeof obj != 'undefined') {
@@ -76,9 +72,6 @@ export function toString(obj: any): string {
       return period.interval + ' ' + period.unit;
     } else if (typeof obj == 'number') {
       // epoch
-      // let date = new Date(0);
-      // date.setUTCMilliseconds(obj);
-      // return date.toString();
       return moment(obj).format('MM/DD/YY hh:mm A');
     }
   }
@@ -195,10 +188,6 @@ export const MetaData = (props: MetaDataProps) => {
       title="Detector configuration"
       titleSize="s"
       actions={[<EuiButton onClick={props.onEditDetector}>Edit</EuiButton>]}
-      // panelStyles={{
-      //   left: '10px',
-      //   width: '1120px',
-      // }}
     >
       <EuiFlexGrid columns={4} gutterSize="l" style={{ border: 'none' }}>
         <EuiFlexItem>
