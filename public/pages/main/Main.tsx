@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+ * Copyright 2020 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,12 +18,12 @@ import React from 'react';
 import { AppState } from '../../redux/reducers';
 import { CreateDetector } from '../createDetector';
 import { DetectorList } from '../DetectorsList';
-import { DetectorDetail } from '../DetectorDetail';
 import { ListRouterParams } from '../DetectorsList/List/List';
 // @ts-ignore
 import { EuiSideNav, EuiPage, EuiPageBody, EuiPageSideBar } from '@elastic/eui';
 import { useSelector } from 'react-redux';
-import { DashboardOverview } from '../Dashboard/Container/DashboardOverview';
+import { APP_PATH } from '../../utils/constants';
+import { DetectorDetail } from '../DetectorDetail';
 import { Dashboard } from '../Dashboard/Container/Dashboard';
 import { EditFeatures } from '../EditFeatures/containers/EditFeatures';
 
@@ -74,42 +74,42 @@ export function Main(props: MainProps) {
       <EuiPageBody>
         <Switch>
           <Route
-            path="/dashboard"
+            path={APP_PATH.DASHBOARD}
             render={(props: RouteComponentProps) => <Dashboard />}
           />
           <Route
             exact
-            path="/detectors"
+            path={APP_PATH.LIST_DETECTORS}
             render={(props: RouteComponentProps<ListRouterParams>) => (
               <DetectorList {...props} />
             )}
           />
           <Route
             exact
-            path="/create-ad/"
+            path={APP_PATH.CREATE_DETECTOR}
             render={(props: RouteComponentProps) => (
               <CreateDetector {...props} isEdit={false} />
             )}
           />
           <Route
             exact
-            path="/detectors/:detectorId/edit"
+            path={APP_PATH.EDIT_DETECTOR}
             render={(props: RouteComponentProps) => (
               <CreateDetector {...props} isEdit={true} />
             )}
           />
           <Route
             exact
-            path="/detectors/:detectorId/features/"
+            path={APP_PATH.EDIT_FEATURES}
             render={(props: RouteComponentProps) => <EditFeatures {...props} />}
           />
           <Route
-            path="/detectors/:detectorId/"
+            path={APP_PATH.DETECTOR_DETAIL}
             render={(props: RouteComponentProps) => (
               <DetectorDetail {...props} />
             )}
           />
-          <Redirect from="/" to="/dashboard" />
+          <Redirect from="/" to={APP_PATH.DASHBOARD} />
         </Switch>
       </EuiPageBody>
     </EuiPage>

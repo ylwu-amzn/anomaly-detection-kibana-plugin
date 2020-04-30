@@ -115,7 +115,6 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                   />
                   <EuiSpacer size="l" />
                   <AnomalyHistory
-                    detectorId={detectorId}
                     detector={detector}
                     monitor={monitor}
                     createFeature={() =>
