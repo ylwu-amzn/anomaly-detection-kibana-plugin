@@ -17,37 +17,37 @@ import React, { ReactElement, ReactNode } from 'react';
 import { EuiFormRow } from '@elastic/eui';
 
 type FormattedFormRowProps = {
-    title?: string;
-    formattedTitle?: ReactNode;
-    children: ReactElement;
-    hint?: string | string[];
-    isInvalid?: boolean;
-    error?: ReactNode | ReactNode[];
-    fullWidth?: boolean;
-    helpText?: string;
+  title?: string;
+  formattedTitle?: ReactNode;
+  children: ReactElement;
+  hint?: string | string[];
+  isInvalid?: boolean;
+  error?: ReactNode | ReactNode[];
+  fullWidth?: boolean;
+  helpText?: string;
 };
 
 export const FormattedFormRow = (props: FormattedFormRowProps) => {
-    let hints;
-    if (props.hint) {
-        const hintTexts = Array.isArray(props.hint) ? props.hint : [props.hint];
-        hints = hintTexts.map((hint, i) => {
-            return <p className="sublabel">{hint}</p>;
-        });
-    }
+  let hints;
+  if (props.hint) {
+    const hintTexts = Array.isArray(props.hint) ? props.hint : [props.hint];
+    hints = hintTexts.map((hint, i) => {
+      return <p className="sublabel">{hint}</p>;
+    });
+  }
 
-    return (
-        <EuiFormRow
-            label={
-                <div style={{ lineHeight: '8px' }}>
-                    {props.formattedTitle ? props.formattedTitle : <p>{props.title}</p>}
-                    <br />
-                    {hints}
-                </div>
-            }
-            {...props}
-        >
-            {props.children}
-        </EuiFormRow>
-    );
+  return (
+    <EuiFormRow
+      label={
+        <div style={{ lineHeight: '8px' }}>
+          {props.formattedTitle ? props.formattedTitle : <p>{props.title}</p>}
+          <br />
+          {hints}
+        </div>
+      }
+      {...props}
+    >
+      {props.children}
+    </EuiFormRow>
+  );
 };

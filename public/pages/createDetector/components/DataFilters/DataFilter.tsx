@@ -57,8 +57,8 @@ function DataFilter(props: DataFilterProps) {
           {field.value === FILTER_TYPES.SIMPLE ? (
             <SimpleFilter formikProps={props.formikProps} />
           ) : (
-              <QueryDataFilter />
-            )}
+            <QueryDataFilter />
+          )}
         </Fragment>
       )}
     </Field>
