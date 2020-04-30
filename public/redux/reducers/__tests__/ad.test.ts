@@ -17,60 +17,60 @@ describe('detector reducer actions', () => {
   beforeEach(() => {
     store = mockedStore();
   });
-  // describe('getDetector', () => {
-  //   test('should invoke [REQUEST, SUCCESS]', async () => {
-  //     const expectedDetector = getRandomDetector(true);
-  //     const detectorId = 'randomDetectorID';
-  //     httpMockedClient.get = jest
-  //       .fn()
-  //       .mockResolvedValue({ data: { ok: true, response: expectedDetector } });
-  //     await store.dispatch(getDetector(detectorId));
-  //     const actions = store.getActions();
-  //     expect(actions[0].type).toBe('ad/GET_DETECTOR_REQUEST');
-  //     expect(reducer(initialDetectorsState, actions[0])).toEqual({
-  //       ...initialDetectorsState,
-  //       requesting: true,
-  //     });
-  //     expect(actions[1].type).toBe('ad/GET_DETECTOR_SUCCESS');
-  //     expect(reducer(initialDetectorsState, actions[1])).toEqual({
-  //       ...initialDetectorsState,
-  //       requesting: false,
-  //       detectors: {
-  //         [detectorId]: {
-  //           ...expectedDetector,
-  //         },
-  //       },
-  //     });
-  //     expect(httpMockedClient.get).toHaveBeenCalledWith(
-  //       `..${BASE_NODE_API_PATH}/detectors/${detectorId}`
-  //     );
-  //   });
-  //   test('should invoke [REQUEST, FAILURE]', async () => {
-  //     const detectorId = 'randomDetectorID';
-  //     httpMockedClient.get = jest
-  //       .fn()
-  //       .mockRejectedValue({ data: { ok: false, error: 'Not found' } });
-  //     try {
-  //       await store.dispatch(getDetector(detectorId));
-  //     } catch (e) {
-  //       const actions = store.getActions();
-  //       expect(actions[0].type).toBe('ad/GET_DETECTOR_REQUEST');
-  //       expect(reducer(initialDetectorsState, actions[0])).toEqual({
-  //         ...initialDetectorsState,
-  //         requesting: true,
-  //       });
-  //       expect(actions[1].type).toBe('ad/GET_DETECTOR_FAILURE');
-  //       expect(reducer(initialDetectorsState, actions[1])).toEqual({
-  //         ...initialDetectorsState,
-  //         requesting: false,
-  //         errorMessage: 'Not found',
-  //       });
-  //       expect(httpMockedClient.get).toHaveBeenCalledWith(
-  //         `..${BASE_NODE_API_PATH}/detectors/${detectorId}`
-  //       );
-  //     }
-  //   });
-  // });
+  describe('getDetector', () => {
+    test('should invoke [REQUEST, SUCCESS]', async () => {
+      const expectedDetector = getRandomDetector(true);
+      const detectorId = 'randomDetectorID';
+      httpMockedClient.get = jest
+        .fn()
+        .mockResolvedValue({ data: { ok: true, response: expectedDetector } });
+      await store.dispatch(getDetector(detectorId));
+      const actions = store.getActions();
+      expect(actions[0].type).toBe('ad/GET_DETECTOR_REQUEST');
+      expect(reducer(initialDetectorsState, actions[0])).toEqual({
+        ...initialDetectorsState,
+        requesting: true,
+      });
+      expect(actions[1].type).toBe('ad/GET_DETECTOR_SUCCESS');
+      expect(reducer(initialDetectorsState, actions[1])).toEqual({
+        ...initialDetectorsState,
+        requesting: false,
+        detectors: {
+          [detectorId]: {
+            ...expectedDetector,
+          },
+        },
+      });
+      expect(httpMockedClient.get).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/detectors/${detectorId}`
+      );
+    });
+    test('should invoke [REQUEST, FAILURE]', async () => {
+      const detectorId = 'randomDetectorID';
+      httpMockedClient.get = jest
+        .fn()
+        .mockRejectedValue({ data: { ok: false, error: 'Not found' } });
+      try {
+        await store.dispatch(getDetector(detectorId));
+      } catch (e) {
+        const actions = store.getActions();
+        expect(actions[0].type).toBe('ad/GET_DETECTOR_REQUEST');
+        expect(reducer(initialDetectorsState, actions[0])).toEqual({
+          ...initialDetectorsState,
+          requesting: true,
+        });
+        expect(actions[1].type).toBe('ad/GET_DETECTOR_FAILURE');
+        expect(reducer(initialDetectorsState, actions[1])).toEqual({
+          ...initialDetectorsState,
+          requesting: false,
+          errorMessage: 'Not found',
+        });
+        expect(httpMockedClient.get).toHaveBeenCalledWith(
+          `..${BASE_NODE_API_PATH}/detectors/${detectorId}`
+        );
+      }
+    });
+  });
 
   describe('deleteDetector', () => {
     test('should invoke [REQUEST, SUCCESS]', async () => {
@@ -182,77 +182,77 @@ describe('detector reducer actions', () => {
       }
     });
   });
-  // describe('updateDetector', () => {
-  //   test('should invoke [REQUEST, SUCCESS]', async () => {
-  //     const randomDetector = getRandomDetector(false);
-  //     const detectorId = randomDetector.id;
-  //     httpMockedClient.put = jest.fn().mockResolvedValue({
-  //       data: { ok: true, response: { ...randomDetector, id: detectorId } },
-  //     });
-  //     await store.dispatch(updateDetector(detectorId, randomDetector));
-  //     const actions = store.getActions();
-  //     expect(actions[0].type).toBe('ad/UPDATE_DETECTOR_REQUEST');
-  //     expect(reducer(initialDetectorsState, actions[0])).toEqual({
-  //       ...initialDetectorsState,
-  //       requesting: true,
-  //     });
-  //     expect(actions[1].type).toBe('ad/UPDATE_DETECTOR_SUCCESS');
-  //     expect(reducer(initialDetectorsState, actions[1])).toEqual({
-  //       ...initialDetectorsState,
-  //       requesting: false,
-  //       detectors: {
-  //         [detectorId]: {
-  //           ...randomDetector,
-  //           id: detectorId,
-  //         },
-  //       },
-  //     });
-  //     expect(httpMockedClient.put).toHaveBeenCalledWith(
-  //       `..${BASE_NODE_API_PATH}/detectors/${detectorId}`,
-  //       randomDetector,
-  //       {
-  //         params: {
-  //           ifPrimaryTerm: randomDetector.primaryTerm,
-  //           ifSeqNo: randomDetector.seqNo,
-  //         },
-  //       }
-  //     );
-  //   });
+  describe('updateDetector', () => {
+    test('should invoke [REQUEST, SUCCESS]', async () => {
+      const randomDetector = getRandomDetector(false);
+      const detectorId = randomDetector.id;
+      httpMockedClient.put = jest.fn().mockResolvedValue({
+        data: { ok: true, response: { ...randomDetector, id: detectorId } },
+      });
+      await store.dispatch(updateDetector(detectorId, randomDetector));
+      const actions = store.getActions();
+      expect(actions[0].type).toBe('ad/UPDATE_DETECTOR_REQUEST');
+      expect(reducer(initialDetectorsState, actions[0])).toEqual({
+        ...initialDetectorsState,
+        requesting: true,
+      });
+      expect(actions[1].type).toBe('ad/UPDATE_DETECTOR_SUCCESS');
+      expect(reducer(initialDetectorsState, actions[1])).toEqual({
+        ...initialDetectorsState,
+        requesting: false,
+        detectors: {
+          [detectorId]: {
+            ...randomDetector,
+            id: detectorId,
+          },
+        },
+      });
+      expect(httpMockedClient.put).toHaveBeenCalledWith(
+        `..${BASE_NODE_API_PATH}/detectors/${detectorId}`,
+        randomDetector,
+        {
+          params: {
+            ifPrimaryTerm: randomDetector.primaryTerm,
+            ifSeqNo: randomDetector.seqNo,
+          },
+        }
+      );
+    });
 
-  //   test('should invoke [REQUEST, FAILURE]', async () => {
-  //     const randomDetector = getRandomDetector(true);
-  //     const detectorId = randomDetector.id;
-  //     httpMockedClient.post = jest.fn().mockRejectedValue({
-  //       data: { ok: false, error: 'Invalid primary Term' },
-  //     });
-  //     try {
-  //       await store.dispatch(updateDetector(detectorId, randomDetector));
-  //     } catch {
-  //       const actions = store.getActions();
-  //       expect(actions[0].type).toBe('ad/UPDATE_DETECTOR_REQUEST');
-  //       expect(reducer(initialDetectorsState, actions[0])).toEqual({
-  //         ...initialDetectorsState,
-  //         requesting: true,
-  //       });
-  //       expect(actions[1].type).toBe('ad/UPDATE_DETECTOR_FAILURE');
-  //       expect(reducer(initialDetectorsState, actions[1])).toEqual({
-  //         ...initialDetectorsState,
-  //         requesting: false,
-  //         errorMessage: 'Internal server error',
-  //       });
-  //       expect(httpMockedClient.post).toHaveBeenCalledWith(
-  //         `..${BASE_NODE_API_PATH}/detectors`,
-  //         randomDetector,
-  //         {
-  //           params: {
-  //             ifPrimaryTerm: randomDetector.primaryTerm,
-  //             ifSeqNo: randomDetector.seqNo,
-  //           },
-  //         }
-  //       );
-  //     }
-  //   });
-  // });
+    test('should invoke [REQUEST, FAILURE]', async () => {
+      const randomDetector = getRandomDetector(true);
+      const detectorId = randomDetector.id;
+      httpMockedClient.post = jest.fn().mockRejectedValue({
+        data: { ok: false, error: 'Invalid primary Term' },
+      });
+      try {
+        await store.dispatch(updateDetector(detectorId, randomDetector));
+      } catch {
+        const actions = store.getActions();
+        expect(actions[0].type).toBe('ad/UPDATE_DETECTOR_REQUEST');
+        expect(reducer(initialDetectorsState, actions[0])).toEqual({
+          ...initialDetectorsState,
+          requesting: true,
+        });
+        expect(actions[1].type).toBe('ad/UPDATE_DETECTOR_FAILURE');
+        expect(reducer(initialDetectorsState, actions[1])).toEqual({
+          ...initialDetectorsState,
+          requesting: false,
+          errorMessage: 'Internal server error',
+        });
+        expect(httpMockedClient.post).toHaveBeenCalledWith(
+          `..${BASE_NODE_API_PATH}/detectors`,
+          randomDetector,
+          {
+            params: {
+              ifPrimaryTerm: randomDetector.primaryTerm,
+              ifSeqNo: randomDetector.seqNo,
+            },
+          }
+        );
+      }
+    });
+  });
   describe('searchDetectors', () => {
     test('should invoke [REQUEST, SUCCESS]', async () => {
       const randomDetectors = [getRandomDetector(), getRandomDetector()];

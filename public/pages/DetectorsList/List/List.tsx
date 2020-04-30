@@ -64,7 +64,7 @@ import {
   getDetectorsToDisplay,
 } from '../../utils/helpers';
 import { staticColumn } from '../utils/tableUtils';
-import { countFontColor } from '../../../utils/kibanaUtils';
+import { darkModeEnabled } from '../../../utils/kibanaUtils';
 
 export interface ListRouterParams {
   from: string;
@@ -265,7 +265,7 @@ export const DetectorList = (props: ListProps) => {
     pageSizeOptions: [5, 10, 20, 50],
   };
 
-  // const detectorCountFontColor = darkModeEnabled() ? '#98A2B3' : '#535966';
+  const detectorCountFontColor = darkModeEnabled() ? '#98A2B3' : '#535966';
   const pageTitle = (
     <EuiTitle size={'s'} className={''}>
       <h3
@@ -276,7 +276,7 @@ export const DetectorList = (props: ListProps) => {
       >
         <p>{'Detectors'}&nbsp;</p>
         <p
-          style={{ color: countFontColor }}
+          style={{ color: detectorCountFontColor }}
         >{`(${selectedDetectors.length})`}</p>
       </h3>
     </EuiTitle>

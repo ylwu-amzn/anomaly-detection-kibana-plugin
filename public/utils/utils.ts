@@ -21,10 +21,7 @@ import { npStart } from 'ui/new_platform';
 import { ALERTING_PLUGIN_NAME, NAME_REGEX } from './constants';
 import { MAX_FEATURE_NAME_SIZE } from './constants';
 
-export const validateName = (
-  featureName: string
-): string | undefined => {
-  debugger
+export const validateName = (featureName: string): string | undefined => {
   if (isEmpty(featureName)) {
     return 'Required';
   }

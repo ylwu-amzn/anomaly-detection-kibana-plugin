@@ -19,7 +19,8 @@ import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults'
 import moment from 'moment';
 import { Dispatch } from 'redux';
 import { get } from 'lodash';
-import { AnomalyData, DateRange } from 'public/models/interfaces';
+import { AnomalyData, DateRange } from '../../models/interfaces';
+import { MAX_ANOMALIES } from '../../utils/constants';
 
 export const getLiveAnomalyResults = (
   dispatch: Dispatch<any>,
@@ -43,28 +44,6 @@ export const getLiveAnomalyResults = (
   dispatch(getDetectorLiveResults(detectorId, updatedParams));
 };
 
-// export const getAnomalyResults = (
-//   dispatch: Dispatch<any>,
-//   days: number,
-//   detectorId: string
-// ) => {
-//   const dataStartTimeLowerLimit = moment()
-//     .subtract(days, 'days')
-//     .valueOf();
-//   const updatedParams = {
-//     from: 0,
-//     size: 10000,
-//     sortDirection: SORT_DIRECTION.DESC,
-//     // sortField: 'startTime',
-//     // dataStartTimeLowerLimit: dataStartTimeLowerLimit,
-//     dateRangeFilter: {
-//       startTime: dataStartTimeLowerLimit.valueOf(),
-//       fieldName: AD_DOC_FIELDS.DATA_START_TIME,
-//     },
-//   };
-//   dispatch(getDetectorResults(detectorId, updatedParams));
-// };
-
 export const getAnomalyResultsWithDateRange = (
   dispatch: Dispatch<any>,
   startTime: number,
@@ -73,7 +52,7 @@ export const getAnomalyResultsWithDateRange = (
 ) => {
   const updatedParams = {
     from: 0,
-    size: 10000,
+    size: MAX_ANOMALIES,
     sortDirection: SORT_DIRECTION.DESC,
     sortField: AD_DOC_FIELDS.DATA_START_TIME,
     dateRangeFilter: {
@@ -85,39 +64,13 @@ export const getAnomalyResultsWithDateRange = (
   dispatch(getDetectorResults(detectorId, updatedParams));
 };
 
-// export const prepareDataForChart = (
-//   data: any[],
-//   startTime: Moment,
-//   endTime: Moment
-// ) => {
-//   if (!data || data.length === 0) {
-//     return [];
-//   }
-//   let anomalies = cloneDeep(data);
-
-//   anomalies.push({
-//     startTime: startTime.valueOf(),
-//     endTime: startTime.valueOf(),
-//     plotTime: startTime.valueOf(),
-//     confidence: null,
-//     anomalyGrade: null,
-//   });
-//   anomalies.unshift({
-//     startTime: endTime.valueOf(),
-//     endTime: endTime.valueOf(),
-//     plotTime: endTime.valueOf(),
-//     confidence: null,
-//     anomalyGrade: null,
-//   });
-//   return anomalies;
-// };
-
 const MAX_DATA_POINTS = 1000;
 
 const calculateStep = (total: number): number => {
   return Math.ceil(total / MAX_DATA_POINTS);
 };
 
+//TODO: sorting and find the maximum value?
 function findAnomalyWithMaxAnomalyGrade(anomalies: any[]) {
   let anomalyWithMaxGrade = anomalies[0];
   for (let i = 1, len = anomalies.length; i < len; i++) {
@@ -186,18 +139,6 @@ export const generateAnomalyAnnotations = (anomalies: any[]): any[] => {
       )} and ${moment(anomaly.endTime).format('MM/DD/YY h:mm A')}`,
     }));
 };
-
-// export const filterAnomalyWithDateRange = (
-//   data: any[],
-//   dateRange: DateRange
-// ) => {
-//   const anomalies = data.filter(
-//     anomaly =>
-//       anomaly.plotTime >= dateRange.startDate &&
-//       anomaly.plotTime <= dateRange.endDate
-//   );
-//   return anomalies;
-// };
 
 export const filterWithDateRange = (
   data: any[],
