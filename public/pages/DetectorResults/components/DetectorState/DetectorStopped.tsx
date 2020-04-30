@@ -27,6 +27,7 @@ export interface DetectorStoppedProps {
 export const DetectorStopped = (props: DetectorStoppedProps) => {
   return (
     <EuiEmptyPrompt
+      style={{ maxWidth: '75%' }}
       title={<h2>The detector is stopped</h2>}
       body={
         <Fragment>
@@ -44,11 +45,19 @@ export const DetectorStopped = (props: DetectorStoppedProps) => {
         </Fragment>
       }
       actions={[
-        <EuiButton onClick={props.onSwitchToConfiguration}>
+        <EuiButton
+          onClick={props.onSwitchToConfiguration}
+          style={{ width: '250px' }}
+        >
           View detector configuration
         </EuiButton>,
-        <EuiButton fill onClick={props.onStartDetector} iconType={'play'}>
-          Start detector
+        <EuiButton
+          fill={!props.detector.enabledTime}
+          onClick={props.onStartDetector}
+          iconType={'play'}
+          style={{ width: '250px' }}
+        >
+          {props.detector.enabledTime ? 'Restart detector' : 'Start detector'}
         </EuiButton>,
       ]}
     />

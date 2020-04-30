@@ -13,18 +13,15 @@
  * permissions and limitations under the License.
  */
 
-import { DETECTOR_INIT_FAILURES, DEFAULT_ACTION_ITEM } from './constants';
+import { DETECTOR_INIT_FAILURES } from './constants';
 
 export const getInitFailureMessageAndActionItem = (error: string): object => {
   const failureDetails = Object.values(DETECTOR_INIT_FAILURES);
-  const failureDetail = failureDetails.find(failure =>
+  const failureDetail = failureDetails.find((failure) =>
     error.includes(failure.keyword)
   );
   if (!failureDetail) {
-    return {
-      cause: 'unknown error',
-      actionItem: DEFAULT_ACTION_ITEM,
-    };
+    return DETECTOR_INIT_FAILURES.UNKNOWN_EXCEPTION;
   }
   return failureDetail;
 };

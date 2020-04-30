@@ -18,21 +18,21 @@ export enum DETECTOR_DETAIL_TABS {
   CONFIGURATIONS = 'configurations',
 }
 
-export const DEFAULT_ACTION_ITEM = 'Please re-start this detector to retry.';
+const DEFAULT_ACTION_ITEM = 'Please restart this detector to retry.';
 // Known causes:
 // https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/development/src/main/java/com/amazon/opendistroforelasticsearch/ad/transport/AnomalyResultTransportAction.java#L174-L185
 export const DETECTOR_INIT_FAILURES = Object.freeze({
   NO_TRAINING_DATA: {
     //https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/development/src/main/java/com/amazon/opendistroforelasticsearch/ad/transport/AnomalyResultTransportAction.java#L801
     keyword: 'Cannot get training data',
-    cause: 'lack of training data',
+    cause: 'lack of data ingestion',
     actionItem:
       'Please make sure your data ingestion is working. Or increase your detector time interval if data source has infrequent ingestion.',
   },
   COLD_START_ERROR: {
     //https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/development/src/main/java/com/amazon/opendistroforelasticsearch/ad/transport/AnomalyResultTransportAction.java#L811
     keyword: 'Error while cold start',
-    cause: 'error is found while cold start',
+    cause: 'error is found while model initialization',
     actionItem: DEFAULT_ACTION_ITEM,
   },
   AD_MODEL_MEMORY_REACH_LIMIT: {
@@ -45,9 +45,9 @@ export const DETECTOR_INIT_FAILURES = Object.freeze({
   DETECTOR_MEMORY_REACH_LIMIT: {
     //https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/development/src/main/java/com/amazon/opendistroforelasticsearch/ad/ml/ModelManager.java#L783
     keyword: 'Exceeded memory limit',
-    cause: 'lack of memory for this detector',
+    cause: 'lack of memory',
     actionItem:
-      "Try deleting or stop other detectors that you don't actively use, increase your cluster size, or reduce the number of features in this detector.",
+      "Try deleting or stop other detectors that you don't actively use, increase your cluster size, reduce the number of features in this detector, or scale up with an instance type of more memory.",
   },
   DATA_INDEX_NOT_FOUND: {
     //https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/development/src/main/java/com/amazon/opendistroforelasticsearch/ad/transport/AnomalyResultTransportAction.java#L366
@@ -68,5 +68,11 @@ export const DETECTOR_INIT_FAILURES = Object.freeze({
     keyword: 'AnomalyDetector is not available',
     cause: 'your detector is not defined',
     actionItem: 'Please make sure your detector is defined.',
+  },
+  UNKNOWN_EXCEPTION: {
+    //https://github.com/opendistro-for-elasticsearch/anomaly-detection/blob/development/src/main/java/com/amazon/opendistroforelasticsearch/ad/transport/AnomalyResultTransportAction.java#L438
+    keyword: 'We might have bug',
+    cause: 'unknown error',
+    actionItem: DEFAULT_ACTION_ITEM,
   },
 });

@@ -62,30 +62,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
       <EuiPage style={{ marginTop: '16px', paddingTop: '0px' }}>
         <EuiPageBody>
           <EuiSpacer size="l" />
-          {detector && isEmpty(detector.featureAttributes) ? (
-            <EuiEmptyPrompt
-              // iconType="editorStrike"
-              title={<h2>Features are required to run a detector</h2>}
-              body={
-                <Fragment>
-                  <p>
-                    Specify index fields that you want to find anomalies for by
-                    defining features. Once you define the features, you can
-                    preview your anomalies from a sample feature output.
-                  </p>
-                </Fragment>
-              }
-              actions={
-                <EuiButton
-                  color="primary"
-                  fill
-                  href={`#/detectors/${detectorId}/features`}
-                >
-                  Add features
-                </EuiButton>
-              }
-            />
-          ) : (
+          {
             <Fragment>
               {detector && detector.curState === DETECTOR_STATE.RUNNING ? (
                 <Fragment>
@@ -109,9 +86,7 @@ export function AnomalyResults(props: AnomalyResultsProps) {
                       </EuiButton>
                     </EuiCallOut>
                   ) : null}
-                  <AnomalyResultsLiveChart
-                    detector={detector}
-                  />
+                  <AnomalyResultsLiveChart detector={detector} />
                   <EuiSpacer size="l" />
                   <AnomalyHistory
                     detector={detector}
@@ -124,14 +99,14 @@ export function AnomalyResults(props: AnomalyResultsProps) {
               ) : detector && detector.curState !== DETECTOR_STATE.RUNNING ? (
                 <Fragment>
                   <DetectorStateDetails
-                    detector={detector}
+                    detectorId={detector.id}
                     onStartDetector={props.onStartDetector}
                     onSwitchToConfiguration={props.onSwitchToConfiguration}
                   />
                 </Fragment>
               ) : null}
             </Fragment>
-          )}
+          }
         </EuiPageBody>
       </EuiPage>
     </Fragment>

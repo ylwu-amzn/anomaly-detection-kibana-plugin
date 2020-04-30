@@ -29,11 +29,15 @@ export const DetectorInitializationFailure = (
 ) => {
   return (
     <EuiEmptyPrompt
+      style={{ maxWidth: '75%' }}
       title={
-        <h2>
-          <EuiIcon type="alert" size="l" color="danger" />{' '}
-          {`The detector cannot be initialized due to ${props.failureDetail.cause}`}
-        </h2>
+        <div>
+          <EuiIcon type="alert" size="l" color="danger" />
+
+          <h2>
+            {`The detector cannot be initialized due to ${props.failureDetail.cause}`}
+          </h2>
+        </div>
       }
       body={
         <Fragment>
@@ -41,11 +45,18 @@ export const DetectorInitializationFailure = (
         </Fragment>
       }
       actions={[
-        <EuiButton onClick={props.onSwitchToConfiguration}>
+        <EuiButton
+          onClick={props.onSwitchToConfiguration}
+          style={{ width: '250px' }}
+        >
           View detector configuration
         </EuiButton>,
-        <EuiButton fill onClick={props.onStartDetector} iconType={'play'}>
-          Start detector
+        <EuiButton
+          onClick={props.onStartDetector}
+          iconType={'play'}
+          style={{ width: '250px' }}
+        >
+          Restart detector
         </EuiButton>,
       ]}
     />
