@@ -29,6 +29,8 @@ import {
   Detector,
   Monitor,
   DateRange,
+  AnomalySummary,
+  Anomalies,
 } from '../../../models/interfaces';
 import {
   getAnomalyResultsWithDateRange,
@@ -48,6 +50,7 @@ import { ANOMALY_HISTORY_TABS } from '../utils/constants';
 import { searchES } from '../../../redux/reducers/elasticsearch';
 import { MIN_IN_MILLI_SECS } from '../../../../server/utils/constants';
 import { INITIAL_ANOMALY_SUMMARY } from '../../AnomalyCharts/utils/constants';
+import { MAX_ANOMALIES } from '../../../utils/constants';
 
 interface AnomalyHistoryProps {
   detector: Detector;
@@ -77,9 +80,9 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] = useState<
     boolean
   >(false);
-  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState();
-  const [pureAnomalies, setPureAnomalies] = useState([]);
-  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState(
+  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<Anomalies>();
+  const [pureAnomalies, setPureAnomalies] = useState<AnomalyData[]>([]);
+  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState<AnomalySummary>(
     INITIAL_ANOMALY_SUMMARY
   );
 
@@ -108,7 +111,6 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
             )
           )
         );
-        debugger;
         setBucketizedAnomalyResults(parseAnomalyResults(result));
         setIsLoadingAnomalyResults(false);
       } catch (err) {
@@ -124,12 +126,10 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
       dateRange.endDate - dateRange.startDate >
       get(props.detector, 'detectionInterval.period.interval', 1) *
         MIN_IN_MILLI_SECS *
-        10000
+        MAX_ANOMALIES
     ) {
-      debugger;
       getAnomalyResults();
     } else {
-      debugger;
       setBucketizedAnomalyResults(undefined);
       getAnomalyResultsWithDateRange(
         dispatch,

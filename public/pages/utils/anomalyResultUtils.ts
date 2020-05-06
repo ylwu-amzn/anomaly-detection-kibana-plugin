@@ -23,7 +23,7 @@ import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults'
 import moment from 'moment';
 import { Dispatch } from 'redux';
 import { get } from 'lodash';
-import { AnomalyData, DateRange } from '../../models/interfaces';
+import { AnomalyData, DateRange, AnomalySummary, FeatureAggregationData, Anomalies } from '../../models/interfaces';
 import { MAX_ANOMALIES } from '../../utils/constants';
 import { minuteDateFormatter } from './helpers';
 import { toFixedNumber } from '../../../server/utils/helpers';
@@ -267,9 +267,8 @@ export const getAnomalyResultsQuery = (
   detectorId: string
 ) => {
   const fixedInterval = Math.ceil(
-    (endTime - startTime) / (interval * MIN_IN_MILLI_SECS * MAX_ANOMALIES)
+    (endTime - startTime) / (interval * MIN_IN_MILLI_SECS * MAX_DATA_POINTS)
   );
-  console.log(fixedInterval);
   return {
     index: '.opendistro-anomaly-results*',
     size: 0,
@@ -322,15 +321,14 @@ export const getAnomalyResultsQuery = (
   };
 };
 
-export const parseAnomalyResults = (result: any) => {
-  debugger;
+export const parseAnomalyResults = (result: any): Anomalies => {
   const rawAnomalies = get(
     result,
     'data.response.aggregations.bucketized_anomaly_grade.buckets',
     []
   ) as any[];
-  let anomalies = [];
-  let featureData = {};
+  let anomalies = [] as AnomalyData[];
+  let featureData = {} as { [key: string]: FeatureAggregationData[] };
   rawAnomalies.forEach(item => {
     if (get(item, 'top_anomaly_hits.hits.hits', []).length > 0) {
       const rawAnomaly = get(item, 'top_anomaly_hits.hits.hits.0._source');
@@ -364,8 +362,7 @@ export const parseAnomalyResults = (result: any) => {
   };
 };
 
-export const parseAnomalySummary = (anomalySummaryResult: any) => {
-  debugger;
+export const parseAnomalySummary = (anomalySummaryResult: any): AnomalySummary => {
   const anomalyCount = get(
     anomalySummaryResult,
     'data.response.aggregations.count_anomalies.value',
@@ -380,7 +377,7 @@ export const parseAnomalySummary = (anomalySummaryResult: any) => {
             'data.response.aggregations.min_anomaly_grade.value'
           )
         )
-      : undefined,
+      : 0,
     maxAnomalyGrade: anomalyCount
       ? toFixedNumber(
           get(
@@ -388,7 +385,7 @@ export const parseAnomalySummary = (anomalySummaryResult: any) => {
             'data.response.aggregations.max_anomaly_grade.value'
           )
         )
-      : undefined,
+      : 0,
     minConfidence: anomalyCount
       ? toFixedNumber(
           get(
@@ -396,7 +393,7 @@ export const parseAnomalySummary = (anomalySummaryResult: any) => {
             'data.response.aggregations.min_confidence.value'
           )
         )
-      : undefined,
+      : 0,
     maxConfidence: anomalyCount
       ? toFixedNumber(
           get(
@@ -404,7 +401,7 @@ export const parseAnomalySummary = (anomalySummaryResult: any) => {
             'data.response.aggregations.max_confidence.value'
           )
         )
-      : undefined,
+      : 0,
     lastAnomalyOccurrence: anomalyCount
       ? minuteDateFormatter(
           get(
@@ -412,20 +409,19 @@ export const parseAnomalySummary = (anomalySummaryResult: any) => {
             'data.response.aggregations.max_data_end_time.value'
           )
         )
-      : undefined,
+      : '',
   };
 };
 
-export const parsePureAnomalies = (anomalySummaryResult: any) => {
-  // debugger;
+export const parsePureAnomalies = (anomalySummaryResult: any): AnomalyData[] => {
   const anomaliesHits = get(
     anomalySummaryResult,
     'data.response.hits.hits',
     []
   );
-  const anomalies = [];
+  const anomalies = [] as AnomalyData[];
   if (anomaliesHits.length > 0) {
-    anomaliesHits.forEach(item => {
+    anomaliesHits.forEach((item:any) => {
       const rawAnomaly = get(item, '_source');
       anomalies.push({
         anomalyGrade: get(rawAnomaly, 'anomaly_grade'),
