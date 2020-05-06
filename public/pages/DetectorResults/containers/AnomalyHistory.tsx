@@ -80,11 +80,13 @@ export const AnomalyHistory = (props: AnomalyHistoryProps) => {
   const [isLoadingAnomalyResults, setIsLoadingAnomalyResults] = useState<
     boolean
   >(false);
-  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<Anomalies>();
+  const [bucketizedAnomalyResults, setBucketizedAnomalyResults] = useState<
+    Anomalies
+  >();
   const [pureAnomalies, setPureAnomalies] = useState<AnomalyData[]>([]);
-  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState<AnomalySummary>(
-    INITIAL_ANOMALY_SUMMARY
-  );
+  const [bucketizedAnomalySummary, setBucketizedAnomalySummary] = useState<
+    AnomalySummary
+  >(INITIAL_ANOMALY_SUMMARY);
 
   useEffect(() => {
     async function getAnomalyResults() {

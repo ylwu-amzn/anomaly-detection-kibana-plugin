@@ -23,7 +23,13 @@ import { getDetectorLiveResults } from '../../redux/reducers/liveAnomalyResults'
 import moment from 'moment';
 import { Dispatch } from 'redux';
 import { get } from 'lodash';
-import { AnomalyData, DateRange, AnomalySummary, FeatureAggregationData, Anomalies } from '../../models/interfaces';
+import {
+  AnomalyData,
+  DateRange,
+  AnomalySummary,
+  FeatureAggregationData,
+  Anomalies,
+} from '../../models/interfaces';
 import { MAX_ANOMALIES } from '../../utils/constants';
 import { minuteDateFormatter } from './helpers';
 import { toFixedNumber } from '../../../server/utils/helpers';
@@ -362,7 +368,9 @@ export const parseAnomalyResults = (result: any): Anomalies => {
   };
 };
 
-export const parseAnomalySummary = (anomalySummaryResult: any): AnomalySummary => {
+export const parseAnomalySummary = (
+  anomalySummaryResult: any
+): AnomalySummary => {
   const anomalyCount = get(
     anomalySummaryResult,
     'data.response.aggregations.count_anomalies.value',
@@ -413,7 +421,9 @@ export const parseAnomalySummary = (anomalySummaryResult: any): AnomalySummary =
   };
 };
 
-export const parsePureAnomalies = (anomalySummaryResult: any): AnomalyData[] => {
+export const parsePureAnomalies = (
+  anomalySummaryResult: any
+): AnomalyData[] => {
   const anomaliesHits = get(
     anomalySummaryResult,
     'data.response.hits.hits',
@@ -421,7 +431,7 @@ export const parsePureAnomalies = (anomalySummaryResult: any): AnomalyData[] => 
   );
   const anomalies = [] as AnomalyData[];
   if (anomaliesHits.length > 0) {
-    anomaliesHits.forEach((item:any) => {
+    anomaliesHits.forEach((item: any) => {
       const rawAnomaly = get(item, '_source');
       anomalies.push({
         anomalyGrade: get(rawAnomaly, 'anomaly_grade'),

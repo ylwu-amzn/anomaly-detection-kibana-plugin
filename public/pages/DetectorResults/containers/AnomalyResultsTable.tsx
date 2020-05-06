@@ -69,13 +69,15 @@ export function AnomalyResultsTable(props: AnomalyResultsTableProps) {
 
   useEffect(() => {
     const anomalies = props.anomalies
-      ? props.anomalies.filter(anomaly => anomaly.anomalyGrade > 0).map(anomaly => {
-        return {
-          ...anomaly,
-          anomalyGrade: toFixedNumber(anomaly.anomalyGrade),
-          confidence: toFixedNumber(anomaly.confidence),
-        }
-      })
+      ? props.anomalies
+          .filter(anomaly => anomaly.anomalyGrade > 0)
+          .map(anomaly => {
+            return {
+              ...anomaly,
+              anomalyGrade: toFixedNumber(anomaly.anomalyGrade),
+              confidence: toFixedNumber(anomaly.confidence),
+            };
+          })
       : [];
 
     anomalies.sort(
