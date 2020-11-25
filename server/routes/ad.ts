@@ -28,7 +28,7 @@ import {
   DateRangeFilter,
 } from '../models/types';
 import { Router } from '../router';
-import { SORT_DIRECTION, AD_DOC_FIELDS } from '../utils/constants';
+import { SORT_DIRECTION, AD_DOC_FIELDS, DETECTOR_STATE } from '../utils/constants';
 import {
   mapKeysDeep,
   toCamel,
@@ -220,6 +220,7 @@ export default class AdService {
         .callAsCurrentUser('ad.getDetector', {
           detectorId,
         });
+      console.log("detector response", response);
       let detectorState;
       try {
         const detectorStateResp = await this.client
@@ -238,12 +239,42 @@ export default class AdService {
           err
         );
       }
+      let task_state = get(response, 'anomaly_detection_task.state');
+      if (task_state == "CREATED" || task_state == "INIT"){
+        task_state = DETECTOR_STATE.INIT
+      } else if(task_state == "RUNNING"){
+        task_state = DETECTOR_STATE.RUNNING
+      } else if(task_state == "FAILED" || task_state == "STOPPED"){
+        task_state = DETECTOR_STATE.DISABLED
+      } else if(task_state == "FINISHED" ){
+        task_state = DETECTOR_STATE.DISABLED
+      }
+      
+      let adJob = response.anomaly_detector_job;
+      if (response.anomaly_detection_task && !response.anomaly_detector_job) {
+        adJob = {
+          name: detectorId,
+          schedule: {
+            interval : {
+              start_time : 1606298347398,
+              period : 1,
+              unit : "Minutes"
+            }
+          },
+          window_delay: response.anomaly_detector.window_delay,
+          enabled: task_state == DETECTOR_STATE.INIT || task_state == DETECTOR_STATE.RUNNING? true:false,
+          enabled_time: response.anomaly_detection_task.execution_start_time,
+          disabled_time: response.anomaly_detection_task.execution_end_time ? response.anomaly_detection_task.execution_end_time : response.anomaly_detection_task.last_update_time,
+          last_update_time: response.anomaly_detection_task.last_update_time,
+          lock_duration_seconds: 60
+        }
+      }
       const resp = {
         ...response.anomaly_detector,
         id: response._id,
         primaryTerm: response._primary_term,
         seqNo: response._seq_no,
-        adJob: { ...response.anomaly_detector_job },
+        adJob: { ...adJob },
         ...(detectorState !== undefined
           ? {
               curState: detectorState.state,
@@ -251,7 +282,13 @@ export default class AdService {
               initProgress: getDetectorInitProgress(detectorState),
             }
           : {}),
+          ...(response.anomaly_detection_task && task_state
+            ? {
+                curState: task_state,
+              }
+            : {}),
       };
+      console.log('processed detector response', resp);
       return kibanaResponse.ok({
         body: {
           ok: true,
