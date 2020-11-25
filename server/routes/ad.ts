@@ -249,14 +249,13 @@ export default class AdService {
       } else if(task_state == "FINISHED" ){
         task_state = DETECTOR_STATE.DISABLED
       }
-      
       let adJob = response.anomaly_detector_job;
       if (response.anomaly_detection_task && !response.anomaly_detector_job) {
         adJob = {
           name: detectorId,
           schedule: {
             interval : {
-              start_time : 1606298347398,
+              start_time : response.anomaly_detection_task.last_update_time,
               period : 1,
               unit : "Minutes"
             }

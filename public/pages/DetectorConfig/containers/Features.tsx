@@ -190,6 +190,7 @@ export const Features = (props: FeaturesProps) => {
   const previewText = `After you set the model features and other optional parameters, you can
                          preview your anomalies from a sample feature output.`;
 
+  console.log("detector", props.detector);
   return (
     <ContentPanel
       title="Model configuration"
@@ -253,6 +254,7 @@ export const Features = (props: FeaturesProps) => {
           <AdditionalSettings
             shingleSize={shingleSize}
             categoryField={get(props.detector, 'categoryField', [])}
+            detectionDateRange={get(props.detector, 'detectionDateRange', [])}
           />
         </div>
       )}

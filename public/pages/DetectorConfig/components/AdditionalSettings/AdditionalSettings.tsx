@@ -15,24 +15,30 @@
 
 import React from 'react';
 import { get } from 'lodash';
+import moment from 'moment';
 import { EuiBasicTable } from '@elastic/eui';
 import ContentPanel from '../../../../components/ContentPanel/ContentPanel';
 
 interface AdditionalSettingsProps {
   shingleSize: number;
   categoryField: string[];
+  detectionDateRange: any
 }
 
 export function AdditionalSettings(props: AdditionalSettingsProps) {
+  let startTime = get(props.detectionDateRange, 'startTime') ? moment(get(props.detectionDateRange, 'startTime')).format('MM/DD/YYYY hh:mm A'):'';
+  let endTime = get(props.detectionDateRange, 'startTime') ? moment(get(props.detectionDateRange, 'endTime')).format('MM/DD/YYYY hh:mm A'):'';
   const tableItems = [
     {
       categoryField: get(props.categoryField, 0, '-'),
       windowSize: props.shingleSize,
+      detectionDateRange: startTime + " - " + endTime
     },
   ];
   const tableColumns = [
     { name: 'Category field', field: 'categoryField' },
     { name: 'Window size', field: 'windowSize' },
+    { name: 'Historical date range', field: 'detectionDateRange' },
   ];
   return (
     <ContentPanel title="Additional settings" titleSize="s">
